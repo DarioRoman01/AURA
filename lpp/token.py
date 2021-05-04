@@ -25,7 +25,7 @@ class TokenType(Enum):
 
 class Token(NamedTuple):
     token_type: TokenType
-    literal = str
+    literal: str
 
     def __str__(self) -> str:
         return f'Type: {self.token_type}, Literal: {self.literal}'
