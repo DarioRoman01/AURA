@@ -70,3 +70,76 @@ class LexerTest(TestCase):
 
         self.assertEquals(tokens, expected_tokens)
         
+    def test_assingment(self) -> None:
+        source: str = 'var cinco = 5;'
+        lexer: Lexer = Lexer(source)
+
+        tokens: List[Token] = []
+        for i in range(5):
+            tokens.append(lexer.next_token())
+        
+        expected_tokens: List[Token] = [
+            Token(TokenType.LET, 'var'),
+            Token(TokenType.IDENT, 'cinco'),
+            Token(TokenType.ASSING, '='),
+            Token(TokenType.INT, '5'),
+            Token(TokenType.SEMICOLON, ';'),
+        ]
+
+        self.assertEquals(tokens, expected_tokens)
+
+    def test_function_declaration(self) -> None:
+        source: str = '''
+            var suma = funcion(x, y) {
+                x + y;
+            };
+        '''
+
+        lexer: Lexer = Lexer(source)
+        tokens: List[Token] = []
+        for i in range(16):
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+            Token(TokenType.LET, 'var'),
+            Token(TokenType.IDENT, 'suma'),
+            Token(TokenType.ASSING, '='),
+            Token(TokenType.FUNCTION, 'funcion'),
+            Token(TokenType.LPAREN, '('),
+            Token(TokenType.IDENT, 'x'),
+            Token(TokenType.COMMA, ','),
+            Token(TokenType.IDENT, 'y'),
+            Token(TokenType.RPAREN, ')'),
+            Token(TokenType.LBRACE, '{'),
+            Token(TokenType.IDENT, 'x'),
+            Token(TokenType.PLUS, '+'),
+            Token(TokenType.IDENT, 'y'),
+            Token(TokenType.SEMICOLON, ';'),
+            Token(TokenType.RBRACE, '}'),
+            Token(TokenType.SEMICOLON, ';'),
+        ]
+
+        self.assertEquals(tokens, expected_tokens)
+
+    def test_function_call(self) -> None:
+        source: str = 'var resultado = suma(dos, tres);'
+        lexer: Lexer = Lexer(source)
+        tokens: List[Token] = []
+
+        for i in range(10):
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+            Token(TokenType.LET, 'var'),
+            Token(TokenType.IDENT, 'resultado'),
+            Token(TokenType.ASSING, '='),
+            Token(TokenType.IDENT, 'suma'),
+            Token(TokenType.LPAREN, '('),
+            Token(TokenType.IDENT, 'dos'),
+            Token(TokenType.COMMA, ','),
+            Token(TokenType.IDENT, 'tres'),
+            Token(TokenType.RPAREN, ')'),
+            Token(TokenType.SEMICOLON, ';'),
+        ]
+
+        self.assertEquals(tokens, expected_tokens)
