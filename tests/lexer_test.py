@@ -9,15 +9,20 @@ class LexerTest(TestCase):
     assing tokens type propertly
     """
 
+    def load_tokens(self, rang: int, source: str) -> List[Token]:
+        """load tokens of given input"""
+        lexer: Lexer = Lexer(source)
+        tokens: List[Token] = []
+        for i in range(rang):
+            tokens.append(lexer.next_token())
+
+        return tokens
+
     def test_illegal(self) -> None:
         """Test illegal tokens."""
 
         source: str = '¡¿@'
-        lexer: Lexer = Lexer(source)
-
-        tokens: List[Token] = []
-        for i in range(len(source)):
-            tokens.append(lexer.next_token())
+        tokens: List[Token] = self.load_tokens(len(source), source)
 
         expected_tokens: List[Token] = [
             Token(TokenType.ILLEGAL, '¡'),
@@ -31,11 +36,7 @@ class LexerTest(TestCase):
         """Test operators character."""
 
         source: str = '=+'
-        lexer: Lexer = Lexer(source)
-
-        tokens: List[Token] = []
-        for i in range(len(source)):
-            tokens.append(lexer.next_token())
+        tokens: List[Token] = self.load_tokens(len(source), source)
         
         expected_tokens: List[Token] = [
             Token(TokenType.ASSING, '='),
@@ -48,11 +49,7 @@ class LexerTest(TestCase):
         """Test end of file tokens."""
 
         source: str = '+'
-        lexer: Lexer = Lexer(source)
-        tokens: List[Token] = []
-
-        for i in range(len(source) + 1):
-                tokens.append(lexer.next_token())
+        tokens: List[Token] = self.load_tokens(len(source) + 1, source)
         
         expected_tokens: List[Token] = [
             Token(TokenType.PLUS, '+'),
@@ -65,11 +62,7 @@ class LexerTest(TestCase):
         """test delimiters tokens."""
 
         source = '(){},;'
-        lexer: Lexer = Lexer(source)
-        tokens: List[Token] = []
-
-        for i in range(len(source)):
-            tokens.append(lexer.next_token())
+        tokens: List[Token] = self.load_tokens(len(source), source)
 
         expected_tokens: List[Token] = [
             Token(TokenType.LPAREN, '('),
@@ -86,11 +79,7 @@ class LexerTest(TestCase):
         """test variables assingment tokens"""
 
         source: str = 'var cinco = 5;'
-        lexer: Lexer = Lexer(source)
-
-        tokens: List[Token] = []
-        for i in range(5):
-            tokens.append(lexer.next_token())
+        tokens: List[Token] = self.load_tokens(5, source)
         
         expected_tokens: List[Token] = [
             Token(TokenType.LET, 'var'),
@@ -110,11 +99,7 @@ class LexerTest(TestCase):
                 x + y;
             };
         '''
-
-        lexer: Lexer = Lexer(source)
-        tokens: List[Token] = []
-        for i in range(16):
-            tokens.append(lexer.next_token())
+        tokens: List[Token] = self.load_tokens(16, source)
 
         expected_tokens: List[Token] = [
             Token(TokenType.LET, 'var'),
@@ -139,13 +124,9 @@ class LexerTest(TestCase):
 
     def test_function_call(self) -> None:
         """Test functino call tokens."""
-        
-        source: str = 'var resultado = suma(dos, tres);'
-        lexer: Lexer = Lexer(source)
-        tokens: List[Token] = []
 
-        for i in range(10):
-            tokens.append(lexer.next_token())
+        source: str = 'var resultado = suma(dos, tres);'
+        tokens: List[Token] = self.load_tokens(10, source)
 
         expected_tokens: List[Token] = [
             Token(TokenType.LET, 'var'),
