@@ -24,6 +24,8 @@ class TokenType(Enum):
     SEMICOLON = auto()
 
 class Token(NamedTuple):
+    """Token definition"""
+
     token_type: TokenType
     literal: str
 
@@ -31,6 +33,8 @@ class Token(NamedTuple):
         return f'Type: {self.token_type}, Literal: {self.literal}'
 
 def lookup_token_type(literal: str) -> TokenType:
+    """check if the given literal is a keyword"""
+    
     keywords: Dict[str, TokenType] = {
         'var': TokenType.LET,
         'funcion': TokenType.FUNCTION

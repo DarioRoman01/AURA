@@ -8,6 +8,7 @@ from re import match
 
 class Lexer:
     def __init__(self, source: str) -> None:
+        """lexer constructor."""
         self._source: str = source
         self._character: str = ''
         self._read_position: int = 0
@@ -59,12 +60,15 @@ class Lexer:
         return token
 
     def _is_letter(self, character: str) -> bool:
+        """Verify that the current character is a letter."""
         return bool(match(r'^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$', character))
 
     def _is_number(self, character: str) -> bool:
+        """Verify that the current character is a number."""
         return bool(match(r'^\d$', character))
 
     def _read_character(self) -> None:
+        """read all the characters."""
         if self._read_position >= len(self._source):
             self._character = ''
         else:
@@ -74,6 +78,7 @@ class Lexer:
         self._read_position += 1
 
     def _read_identifier(self) -> str:
+        """read a string character sequence."""
         initial_position = self._position
 
         while self._is_letter(self._character):
@@ -82,6 +87,7 @@ class Lexer:
         return self._source[initial_position:self._position] 
 
     def _read_number(self) -> str:
+        """read number character sequence."""
         initial_position = self._position
 
         while self._is_number(self._character):
@@ -90,5 +96,7 @@ class Lexer:
         return self._source[initial_position:self._position]
 
     def _skip_whitespace(self) -> None:
+        """Skip all the whitespaces."""
+
         while match(r'^\s$', self._character):
             self._read_character()

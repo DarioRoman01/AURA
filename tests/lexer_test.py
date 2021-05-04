@@ -4,8 +4,14 @@ from lpp.token import Token, TokenType
 from lpp.lexer import Lexer
 
 class LexerTest(TestCase):
+    """
+    Lexer tests cases verify that the lexer 
+    assing tokens type propertly
+    """
 
     def test_illegal(self) -> None:
+        """Test illegal tokens."""
+
         source: str = '¡¿@'
         lexer: Lexer = Lexer(source)
 
@@ -22,6 +28,8 @@ class LexerTest(TestCase):
         self.assertEquals(tokens, expected_tokens)
 
     def test_one_character_operator(self) -> None:
+        """Test operators character."""
+
         source: str = '=+'
         lexer: Lexer = Lexer(source)
 
@@ -37,6 +45,8 @@ class LexerTest(TestCase):
         self.assertEquals(tokens, expected_tokens)
 
     def test_eof(self) -> None:
+        """Test end of file tokens."""
+
         source: str = '+'
         lexer: Lexer = Lexer(source)
         tokens: List[Token] = []
@@ -52,6 +62,8 @@ class LexerTest(TestCase):
         self.assertEqual(tokens, expected_tokens)
 
     def test_delimiters(self) -> None:
+        """test delimiters tokens."""
+
         source = '(){},;'
         lexer: Lexer = Lexer(source)
         tokens: List[Token] = []
@@ -71,6 +83,8 @@ class LexerTest(TestCase):
         self.assertEquals(tokens, expected_tokens)
         
     def test_assingment(self) -> None:
+        """test variables assingment tokens"""
+
         source: str = 'var cinco = 5;'
         lexer: Lexer = Lexer(source)
 
@@ -89,6 +103,8 @@ class LexerTest(TestCase):
         self.assertEquals(tokens, expected_tokens)
 
     def test_function_declaration(self) -> None:
+        """Test functions declarations tokens."""
+
         source: str = '''
             var suma = funcion(x, y) {
                 x + y;
@@ -122,6 +138,8 @@ class LexerTest(TestCase):
         self.assertEquals(tokens, expected_tokens)
 
     def test_function_call(self) -> None:
+        """Test functino call tokens."""
+        
         source: str = 'var resultado = suma(dos, tres);'
         lexer: Lexer = Lexer(source)
         tokens: List[Token] = []
