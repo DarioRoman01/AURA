@@ -9,6 +9,7 @@ const (
 	DIVISION
 	ELSE
 	EOF
+	EQ
 	FALSE
 	FUNCTION
 	GT // grather than
@@ -22,6 +23,7 @@ const (
 	LT    // less than
 	MINUS // -
 	NOT   // !
+	NOT_EQ
 	PLUS
 	RBRACE
 	RETURN

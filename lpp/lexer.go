@@ -1,6 +1,7 @@
 package lpp
 
 import (
+	"fmt"
 	"regexp"
 	"unicode/utf8"
 )
@@ -31,7 +32,11 @@ func (l *Lexer) NextToken() Token {
 	var token Token
 
 	if equal, _ := regexp.MatchString(`^=$`, l.character); equal {
-		token = Token{Token_type: ASSING, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(EQ)
+		} else {
+			token = Token{Token_type: ASSING, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^\+$`, l.character); equal {
 		token = Token{Token_type: PLUS, Literal: l.character}
@@ -73,7 +78,11 @@ func (l *Lexer) NextToken() Token {
 		token = Token{Token_type: TIMES, Literal: l.character}
 
 	} else if equal, _ := regexp.MatchString(`^\!$`, l.character); equal {
-		token = Token{Token_type: NOT, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(NOT_EQ)
+		} else {
+			token = Token{Token_type: NOT, Literal: l.character}
+		}
 
 	} else if l.isLetter(l.character) {
 		literal := l.readIdentifier()
@@ -102,6 +111,14 @@ func (l *Lexer) isLetter(char string) bool {
 func (l *Lexer) isNumber(char string) bool {
 	isValid, _ := regexp.MatchString(`^\d$`, char)
 	return isValid
+}
+
+func (l *Lexer) makeTwoCharacterToken(tokenType TokenType) Token {
+	prefix := l.character
+	l.readCharacter()
+	suffix := l.character
+
+	return Token{Token_type: tokenType, Literal: fmt.Sprintf("%s%s", prefix, suffix)}
 }
 
 // read current character.
@@ -134,6 +151,14 @@ func (l *Lexer) readNumber() string {
 	}
 
 	return string(l.source[initialPosition:l.position])
+}
+
+func (l *Lexer) peekCharacter() string {
+	if l.read_position >= utf8.RuneCountInString(l.source) {
+		return ""
+	}
+
+	return string([]rune(l.source)[l.read_position])
 }
 
 // skipp whitespaces
