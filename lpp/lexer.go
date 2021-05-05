@@ -136,11 +136,7 @@ func (l *Lexer) readCharacter() {
 // read character sequence
 func (l *Lexer) readIdentifier() string {
 	initialPosition := l.position
-	for l.isLetter(l.character) {
-		l.readCharacter()
-	}
-
-	for l.isNumber(l.character) {
+	for l.isLetter(l.character) || l.isNumber(l.character) {
 		l.readCharacter()
 	}
 
