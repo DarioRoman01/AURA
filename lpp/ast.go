@@ -15,7 +15,7 @@ func NewStatement(token Token) *Statement {
 	return &Statement{Token: token}
 }
 
-func (s *Statement) TokenLiteral() string {
+func (s Statement) TokenLiteral() string {
 	return s.Token.Literal
 }
 
@@ -27,7 +27,7 @@ func NewExpression(token Token) *Expression {
 	return &Expression{Token: token}
 }
 
-func (e *Expression) TokenLiteral() string {
+func (e Expression) TokenLiteral() string {
 	return e.Token.Literal
 }
 
@@ -39,7 +39,7 @@ func NewProgram(statements []Statement) *Program {
 	return &Program{Staments: statements}
 }
 
-func (p *Program) TokenLiteral() string {
+func (p Program) TokenLiteral() string {
 	if len(p.Staments) > 0 {
 		return p.Staments[0].TokenLiteral()
 	}
@@ -47,7 +47,7 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
-func (p *Program) Str() string {
+func (p Program) Str() string {
 	var out []string
 
 	for _, v := range p.Staments {
