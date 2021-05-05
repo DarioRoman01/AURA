@@ -243,3 +243,24 @@ func TestTwoCharacterOperator(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestUnderscoreVar(t *testing.T) {
+	source := "var num_12 = 5;"
+
+	tokens := loadTokens(5, source)
+
+	expectedTokens := []lpp.Token{
+		{Token_type: lpp.LET, Literal: "var"},
+		{Token_type: lpp.IDENT, Literal: "num_12"},
+		{Token_type: lpp.ASSING, Literal: "="},
+		{Token_type: lpp.INT, Literal: "5"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+	}
+
+	if !reflect.DeepEqual(tokens, expectedTokens) {
+		t.Log("tokens and expected tokens are not equal in underscore variable")
+		t.Log("expected: ", expectedTokens)
+		t.Log("found: ", tokens)
+		t.Fail()
+	}
+}
