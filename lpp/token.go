@@ -36,6 +36,7 @@ type Token struct {
 	Literal    string
 }
 
+// verify that given literal is a string
 func LookUpTokenType(literal string) TokenType {
 	keywords := map[string]TokenType{
 		"falso":     FALSE,

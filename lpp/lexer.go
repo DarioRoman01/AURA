@@ -12,6 +12,7 @@ type Lexer struct {
 	position      int
 }
 
+// create a new lexer
 func NewLexer(source string) *Lexer {
 	lexer := &Lexer{
 		source:        source,
@@ -24,6 +25,7 @@ func NewLexer(source string) *Lexer {
 	return lexer
 }
 
+// read next token
 func (l *Lexer) NextToken() Token {
 	l.skipWhiteSpaces()
 	var token Token
@@ -90,16 +92,19 @@ func (l *Lexer) NextToken() Token {
 	return token
 }
 
+// check if current character is letter
 func (l *Lexer) isLetter(char string) bool {
 	isValid, _ := regexp.MatchString(`^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$`, char)
 	return isValid
 }
 
+// check if current character is number
 func (l *Lexer) isNumber(char string) bool {
 	isValid, _ := regexp.MatchString(`^\d$`, char)
 	return isValid
 }
 
+// read current character.
 func (l *Lexer) readCharacter() {
 	if l.read_position >= utf8.RuneCountInString(l.source) {
 		l.character = ""
@@ -111,6 +116,7 @@ func (l *Lexer) readCharacter() {
 	l.read_position++
 }
 
+// read character sequence
 func (l *Lexer) readIdentifier() string {
 	initialPosition := l.position
 	for l.isLetter(l.character) {
@@ -120,6 +126,7 @@ func (l *Lexer) readIdentifier() string {
 	return string(l.source[initialPosition:l.position])
 }
 
+// read number sequence of characters
 func (l *Lexer) readNumber() string {
 	initialPosition := l.position
 	for l.isNumber(l.character) {
@@ -129,6 +136,7 @@ func (l *Lexer) readNumber() string {
 	return string(l.source[initialPosition:l.position])
 }
 
+// skipp whitespaces
 func (l *Lexer) skipWhiteSpaces() {
 	m, _ := regexp.Compile(`^\s$`)
 	for m.MatchString(l.character) {
