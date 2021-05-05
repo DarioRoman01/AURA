@@ -1,5 +1,7 @@
 package lpp
 
+import "fmt"
+
 type TokenType int
 
 const (
@@ -36,6 +38,10 @@ const (
 type Token struct {
 	Token_type TokenType
 	Literal    string
+}
+
+func (t *Token) PrintToken() string {
+	return fmt.Sprintf("Token Type: %d, Literal: %s", t.Token_type, t.Literal)
 }
 
 // verify that given literal is a string

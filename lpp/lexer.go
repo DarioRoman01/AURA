@@ -140,6 +140,10 @@ func (l *Lexer) readIdentifier() string {
 		l.readCharacter()
 	}
 
+	for l.isNumber(l.character) {
+		l.readCharacter()
+	}
+
 	return string(l.source[initialPosition:l.position])
 }
 
