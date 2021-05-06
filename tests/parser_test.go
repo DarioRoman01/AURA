@@ -46,26 +46,47 @@ func TestLetStatements(t *testing.T) {
 		t.Fail()
 	}
 
-	if !assert.Equal("x", program.Staments[0].LetStatement.TokenLiteral()) {
-		t.Fail()
-	}
-
-	if !assert.Equal("y", program.Staments[1].LetStatement.TokenLiteral()) {
-		t.Fail()
-	}
-	if !assert.Equal("foo", program.Staments[2].LetStatement.TokenLiteral()) {
-		t.Fail()
-	}
-
 	for _, statement := range program.Staments {
 		if !assert.Equal("var", statement.TokenLiteral()) {
 			t.Log("token are not a variable")
 			t.Fail()
 		}
 
-		if !assert.IsType(&lpp.LetStatement{}, statement.LetStatement) {
+		if !assert.IsType(&lpp.LetStatement{}, statement.(*lpp.LetStatement)) {
 			t.Log("statement are not let statement type")
 			t.Fail()
 		}
 	}
+}
+
+func TestNamesInLetStatements(t *testing.T) {
+	assert := assert.New(t)
+	source := `
+		var x = 5;
+		var y = 10;
+		var foo = 20;
+	`
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+
+	var names []string
+	for _, stament := range program.Staments {
+		stament := stament.(*lpp.LetStatement)
+		if !assert.NotNil(stament.Name) {
+			t.Fail()
+		}
+
+		if !assert.Implements((*lpp.Stmt)(nil), stament) {
+			t.Fail()
+		}
+
+		names = append(names, stament.Name.Str())
+	}
+
+	expectedNames := []string{"x", "y", "foo"}
+	if !assert.Equal(expectedNames, names) {
+		t.Fail()
+	}
+
 }
