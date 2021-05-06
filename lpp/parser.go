@@ -2,11 +2,19 @@ package lpp
 
 import "fmt"
 
+type PrefixParsFn func() *Expression
+type InfixParseFn func(Expression) *Expression
+
+type PrefixParsFns map[TokenType]PrefixParsFn
+type InfixParseFns map[TokenType]InfixParseFn
+
 type Parser struct {
-	lexer        *Lexer
-	currentToken *Token
-	peekToken    *Token
-	errors       []string
+	lexer         *Lexer
+	currentToken  *Token
+	peekToken     *Token
+	errors        []string
+	prefixParsFns PrefixParsFns
+	infixParseFns InfixParseFns
 }
 
 func NewParser(lexer *Lexer) *Parser {
@@ -16,9 +24,10 @@ func NewParser(lexer *Lexer) *Parser {
 		peekToken:    nil,
 	}
 
+	parser.prefixParsFns = parser.registerPrefixFns()
+	parser.infixParseFns = parser.registerInfixFns()
 	parser.advanceTokens()
 	parser.advanceTokens()
-
 	return parser
 }
 
@@ -104,4 +113,12 @@ func (p *Parser) parseStament() Stmt {
 	}
 
 	return nil
+}
+
+func (p *Parser) registerInfixFns() InfixParseFns {
+	return make(InfixParseFns)
+}
+
+func (p *Parser) registerPrefixFns() PrefixParsFns {
+	return make(PrefixParsFns)
 }
