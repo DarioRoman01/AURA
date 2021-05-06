@@ -29,3 +29,31 @@ func TestParseProgram(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestLetStatements(t *testing.T) {
+	assert := assert.New(t)
+	source := `
+		var x = 5;
+		var y = 10;
+		var foo = 20;
+	`
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+
+	if !assert.Equal(3, len(program.Staments)) {
+		t.Log("len of program statements are not 3")
+		t.Fail()
+	}
+
+	for _, statement := range program.Staments {
+		if !assert.Equal(statement.TokenLiteral(), "var") {
+			t.Log("token are not a variable")
+			t.Fail()
+		}
+		if !assert.IsType(lpp.LetStatement{}, statement) {
+			t.Log("statement are not statement type")
+			t.Fail()
+		}
+	}
+}
