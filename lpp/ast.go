@@ -11,16 +11,23 @@ type ASTNode interface {
 }
 
 type Statement struct {
-	Token Token
-	LetStatement
+	Token        Token
+	LetStatement *LetStatement
 }
 
-func NewStatement(token Token) *Statement {
-	return &Statement{Token: token}
+func NewStatement(token Token, letStatement *LetStatement) *Statement {
+	return &Statement{
+		Token:        token,
+		LetStatement: letStatement,
+	}
 }
 
 func (s Statement) TokenLiteral() string {
 	return s.Token.Literal
+}
+
+func (s Statement) Str() string {
+	return s.TokenLiteral()
 }
 
 type Expression struct {
@@ -83,23 +90,21 @@ func (i Identifier) Str() string {
 }
 
 type LetStatement struct {
-	token Token
 	name  *Identifier
 	value *Expression
 }
 
-func NewLetStatement(token Token, name *Identifier, value *Expression) *LetStatement {
+func NewLetStatement(name *Identifier, value *Expression) *LetStatement {
 	return &LetStatement{
-		token: token,
 		name:  name,
 		value: value,
 	}
 }
 
-func (l LetStatement) TokenLiteral() string {
-	return l.value.TokenLiteral()
+func (l *LetStatement) TokenLiteral() string {
+	return l.name.TokenLiteral()
 }
 
-func (l LetStatement) Str() string {
+func (l *LetStatement) Str() string {
 	return fmt.Sprintf("%s %s = %s;", l.TokenLiteral(), l.name.Str(), l.value.TokenLiteral())
 }

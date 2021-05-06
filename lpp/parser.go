@@ -7,11 +7,16 @@ type Parser struct {
 }
 
 func NewParser(lexer *Lexer) *Parser {
-	return &Parser{
+	parser := &Parser{
 		lexer:        lexer,
 		currentToken: nil,
 		peekToken:    nil,
 	}
+
+	parser.advanceTokens()
+	parser.advanceTokens()
+
+	return parser
 }
 
 func (p *Parser) ParseProgam() Program {
@@ -20,29 +25,36 @@ func (p *Parser) ParseProgam() Program {
 	for p.currentToken.Token_type != EOF {
 		statement := p.parseStament()
 		if statement != nil {
-			program.Staments = append(program.Staments)
+			program.Staments = append(program.Staments, *statement)
 		}
+
+		p.advanceTokens()
 	}
 	return program
 }
 
 func (p *Parser) expepectedToken(tokenType TokenType) bool {
-	return true
+	if p.peekToken.Token_type == tokenType {
+		p.advanceTokens()
+		return true
+	}
+
+	return false
 }
 
 func (p *Parser) advanceTokens() {
+	p.currentToken = p.peekToken
+	nextToken := p.lexer.NextToken()
+	p.peekToken = &nextToken
 
 }
-
-func (p *Parser) parseLetSatement() *LetStatement {
-	letStatemnt := NewLetStatement(*p.currentToken, nil, nil)
-
+func (p *Parser) parseLetSatement() *Statement {
+	stament := NewStatement(*p.currentToken, &LetStatement{})
 	if !p.expepectedToken(IDENT) {
 		return nil
 	}
 
-	letStatemnt.name = NewIdentifier(*p.currentToken, p.currentToken.Literal)
-
+	stament.LetStatement.name = NewIdentifier(*p.currentToken, p.currentToken.Literal)
 	if !p.expepectedToken(ASSING) {
 		return nil
 	}
@@ -52,7 +64,7 @@ func (p *Parser) parseLetSatement() *LetStatement {
 		p.advanceTokens()
 	}
 
-	return letStatemnt
+	return stament
 }
 
 func (p *Parser) parseStament() *Statement {
