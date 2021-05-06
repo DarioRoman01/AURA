@@ -35,13 +35,43 @@ const (
 	TRUE
 )
 
+var tokens = [...]string{
+	ASSING:    "ASSING",
+	COMMA:     "COMMA",
+	DIVISION:  "DIVISION",
+	ELSE:      "ELSE",
+	EOF:       "EOF",
+	EQ:        "EQ",
+	FALSE:     "FALSE",
+	FUNCTION:  "FUNCTION",
+	GT:        "GT",
+	IDENT:     "IDENT",
+	IF:        "IF",
+	ILLEGAL:   "ILLEGAL",
+	INT:       "INT",
+	LBRACE:    "LBRACE",
+	LET:       "LET",
+	LPAREN:    "LPAREN",
+	LT:        "LT",
+	MINUS:     "MINNUS",
+	NOT:       "NOT",
+	NOT_EQ:    "NOT_EQ",
+	PLUS:      "PLUS",
+	RBRACE:    "RBRACE",
+	RETURN:    "RETURN",
+	RPAREN:    "RPAREN",
+	SEMICOLON: "SEMICOLON",
+	TIMES:     "TIMES",
+	TRUE:      "TRUE",
+}
+
 type Token struct {
 	Token_type TokenType
 	Literal    string
 }
 
 func (t *Token) PrintToken() string {
-	return fmt.Sprintf("Token Type: %d, Literal: %s", t.Token_type, t.Literal)
+	return fmt.Sprintf("Token Type: %s, Literal: %s", tokens[t.Token_type], t.Literal)
 }
 
 // verify that given literal is a string

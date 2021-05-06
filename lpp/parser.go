@@ -1,9 +1,12 @@
 package lpp
 
+import "fmt"
+
 type Parser struct {
 	lexer        *Lexer
 	currentToken *Token
 	peekToken    *Token
+	errors       []string
 }
 
 func NewParser(lexer *Lexer) *Parser {
@@ -17,6 +20,10 @@ func NewParser(lexer *Lexer) *Parser {
 	parser.advanceTokens()
 
 	return parser
+}
+
+func (p *Parser) Errors() []string {
+	return p.errors
 }
 
 func (p *Parser) ParseProgam() Program {
@@ -39,7 +46,17 @@ func (p *Parser) expepectedToken(tokenType TokenType) bool {
 		return true
 	}
 
+	p.expectedTokenError(tokenType)
 	return false
+}
+
+func (p *Parser) expectedTokenError(tokenType TokenType) {
+	if p.peekToken == nil {
+		panic("peer token is nil")
+	}
+
+	err := fmt.Sprintf("se esperaba que el siguient token fuera %s pero se obtuvo %s", tokens[tokenType], tokens[p.peekToken.Token_type])
+	p.errors = append(p.errors, err)
 }
 
 func (p *Parser) advanceTokens() {
@@ -67,9 +84,23 @@ func (p *Parser) parseLetSatement() Stmt {
 	return stament
 }
 
+func (p *Parser) parseReturnStatement() Stmt {
+	stament := NewReturnStatement(*p.currentToken, nil)
+	p.advanceTokens()
+
+	// todo finish when i know how to parse expressions
+	for p.currentToken.Token_type != SEMICOLON {
+		p.advanceTokens()
+	}
+
+	return stament
+}
+
 func (p *Parser) parseStament() Stmt {
 	if p.currentToken.Token_type == LET {
 		return p.parseLetSatement()
+	} else if p.currentToken.Token_type == RETURN {
+		return p.parseReturnStatement()
 	}
 
 	return nil
