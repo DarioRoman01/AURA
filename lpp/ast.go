@@ -53,7 +53,7 @@ func (p Program) Str() string {
 	var out []string
 
 	for _, v := range p.Staments {
-		out = append(out, v.TokenLiteral())
+		out = append(out, v.Str())
 	}
 
 	return strings.Join(out, " ")
