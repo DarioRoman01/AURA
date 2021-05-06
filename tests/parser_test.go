@@ -46,13 +46,25 @@ func TestLetStatements(t *testing.T) {
 		t.Fail()
 	}
 
+	if !assert.Equal("x", program.Staments[0].LetStatement.TokenLiteral()) {
+		t.Fail()
+	}
+
+	if !assert.Equal("y", program.Staments[1].LetStatement.TokenLiteral()) {
+		t.Fail()
+	}
+	if !assert.Equal("foo", program.Staments[2].LetStatement.TokenLiteral()) {
+		t.Fail()
+	}
+
 	for _, statement := range program.Staments {
-		if !assert.Equal(statement.TokenLiteral(), "var") {
+		if !assert.Equal("var", statement.TokenLiteral()) {
 			t.Log("token are not a variable")
 			t.Fail()
 		}
-		if !assert.IsType(lpp.LetStatement{}, statement) {
-			t.Log("statement are not statement type")
+
+		if !assert.IsType(&lpp.LetStatement{}, statement.LetStatement) {
+			t.Log("statement are not let statement type")
 			t.Fail()
 		}
 	}
