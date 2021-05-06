@@ -1,6 +1,9 @@
 package lpp
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type ASTNode interface {
 	TokenLiteral() string
@@ -9,6 +12,7 @@ type ASTNode interface {
 
 type Statement struct {
 	Token Token
+	LetStatement
 }
 
 func NewStatement(token Token) *Statement {
@@ -29,6 +33,10 @@ func NewExpression(token Token) *Expression {
 
 func (e Expression) TokenLiteral() string {
 	return e.Token.Literal
+}
+
+func (e Expression) Str() string {
+	return e.Token.PrintToken()
 }
 
 type Program struct {
@@ -55,4 +63,43 @@ func (p Program) Str() string {
 	}
 
 	return strings.Join(out, " ")
+}
+
+type Identifier struct {
+	token Token
+	value string
+}
+
+func NewIdentifier(token Token, value string) *Identifier {
+	return &Identifier{token: token, value: value}
+}
+
+func (i Identifier) TokenLiteral() string {
+	return i.token.Literal
+}
+
+func (i Identifier) Str() string {
+	return i.value
+}
+
+type LetStatement struct {
+	token Token
+	name  *Identifier
+	value *Expression
+}
+
+func NewLetStatement(token Token, name *Identifier, value *Expression) *LetStatement {
+	return &LetStatement{
+		token: token,
+		name:  name,
+		value: value,
+	}
+}
+
+func (l LetStatement) TokenLiteral() string {
+	return l.value.TokenLiteral()
+}
+
+func (l LetStatement) Str() string {
+	return fmt.Sprintf("%s %s = %s;", l.TokenLiteral(), l.name.Str(), l.value.TokenLiteral())
 }
