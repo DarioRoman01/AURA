@@ -90,3 +90,36 @@ func TestNamesInLetStatements(t *testing.T) {
 	}
 
 }
+
+func TestParseErrors(t *testing.T) {
+	source := "var x 5;"
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	parser.ParseProgam()
+
+	if !assert.Equal(t, 1, len(parser.Errors())) {
+		t.Fail()
+	}
+}
+
+func TestReturnStatement(t *testing.T) {
+	assert := assert.New(t)
+	source := `
+		regresa 5;
+		regresa foo;
+	`
+
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+
+	if !assert.Equal(2, len(program.Staments)) {
+		t.Log("len of program statements are not 2")
+		t.Fail()
+	}
+
+	for _, statement := range program.Staments {
+		assert.Equal("regresa", statement.TokenLiteral())
+		assert.IsType(&lpp.ReturnStament{}, statement.(*lpp.ReturnStament))
+	}
+}
