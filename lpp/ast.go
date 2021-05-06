@@ -99,3 +99,22 @@ func (l LetStatement) stmtNode() {}
 func (l LetStatement) Str() string {
 	return fmt.Sprintf("%s %s = %s;", l.TokenLiteral(), l.Name.Str(), l.Value.TokenLiteral())
 }
+
+type ReturnStament struct {
+	Token       Token
+	ReturnValue *Expression
+}
+
+func NewReturnStatement(token Token, returnValue *Expression) *ReturnStament {
+	return &ReturnStament{Token: token, ReturnValue: returnValue}
+}
+
+func (r ReturnStament) TokenLiteral() string {
+	return r.Token.Literal
+}
+
+func (r ReturnStament) stmtNode() {}
+
+func (r ReturnStament) Str() string {
+	return fmt.Sprintf("%s %s;", r.TokenLiteral(), r.ReturnValue.TokenLiteral())
+}
