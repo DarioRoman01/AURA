@@ -20,12 +20,12 @@ func NewParser(lexer *Lexer) *Parser {
 }
 
 func (p *Parser) ParseProgam() Program {
-	program := Program{Staments: []Statement{}}
+	program := Program{Staments: []Stmt{}}
 
 	for p.currentToken.Token_type != EOF {
 		statement := p.parseStament()
 		if statement != nil {
-			program.Staments = append(program.Staments, *statement)
+			program.Staments = append(program.Staments, statement)
 		}
 
 		p.advanceTokens()
@@ -48,13 +48,13 @@ func (p *Parser) advanceTokens() {
 	p.peekToken = &nextToken
 
 }
-func (p *Parser) parseLetSatement() *Statement {
-	stament := NewStatement(*p.currentToken, &LetStatement{})
+func (p *Parser) parseLetSatement() Stmt {
+	stament := NewLetStatement(*p.currentToken, nil, nil)
 	if !p.expepectedToken(IDENT) {
 		return nil
 	}
 
-	stament.LetStatement.name = NewIdentifier(*p.currentToken, p.currentToken.Literal)
+	stament.Name = NewIdentifier(*p.currentToken, p.currentToken.Literal)
 	if !p.expepectedToken(ASSING) {
 		return nil
 	}
@@ -67,7 +67,7 @@ func (p *Parser) parseLetSatement() *Statement {
 	return stament
 }
 
-func (p *Parser) parseStament() *Statement {
+func (p *Parser) parseStament() Stmt {
 	if p.currentToken.Token_type == LET {
 		return p.parseLetSatement()
 	}

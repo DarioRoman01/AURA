@@ -10,24 +10,11 @@ type ASTNode interface {
 	Str() string
 }
 
-type Statement struct {
-	Token        Token
-	LetStatement *LetStatement
-}
-
-func NewStatement(token Token, letStatement *LetStatement) *Statement {
-	return &Statement{
-		Token:        token,
-		LetStatement: letStatement,
-	}
-}
-
-func (s Statement) TokenLiteral() string {
-	return s.Token.Literal
-}
-
-func (s Statement) Str() string {
-	return s.TokenLiteral()
+// statement interface
+// ensure all statements implements ast node
+type Stmt interface {
+	ASTNode
+	stmtNode()
 }
 
 type Expression struct {
@@ -47,10 +34,10 @@ func (e Expression) Str() string {
 }
 
 type Program struct {
-	Staments []Statement
+	Staments []Stmt
 }
 
-func NewProgram(statements []Statement) *Program {
+func NewProgram(statements []Stmt) *Program {
 	return &Program{Staments: statements}
 }
 
@@ -90,21 +77,25 @@ func (i Identifier) Str() string {
 }
 
 type LetStatement struct {
-	name  *Identifier
-	value *Expression
+	Token Token
+	Name  *Identifier
+	Value *Expression
 }
 
-func NewLetStatement(name *Identifier, value *Expression) *LetStatement {
+func NewLetStatement(token Token, name *Identifier, value *Expression) *LetStatement {
 	return &LetStatement{
-		name:  name,
-		value: value,
+		Token: token,
+		Name:  name,
+		Value: value,
 	}
 }
 
-func (l *LetStatement) TokenLiteral() string {
-	return l.name.TokenLiteral()
+func (l LetStatement) TokenLiteral() string {
+	return l.Token.Literal
 }
 
-func (l *LetStatement) Str() string {
-	return fmt.Sprintf("%s %s = %s;", l.TokenLiteral(), l.name.Str(), l.value.TokenLiteral())
+func (l LetStatement) stmtNode() {}
+
+func (l LetStatement) Str() string {
+	return fmt.Sprintf("%s %s = %s;", l.TokenLiteral(), l.Name.Str(), l.Value.TokenLiteral())
 }
