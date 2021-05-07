@@ -17,20 +17,9 @@ type Stmt interface {
 	stmtNode()
 }
 
-type Expression struct {
-	Token Token
-}
-
-func NewExpression(token Token) *Expression {
-	return &Expression{Token: token}
-}
-
-func (e Expression) TokenLiteral() string {
-	return e.Token.Literal
-}
-
-func (e Expression) Str() string {
-	return e.Token.PrintToken()
+type Expression interface {
+	ASTNode
+	expressNode()
 }
 
 type Program struct {
@@ -68,6 +57,8 @@ func NewIdentifier(token Token, value string) *Identifier {
 	return &Identifier{token: token, value: value}
 }
 
+func (i Identifier) expressNode() {}
+
 func (i Identifier) TokenLiteral() string {
 	return i.token.Literal
 }
@@ -79,10 +70,10 @@ func (i Identifier) Str() string {
 type LetStatement struct {
 	Token Token
 	Name  *Identifier
-	Value *Expression
+	Value Expression
 }
 
-func NewLetStatement(token Token, name *Identifier, value *Expression) *LetStatement {
+func NewLetStatement(token Token, name *Identifier, value Expression) *LetStatement {
 	return &LetStatement{
 		Token: token,
 		Name:  name,
@@ -102,10 +93,10 @@ func (l LetStatement) Str() string {
 
 type ReturnStament struct {
 	Token       Token
-	ReturnValue *Expression
+	ReturnValue Expression
 }
 
-func NewReturnStatement(token Token, returnValue *Expression) *ReturnStament {
+func NewReturnStatement(token Token, returnValue Expression) *ReturnStament {
 	return &ReturnStament{Token: token, ReturnValue: returnValue}
 }
 
@@ -117,4 +108,23 @@ func (r ReturnStament) stmtNode() {}
 
 func (r ReturnStament) Str() string {
 	return fmt.Sprintf("%s %s;", r.TokenLiteral(), r.ReturnValue.TokenLiteral())
+}
+
+type ExpressionStament struct {
+	token      Token
+	Expression Expression
+}
+
+func NewExpressionStament(token Token, expression Expression) *ExpressionStament {
+	return &ExpressionStament{token: token, Expression: expression}
+}
+
+func (e ExpressionStament) TokenLiteral() string {
+	return e.token.Literal
+}
+
+func (e ExpressionStament) stmtNode() {}
+
+func (e ExpressionStament) Str() string {
+	return e.Expression.Str()
 }
