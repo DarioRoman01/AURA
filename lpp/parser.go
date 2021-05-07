@@ -1,21 +1,15 @@
 package lpp
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type PrefixParsFn func() Expression
 type InfixParseFn func(Expression) *Expression
 
 type PrefixParsFns map[TokenType]PrefixParsFn
 type InfixParseFns map[TokenType]InfixParseFn
-
-type Parser struct {
-	lexer         *Lexer
-	currentToken  *Token
-	peekToken     *Token
-	errors        []string
-	prefixParsFns PrefixParsFns
-	infixParseFns InfixParseFns
-}
 
 type Precedence int
 
@@ -29,6 +23,15 @@ const (
 	PREFIX                     = 6
 	CALL                       = 7
 )
+
+type Parser struct {
+	lexer         *Lexer
+	currentToken  *Token
+	peekToken     *Token
+	errors        []string
+	prefixParsFns PrefixParsFns
+	infixParseFns InfixParseFns
+}
 
 func NewParser(lexer *Lexer) *Parser {
 	parser := &Parser{
@@ -95,7 +98,6 @@ func (p *Parser) parseExpression(Precedence) Expression {
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
 	fmt.Println(p.currentToken.Token_type)
 	if !exist {
-		fmt.Println("entro aqui")
 		return nil
 	}
 
@@ -128,6 +130,23 @@ func (p *Parser) parseIdentifier() Expression {
 	}
 
 	return &Identifier{token: *p.currentToken, value: p.currentToken.Literal}
+}
+
+func (p *Parser) parseInteger() Expression {
+	if p.currentToken == nil {
+		panic("current token cannot be nil in parse integer")
+	}
+
+	integer := NewInteger(*p.currentToken, nil)
+	val, err := strconv.Atoi(p.currentToken.Literal)
+	if err != nil {
+		message := fmt.Sprintf("no se pudo parsear %s como entero", p.currentToken.Literal)
+		p.errors = append(p.errors, message)
+		return nil
+	}
+
+	integer.Value = &val
+	return integer
 }
 
 func (p *Parser) parseLetSatement() Stmt {
@@ -179,5 +198,6 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
 	prefixFns[IDENT] = p.parseIdentifier
+	prefixFns[INT] = p.parseInteger
 	return prefixFns
 }

@@ -128,3 +128,22 @@ func (e ExpressionStament) stmtNode() {}
 func (e ExpressionStament) Str() string {
 	return e.Expression.Str()
 }
+
+type Integer struct {
+	Token Token
+	Value *int
+}
+
+func NewInteger(token Token, value *int) *Integer {
+	return &Integer{Token: token, Value: value}
+}
+
+func (i Integer) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+func (i Integer) expressNode() {}
+
+func (i Integer) Str() string {
+	return string(rune(*i.Value))
+}
