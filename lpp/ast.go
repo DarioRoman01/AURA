@@ -145,7 +145,7 @@ func (i Integer) TokenLiteral() string {
 func (i Integer) expressNode() {}
 
 func (i Integer) Str() string {
-	return string(rune(*i.Value))
+	return fmt.Sprint(*i.Value)
 }
 
 type Prefix struct {

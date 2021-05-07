@@ -11,7 +11,7 @@ import (
 
 type PrefixTuple struct {
 	Operator string
-	Value    int
+	Value    interface{}
 }
 
 type InfixTuple struct {
@@ -20,19 +20,25 @@ type InfixTuple struct {
 	Rigth    interface{}
 }
 
-func TestParseProgram(t *testing.T) {
-	assert := assert.New(t)
-	source := "var x = 5;"
+func InitParserTests(source string) (*lpp.Parser, *lpp.Program) {
 	lexer := lpp.NewLexer(source)
 	parser := lpp.NewParser(lexer)
 	program := parser.ParseProgam()
+
+	return parser, &program
+}
+
+func TestParseProgram(t *testing.T) {
+	assert := assert.New(t)
+	source := "var x = 5;"
+	_, program := InitParserTests(source)
 
 	if !assert.NotNil(program) {
 		t.Log("program is nil")
 		t.Fail()
 	}
 
-	if !assert.IsType(lpp.Program{}, program) {
+	if !assert.IsType(&lpp.Program{}, program) {
 		t.Log("program type is not Program!")
 		t.Fail()
 	}
@@ -50,9 +56,7 @@ func TestLetStatements(t *testing.T) {
 		var y = 10;
 		var foo = 20;
 	`
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
+	_, program := InitParserTests(source)
 
 	if !assert.Equal(3, len(program.Staments)) {
 		t.Log("len of program statements are not 3")
@@ -79,9 +83,7 @@ func TestNamesInLetStatements(t *testing.T) {
 		var y = 10;
 		var foo = 20;
 	`
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
+	_, program := InitParserTests(source)
 
 	var names []string
 	for _, stament := range program.Staments {
@@ -106,9 +108,7 @@ func TestNamesInLetStatements(t *testing.T) {
 
 func TestParseErrors(t *testing.T) {
 	source := "var x 5;"
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	parser.ParseProgam()
+	parser, _ := InitParserTests(source)
 
 	if !assert.Equal(t, 1, len(parser.Errors())) {
 		t.Fail()
@@ -122,9 +122,7 @@ func TestReturnStatement(t *testing.T) {
 		regresa foo;
 	`
 
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
+	_, program := InitParserTests(source)
 
 	if !assert.Equal(2, len(program.Staments)) {
 		t.Log("len of program statements are not 2")
@@ -139,11 +137,9 @@ func TestReturnStatement(t *testing.T) {
 
 func TestIdentifierExpression(t *testing.T) {
 	source := "foobar;"
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
+	parser, program := InitParserTests(source)
 
-	testProgramStatements(t, parser, &program, 1)
+	testProgramStatements(t, parser, program, 1)
 
 	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
 	if !assert.NotNil(t, expressionStament.Expression) {
@@ -155,25 +151,24 @@ func TestIdentifierExpression(t *testing.T) {
 
 func TestIntegerExpressions(t *testing.T) {
 	source := "5;"
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
-	testProgramStatements(t, parser, &program, 1)
+	parser, program := InitParserTests(source)
+
+	testProgramStatements(t, parser, program, 1)
 	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
 	assert.NotNil(t, expressionStament.Expression)
 	testLiteralExpression(t, expressionStament.Expression, 5)
 }
 
 func TestPrefixExpressions(t *testing.T) {
-	source := "!5; -15;"
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
+	source := "!5; -15; !verdadero; !falso;"
+	parser, program := InitParserTests(source)
 
-	testProgramStatements(t, parser, &program, 2)
+	testProgramStatements(t, parser, program, 4)
 	expectedExpressions := []PrefixTuple{
 		{Operator: "!", Value: 5},
 		{Operator: "-", Value: 15},
+		{Operator: "!", Value: true},
+		{Operator: "!", Value: false},
 	}
 
 	if len(program.Staments) == len(expectedExpressions) {
@@ -203,13 +198,15 @@ func TestInfixExpressions(t *testing.T) {
 		5 < 5;
 		5 == 5;
 		5 != 5;
+		verdadero == verdadero;
+		verdadero != verdadero;
+		falso == verdadero;
+		falso != verdadero;
+		
 	`
+	parser, program := InitParserTests(source)
 
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
-
-	testProgramStatements(t, parser, &program, 8)
+	testProgramStatements(t, parser, program, 12)
 	expectedOperators := []InfixTuple{
 		{Left: 5, Operator: "+", Rigth: 5},
 		{Left: 5, Operator: "-", Rigth: 5},
@@ -219,6 +216,10 @@ func TestInfixExpressions(t *testing.T) {
 		{Left: 5, Operator: "<", Rigth: 5},
 		{Left: 5, Operator: "==", Rigth: 5},
 		{Left: 5, Operator: "!=", Rigth: 5},
+		{Left: true, Operator: "==", Rigth: true},
+		{Left: true, Operator: "!=", Rigth: true},
+		{Left: false, Operator: "==", Rigth: true},
+		{Left: false, Operator: "!=", Rigth: true},
 	}
 
 	for i, stamment := range program.Staments {
@@ -236,17 +237,36 @@ func TestInfixExpressions(t *testing.T) {
 
 func TestBooleanExpressions(t *testing.T) {
 	source := "verdadero; falso;"
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
-	program := parser.ParseProgam()
+	parser, program := InitParserTests(source)
 	fmt.Println(parser.Errors())
-	testProgramStatements(t, parser, &program, 2)
+	testProgramStatements(t, parser, program, 2)
 	expectedValues := []bool{true, false}
 
 	for i, stament := range program.Staments {
 		expressionStament := stament.(*lpp.ExpressionStament)
 		assert.NotNil(t, expressionStament.Expression)
 		testLiteralExpression(t, expressionStament.Expression, expectedValues[i])
+	}
+}
+
+func TestOperatorPrecedence(t *testing.T) {
+	type TupleToTest struct {
+		source        string
+		expected      string
+		expectedCount int
+	}
+	test_source := []TupleToTest{
+		{source: "-a * b;", expected: "((- a) * b)", expectedCount: 1},
+		{source: "!-a;", expected: "(! (- a))", expectedCount: 1},
+		{source: "a + b / c;", expected: "(a + (b / c))", expectedCount: 1},
+		{source: "3 + 4; -5 * 5;", expected: "(3 + 4) ((- 5) * 5)", expectedCount: 2},
+		{source: "a + b * c + d / e - f;", expected: "(((a + (b * c)) + (d / e)) - f)", expectedCount: 1},
+	}
+
+	for i, source := range test_source {
+		parser, program := InitParserTests(source.source)
+		testProgramStatements(t, parser, program, test_source[i].expectedCount)
+		assert.Equal(t, test_source[i].expected, program.Str())
 	}
 }
 
