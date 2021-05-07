@@ -18,10 +18,10 @@ func TestLetStatement(t *testing.T) {
 				Token_type: lpp.IDENT,
 				Literal:    "mi_var",
 			}, "mi_var"),
-			Value: lpp.NewExpression(lpp.Token{
+			Value: lpp.NewIdentifier(lpp.Token{
 				Token_type: lpp.IDENT,
 				Literal:    "otra_var",
-			}),
+			}, "otra_var"),
 		},
 	})
 
@@ -39,22 +39,21 @@ func TestReturnStatements(t *testing.T) {
 				Token_type: lpp.IDENT,
 				Literal:    "x",
 			}, "x"),
-			Value: lpp.NewExpression(lpp.Token{
+			Value: lpp.NewIdentifier(lpp.Token{
 				Token_type: lpp.INT,
 				Literal:    "5",
-			}),
+			}, "5"),
 		},
 		lpp.ReturnStament{
 			Token: lpp.Token{
 				Token_type: lpp.RETURN,
 				Literal:    "regresa",
 			},
-			ReturnValue: lpp.NewExpression(
+			ReturnValue: lpp.NewIdentifier(
 				lpp.Token{
 					Token_type: lpp.IDENT,
 					Literal:    "x",
-				},
-			),
+				}, "x"),
 		},
 	})
 

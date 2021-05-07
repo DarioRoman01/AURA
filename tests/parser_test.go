@@ -1,7 +1,9 @@
 package test_test
 
 import (
+	"fmt"
 	"lpp/lpp"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -122,4 +124,46 @@ func TestReturnStatement(t *testing.T) {
 		assert.Equal("regresa", statement.TokenLiteral())
 		assert.IsType(&lpp.ReturnStament{}, statement.(*lpp.ReturnStament))
 	}
+}
+
+func TestIdentifierExpression(t *testing.T) {
+	source := "foobar;"
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+
+	testProgramStatements(t, parser, &program, 1)
+
+	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
+	if !assert.NotNil(t, expressionStament.Expression) {
+		t.Fail()
+	}
+
+	testLiteralExpression(t, expressionStament.Expression, "foobar")
+}
+
+func testProgramStatements(t *testing.T, parser *lpp.Parser, program *lpp.Program, expectedStamenetCount int) {
+	assert := assert.New(t)
+	assert.Equal(0, len(parser.Errors()))
+	assert.Equal(expectedStamenetCount, len(program.Staments))
+	assert.IsType(&lpp.ExpressionStament{}, program.Staments[0].(*lpp.ExpressionStament))
+}
+
+func testLiteralExpression(t *testing.T, expression lpp.Expression, expectedValue interface{}) {
+	switch expectedValue := expectedValue.(type) {
+	case string:
+		testIdentifier(t, expression, expectedValue)
+	default:
+		t.Log(fmt.Sprintf("unhandled type of expression, Got=%s", reflect.TypeOf(expectedValue).String()))
+		t.Fail()
+	}
+}
+
+func testIdentifier(t *testing.T, expression lpp.Expression, expectedValue string) {
+	assert := assert.New((t))
+	assert.IsType(&lpp.Identifier{}, expression.(*lpp.Identifier))
+
+	identifier := expression.(*lpp.Identifier)
+	assert.Equal(expectedValue, identifier.Str())
+	assert.Equal(expectedValue, identifier.TokenLiteral())
 }
