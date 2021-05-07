@@ -142,6 +142,17 @@ func TestIdentifierExpression(t *testing.T) {
 	testLiteralExpression(t, expressionStament.Expression, "foobar")
 }
 
+func TestIntegerExpressions(t *testing.T) {
+	source := "5;"
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+	testProgramStatements(t, parser, &program, 1)
+	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
+	assert.NotNil(t, expressionStament.Expression)
+	testLiteralExpression(t, expressionStament.Expression, 5)
+}
+
 func testProgramStatements(t *testing.T, parser *lpp.Parser, program *lpp.Program, expectedStamenetCount int) {
 	assert := assert.New(t)
 	assert.Equal(0, len(parser.Errors()))
@@ -153,6 +164,8 @@ func testLiteralExpression(t *testing.T, expression lpp.Expression, expectedValu
 	switch expectedValue := expectedValue.(type) {
 	case string:
 		testIdentifier(t, expression, expectedValue)
+	case int:
+		testInteger(t, expression, expectedValue)
 	default:
 		t.Log(fmt.Sprintf("unhandled type of expression, Got=%s", reflect.TypeOf(expectedValue).String()))
 		t.Fail()
@@ -166,4 +179,11 @@ func testIdentifier(t *testing.T, expression lpp.Expression, expectedValue strin
 	identifier := expression.(*lpp.Identifier)
 	assert.Equal(expectedValue, identifier.Str())
 	assert.Equal(expectedValue, identifier.TokenLiteral())
+}
+
+func testInteger(t *testing.T, expression lpp.Expression, expectedValue int) {
+	assert.IsType(t, &lpp.Integer{}, expression.(*lpp.Integer))
+	integer := expression.(*lpp.Integer)
+	assert.Equal(t, expectedValue, *integer.Value)
+	assert.Equal(t, fmt.Sprint(expectedValue), integer.Token.Literal)
 }
