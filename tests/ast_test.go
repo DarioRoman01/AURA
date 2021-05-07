@@ -59,3 +59,25 @@ func TestReturnStatements(t *testing.T) {
 
 	assert.Equal(t, "var x = 5; regresa x;", program.Str())
 }
+
+func TestIntegerExpression(t *testing.T) {
+	value := 5
+	program := lpp.NewProgram([]lpp.Stmt{
+		lpp.LetStatement{
+			Token: lpp.Token{
+				Token_type: lpp.LET,
+				Literal:    "var",
+			},
+			Name: lpp.NewIdentifier(lpp.Token{
+				Token_type: lpp.IDENT,
+				Literal:    "x",
+			}, "x"),
+			Value: lpp.NewInteger(lpp.Token{
+				Token_type: lpp.INT,
+				Literal:    "5",
+			}, &value),
+		},
+	})
+
+	assert.Equal(t, "var x = 5;", program.Str())
+}

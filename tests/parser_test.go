@@ -9,6 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type Tuple struct {
+	Operator string
+	Value    int
+}
+
 func TestParseProgram(t *testing.T) {
 	assert := assert.New(t)
 	source := "var x = 5;"
@@ -151,6 +156,35 @@ func TestIntegerExpressions(t *testing.T) {
 	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
 	assert.NotNil(t, expressionStament.Expression)
 	testLiteralExpression(t, expressionStament.Expression, 5)
+}
+
+func TestPrefixExpressions(t *testing.T) {
+	source := "!5; -15;"
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+
+	testProgramStatements(t, parser, &program, 2)
+	expectedExpressions := []Tuple{
+		{Operator: "!", Value: 5},
+		{Operator: "-", Value: 15},
+	}
+
+	if len(program.Staments) == len(expectedExpressions) {
+		for i, stament := range program.Staments {
+			stament := stament.(*lpp.ExpressionStament)
+			assert.IsType(t, &lpp.Prefix{}, stament.Expression.(*lpp.Prefix))
+
+			prefix := stament.Expression.(*lpp.Prefix)
+			assert.Equal(t, prefix.Operator, expectedExpressions[i].Operator)
+
+			assert.NotNil(t, prefix.Rigth)
+			testLiteralExpression(t, prefix.Rigth, expectedExpressions[i].Value)
+		}
+	} else {
+		t.Log("len of staments and expected expected expressions are not equal")
+		t.Fail()
+	}
 }
 
 func testProgramStatements(t *testing.T, parser *lpp.Parser, program *lpp.Program, expectedStamenetCount int) {
