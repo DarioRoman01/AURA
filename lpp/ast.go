@@ -171,3 +171,29 @@ func (p *Prefix) expressNode() {}
 func (p *Prefix) Str() string {
 	return fmt.Sprintf("(%s %s)", p.Operator, p.Rigth.Str())
 }
+
+type Infix struct {
+	Token    Token
+	Rigth    Expression
+	Operator string
+	Left     Expression
+}
+
+func Newinfix(token Token, r Expression, operator string, l Expression) *Infix {
+	return &Infix{
+		Token:    token,
+		Rigth:    r,
+		Operator: operator,
+		Left:     l,
+	}
+}
+
+func (i Infix) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+func (i Infix) expressNode() {}
+
+func (i Infix) Str() string {
+	return fmt.Sprintf("(%s %s %s)", i.Left.Str(), i.Operator, i.Rigth.Str())
+}
