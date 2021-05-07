@@ -96,8 +96,9 @@ func (p *Parser) parseExpression(Precedence) Expression {
 	}
 
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
-	fmt.Println(p.currentToken.Token_type)
 	if !exist {
+		message := fmt.Sprintf("no se encontro ninguna funcion para parsear %s", p.currentToken.Literal)
+		p.errors = append(p.errors, message)
 		return nil
 	}
 
@@ -110,7 +111,6 @@ func (p *Parser) parserExpressionStatement() *ExpressionStament {
 		panic("peek token cannot be bil")
 	}
 
-	fmt.Println(p.currentToken.Literal)
 	expressionStament := NewExpressionStament(*p.currentToken, nil)
 	expressionStament.Expression = p.parseExpression(LOWEST)
 
@@ -168,6 +168,17 @@ func (p *Parser) parseLetSatement() Stmt {
 	return stament
 }
 
+func (p *Parser) parsePrefixExpression() Expression {
+	if p.currentToken == nil {
+		panic("current token cannot be nil in parse prefix")
+	}
+
+	prefixExpression := NewPrefix(*p.currentToken, p.currentToken.Literal, nil)
+	p.advanceTokens()
+	prefixExpression.Rigth = p.parseExpression(PREFIX)
+	return prefixExpression
+}
+
 func (p *Parser) parseReturnStatement() Stmt {
 	stament := NewReturnStatement(*p.currentToken, nil)
 	p.advanceTokens()
@@ -199,5 +210,7 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
 	prefixFns[IDENT] = p.parseIdentifier
 	prefixFns[INT] = p.parseInteger
+	prefixFns[MINUS] = p.parsePrefixExpression
+	prefixFns[NOT] = p.parsePrefixExpression
 	return prefixFns
 }

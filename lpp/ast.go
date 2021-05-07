@@ -147,3 +147,27 @@ func (i Integer) expressNode() {}
 func (i Integer) Str() string {
 	return string(rune(*i.Value))
 }
+
+type Prefix struct {
+	Token    Token
+	Operator string
+	Rigth    Expression
+}
+
+func NewPrefix(token Token, operator string, rigth Expression) *Prefix {
+	return &Prefix{
+		Token:    token,
+		Operator: operator,
+		Rigth:    rigth,
+	}
+}
+
+func (p *Prefix) TokenLiteral() string {
+	return p.Token.Literal
+}
+
+func (p *Prefix) expressNode() {}
+
+func (p *Prefix) Str() string {
+	return fmt.Sprintf("(%s %s)", p.Operator, p.Rigth.Str())
+}
