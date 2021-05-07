@@ -197,3 +197,22 @@ func (i Infix) expressNode() {}
 func (i Infix) Str() string {
 	return fmt.Sprintf("(%s %s %s)", i.Left.Str(), i.Operator, i.Rigth.Str())
 }
+
+type Boolean struct {
+	Token Token
+	Value *bool
+}
+
+func NewBoolean(token Token, value *bool) *Boolean {
+	return &Boolean{Token: token, Value: value}
+}
+
+func (b Boolean) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+func (b Boolean) expressNode() {}
+
+func (b Boolean) Str() string {
+	return b.TokenLiteral()
+}

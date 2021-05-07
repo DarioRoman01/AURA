@@ -70,7 +70,7 @@ func (p *Parser) checkCurrentTokenIsNotNil() {
 	}
 }
 
-func (p *Parser) checkPeerTokenIsNotNil() {
+func (p *Parser) checkPeekTokenIsNotNil() {
 	if p.peekToken == nil {
 		panic("peek token cannot be nil")
 	}
@@ -120,6 +120,18 @@ func (p *Parser) expectedTokenError(tokenType TokenType) {
 	p.errors = append(p.errors, err)
 }
 
+func (p *Parser) parseBoolean() Expression {
+	p.checkCurrentTokenIsNotNil()
+	var value bool
+	if p.currentToken.Token_type == TRUE {
+		value = true
+		return NewBoolean(*p.currentToken, &value)
+	}
+
+	value = false
+	return NewBoolean(*p.currentToken, &value)
+}
+
 func (p *Parser) parseExpression(precedence Precedence) Expression {
 	p.checkCurrentTokenIsNotNil()
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
@@ -130,7 +142,7 @@ func (p *Parser) parseExpression(precedence Precedence) Expression {
 	}
 
 	leftExpression := prefixParseFn()
-	p.checkPeerTokenIsNotNil()
+	p.checkPeekTokenIsNotNil()
 
 	for !(p.peekToken.Token_type == SEMICOLON) && precedence < p.peekPrecedence() {
 		infixParseFn, exist := p.infixParseFns[p.peekToken.Token_type]
@@ -244,7 +256,7 @@ func (p *Parser) parseStament() Stmt {
 }
 
 func (p *Parser) peekPrecedence() Precedence {
-	p.checkPeerTokenIsNotNil()
+	p.checkPeekTokenIsNotNil()
 	precedence, exists := PRECEDENCES[p.peekToken.Token_type]
 	if !exists {
 		return LOWEST
@@ -268,9 +280,11 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 
 func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
+	prefixFns[FALSE] = p.parseBoolean
 	prefixFns[IDENT] = p.parseIdentifier
 	prefixFns[INT] = p.parseInteger
 	prefixFns[MINUS] = p.parsePrefixExpression
 	prefixFns[NOT] = p.parsePrefixExpression
+	prefixFns[TRUE] = p.parseBoolean
 	return prefixFns
 }

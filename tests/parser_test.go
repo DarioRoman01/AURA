@@ -234,6 +234,32 @@ func TestInfixExpressions(t *testing.T) {
 	}
 }
 
+func TestBooleanExpressions(t *testing.T) {
+	source := "verdadero; falso;"
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+	fmt.Println(parser.Errors())
+	testProgramStatements(t, parser, &program, 2)
+	expectedValues := []bool{true, false}
+
+	for i, stament := range program.Staments {
+		expressionStament := stament.(*lpp.ExpressionStament)
+		assert.NotNil(t, expressionStament.Expression)
+		testLiteralExpression(t, expressionStament.Expression, expectedValues[i])
+	}
+}
+
+func testBoolean(t *testing.T, expression lpp.Expression, expectedValue bool) {
+	boolean := expression.(*lpp.Boolean)
+	assert.Equal(t, *boolean.Value, expectedValue)
+	if expectedValue {
+		assert.Equal(t, "verdadero", boolean.Token.Literal)
+	} else {
+		assert.Equal(t, "falso", boolean.Token.Literal)
+	}
+}
+
 func testInfixExpression(t *testing.T, ex lpp.Expression, expectedLeft interface{}, operator string, expectedRigth interface{}) {
 	infix := ex.(*lpp.Infix)
 	assert.NotNil(t, infix.Left)
@@ -256,6 +282,8 @@ func testLiteralExpression(t *testing.T, expression lpp.Expression, expectedValu
 		testIdentifier(t, expression, expectedValue)
 	case int:
 		testInteger(t, expression, expectedValue)
+	case bool:
+		testBoolean(t, expression, expectedValue)
 	default:
 		t.Log(fmt.Sprintf("unhandled type of expression, Got=%s", reflect.TypeOf(expectedValue).String()))
 		t.Fail()
