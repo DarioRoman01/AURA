@@ -9,9 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type Tuple struct {
+type PrefixTuple struct {
 	Operator string
 	Value    int
+}
+
+type InfixTuple struct {
+	Left     interface{}
+	Operator string
+	Rigth    interface{}
 }
 
 func TestParseProgram(t *testing.T) {
@@ -165,7 +171,7 @@ func TestPrefixExpressions(t *testing.T) {
 	program := parser.ParseProgam()
 
 	testProgramStatements(t, parser, &program, 2)
-	expectedExpressions := []Tuple{
+	expectedExpressions := []PrefixTuple{
 		{Operator: "!", Value: 5},
 		{Operator: "-", Value: 15},
 	}
@@ -185,6 +191,56 @@ func TestPrefixExpressions(t *testing.T) {
 		t.Log("len of staments and expected expected expressions are not equal")
 		t.Fail()
 	}
+}
+
+func TestInfixExpressions(t *testing.T) {
+	source := `
+		5 + 5;
+		5 - 5;
+		5 * 5;
+		5 / 5;
+		5 > 5;
+		5 < 5;
+		5 == 5;
+		5 != 5;
+	`
+
+	lexer := lpp.NewLexer(source)
+	parser := lpp.NewParser(lexer)
+	program := parser.ParseProgam()
+
+	testProgramStatements(t, parser, &program, 8)
+	expectedOperators := []InfixTuple{
+		{Left: 5, Operator: "+", Rigth: 5},
+		{Left: 5, Operator: "-", Rigth: 5},
+		{Left: 5, Operator: "*", Rigth: 5},
+		{Left: 5, Operator: "/", Rigth: 5},
+		{Left: 5, Operator: ">", Rigth: 5},
+		{Left: 5, Operator: "<", Rigth: 5},
+		{Left: 5, Operator: "==", Rigth: 5},
+		{Left: 5, Operator: "!=", Rigth: 5},
+	}
+
+	for i, stamment := range program.Staments {
+		stament := stamment.(*lpp.ExpressionStament)
+		assert.NotNil(t, stament.Expression)
+		assert.IsType(t, &lpp.Infix{}, stament.Expression.(*lpp.Infix))
+		testInfixExpression(t,
+			stament.Expression,
+			expectedOperators[i].Left,
+			expectedOperators[i].Operator,
+			expectedOperators[i].Rigth,
+		)
+	}
+}
+
+func testInfixExpression(t *testing.T, ex lpp.Expression, expectedLeft interface{}, operator string, expectedRigth interface{}) {
+	infix := ex.(*lpp.Infix)
+	assert.NotNil(t, infix.Left)
+	testLiteralExpression(t, infix.Left, expectedLeft)
+	assert.Equal(t, operator, infix.Operator)
+	assert.NotNil(t, infix.Rigth)
+	testLiteralExpression(t, infix.Rigth, expectedRigth)
 }
 
 func testProgramStatements(t *testing.T, parser *lpp.Parser, program *lpp.Program, expectedStamenetCount int) {
