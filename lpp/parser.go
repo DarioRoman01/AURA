@@ -2,7 +2,7 @@ package lpp
 
 import "fmt"
 
-type PrefixParsFn func() *Expression
+type PrefixParsFn func() Expression
 type InfixParseFn func(Expression) *Expression
 
 type PrefixParsFns map[TokenType]PrefixParsFn
@@ -17,6 +17,19 @@ type Parser struct {
 	infixParseFns InfixParseFns
 }
 
+type Precedence int
+
+const (
+	HeadPrecendence Precedence = iota
+	LOWEST                     = 1
+	EQUEAL                     = 2
+	LESSGRATER                 = 3
+	SUM                        = 4
+	PRODUCT                    = 5
+	PREFIX                     = 6
+	CALL                       = 7
+)
+
 func NewParser(lexer *Lexer) *Parser {
 	parser := &Parser{
 		lexer:        lexer,
@@ -29,6 +42,12 @@ func NewParser(lexer *Lexer) *Parser {
 	parser.advanceTokens()
 	parser.advanceTokens()
 	return parser
+}
+
+func (p *Parser) advanceTokens() {
+	p.currentToken = p.peekToken
+	nextToken := p.lexer.NextToken()
+	p.peekToken = &nextToken
 }
 
 func (p *Parser) Errors() []string {
@@ -68,12 +87,49 @@ func (p *Parser) expectedTokenError(tokenType TokenType) {
 	p.errors = append(p.errors, err)
 }
 
-func (p *Parser) advanceTokens() {
-	p.currentToken = p.peekToken
-	nextToken := p.lexer.NextToken()
-	p.peekToken = &nextToken
+func (p *Parser) parseExpression(Precedence) Expression {
+	if p.currentToken == nil {
+		panic("current token cannot be nil")
+	}
 
+	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
+	fmt.Println(p.currentToken.Token_type)
+	if !exist {
+		fmt.Println("entro aqui")
+		return nil
+	}
+
+	leftExpression := prefixParseFn()
+	return leftExpression
 }
+
+func (p *Parser) parserExpressionStatement() *ExpressionStament {
+	if p.currentToken == nil {
+		panic("peek token cannot be bil")
+	}
+
+	fmt.Println(p.currentToken.Literal)
+	expressionStament := NewExpressionStament(*p.currentToken, nil)
+	expressionStament.Expression = p.parseExpression(LOWEST)
+
+	if p.peekToken == nil {
+		panic("peek token cannot be bil")
+	}
+	if p.peekToken.Token_type == SEMICOLON {
+		p.advanceTokens()
+	}
+
+	return expressionStament
+}
+
+func (p *Parser) parseIdentifier() Expression {
+	if p.currentToken == nil {
+		panic("current token cannot be nil in parse identifier")
+	}
+
+	return &Identifier{token: *p.currentToken, value: p.currentToken.Literal}
+}
+
 func (p *Parser) parseLetSatement() Stmt {
 	stament := NewLetStatement(*p.currentToken, nil, nil)
 	if !p.expepectedToken(IDENT) {
@@ -112,13 +168,16 @@ func (p *Parser) parseStament() Stmt {
 		return p.parseReturnStatement()
 	}
 
-	return nil
+	return p.parserExpressionStatement()
 }
 
 func (p *Parser) registerInfixFns() InfixParseFns {
-	return make(InfixParseFns)
+	inFixFns := make(InfixParseFns)
+	return inFixFns
 }
 
 func (p *Parser) registerPrefixFns() PrefixParsFns {
-	return make(PrefixParsFns)
+	prefixFns := make(PrefixParsFns)
+	prefixFns[IDENT] = p.parseIdentifier
+	return prefixFns
 }
