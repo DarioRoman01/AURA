@@ -136,7 +136,7 @@ func (p *Parser) parseLetSatement() Stmt {
 		return nil
 	}
 
-	stament.Name = NewIdentifier(*p.currentToken, p.currentToken.Literal)
+	stament.Name = p.parseIdentifier().(*Identifier)
 	if !p.expepectedToken(ASSING) {
 		return nil
 	}
