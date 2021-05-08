@@ -26,7 +26,7 @@ func NewLexer(source string) *Lexer {
 	return lexer
 }
 
-// read next token
+// read next token and assing a token type to the token
 func (l *Lexer) NextToken() Token {
 	l.skipWhiteSpaces()
 	var token Token
@@ -153,6 +153,7 @@ func (l *Lexer) readNumber() string {
 	return string(l.source[initialPosition:l.position])
 }
 
+// return the next of character of the current string
 func (l *Lexer) peekCharacter() string {
 	if l.read_position >= utf8.RuneCountInString(l.source) {
 		return ""

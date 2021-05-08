@@ -8,15 +8,23 @@ import (
 
 var EOF_TOKEN = Token{Token_type: EOF, Literal: ""}
 
+func printParseErros(errors []string) {
+	for _, err := range errors {
+		fmt.Println(err)
+	}
+}
+
 func StartRpl() {
 	reader := bufio.NewReader(os.Stdin)
 	for source, _ := reader.ReadString('\n'); source != "salir()\n"; {
 		lexer := NewLexer(source)
-		for token := lexer.NextToken(); token != EOF_TOKEN; {
-			fmt.Println(token.PrintToken())
-			token = lexer.NextToken()
+		parser := NewParser(lexer)
+		program := parser.ParseProgam()
+		if len(parser.Errors()) > 0 {
+			printParseErros(parser.Errors())
 		}
 
+		fmt.Println(program.Str())
 		source, _ = reader.ReadString('\n')
 	}
 }
