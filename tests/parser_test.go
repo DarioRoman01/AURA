@@ -55,24 +55,31 @@ func TestLetStatements(t *testing.T) {
 		var x = 5;
 		var y = 10;
 		var foo = 20;
+		var bar = verdadero;
 	`
 	_, program := InitParserTests(source)
 
-	if !assert.Equal(3, len(program.Staments)) {
+	if !assert.Equal(4, len(program.Staments)) {
 		t.Log("len of program statements are not 3")
 		t.Fail()
 	}
+	expected := []PrefixTuple{
+		{Operator: "x", Value: 5},
+		{Operator: "y", Value: 10},
+		{Operator: "foo", Value: 20},
+		{Operator: "bar", Value: true},
+	}
 
-	for _, statement := range program.Staments {
-		if !assert.Equal("var", statement.TokenLiteral()) {
-			t.Log("token are not a variable")
-			t.Fail()
-		}
+	for i, statement := range program.Staments {
+		assert.Equal("var", statement.TokenLiteral())
+		assert.IsType(&lpp.LetStatement{}, statement.(*lpp.LetStatement))
 
-		if !assert.IsType(&lpp.LetStatement{}, statement.(*lpp.LetStatement)) {
-			t.Log("statement are not let statement type")
-			t.Fail()
-		}
+		letStatement := statement.(*lpp.LetStatement)
+		assert.NotNil(letStatement.Name)
+		testIdentifier(t, letStatement.Name, expected[i].Operator)
+
+		assert.NotNil(letStatement.Value)
+		testLiteralExpression(t, letStatement.Value, expected[i].Value)
 	}
 }
 
@@ -84,6 +91,7 @@ func TestNamesInLetStatements(t *testing.T) {
 		var foo = 20;
 	`
 	_, program := InitParserTests(source)
+	assert.Equal(3, len(program.Staments))
 
 	var names []string
 	for _, stament := range program.Staments {
@@ -120,18 +128,31 @@ func TestReturnStatement(t *testing.T) {
 	source := `
 		regresa 5;
 		regresa foo;
+		regresa verdadero;
+		regresa falso;
 	`
 
 	_, program := InitParserTests(source)
 
-	if !assert.Equal(2, len(program.Staments)) {
+	if !assert.Equal(4, len(program.Staments)) {
 		t.Log("len of program statements are not 2")
 		t.Fail()
 	}
 
-	for _, statement := range program.Staments {
+	expected := []PrefixTuple{
+		{Operator: "regresa", Value: 5},
+		{Operator: "regresa", Value: "foo"},
+		{Operator: "regresa", Value: true},
+		{Operator: "regresa", Value: false},
+	}
+
+	for i, statement := range program.Staments {
 		assert.Equal("regresa", statement.TokenLiteral())
 		assert.IsType(&lpp.ReturnStament{}, statement.(*lpp.ReturnStament))
+
+		returnStament := statement.(*lpp.ReturnStament)
+		assert.NotNil(returnStament.ReturnValue)
+		testLiteralExpression(t, returnStament.ReturnValue, expected[i].Value)
 	}
 }
 
@@ -185,6 +206,71 @@ func TestPrefixExpressions(t *testing.T) {
 	} else {
 		t.Log("len of staments and expected expected expressions are not equal")
 		t.Fail()
+	}
+}
+
+func TestCallExpression(t *testing.T) {
+	assert := assert.New(t)
+	source := "suma(1, 2 * 3, 4 + 5);"
+	parser, program := InitParserTests(source)
+	testProgramStatements(t, parser, program, 1)
+
+	call := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.Call)
+	assert.IsType(&lpp.Call{}, call)
+	testIdentifier(t, call.Function, "suma")
+	assert.NotNil(call.Arguments)
+
+	assert.Equal(3, len(call.Arguments))
+	testLiteralExpression(t, call.Arguments[0], 1)
+	testInfixExpression(t, call.Arguments[1], 2, "*", 3)
+	testInfixExpression(t, call.Arguments[2], 4, "+", 5)
+}
+
+func TestFunctionLiteral(t *testing.T) {
+	assert := assert.New(t)
+	source := "funcion(x, y) { x + y }"
+	parser, program := InitParserTests(source)
+	testProgramStatements(t, parser, program, 1)
+
+	functionLiteral := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.Function)
+	assert.IsType(&lpp.Function{}, functionLiteral)
+	assert.Equal(2, len(functionLiteral.Parameters))
+
+	testLiteralExpression(t, functionLiteral.Parameters[0], "x")
+	testLiteralExpression(t, functionLiteral.Parameters[1], "y")
+	assert.NotNil(functionLiteral.Body)
+
+	assert.Equal(1, len(functionLiteral.Body.Staments))
+	body := functionLiteral.Body.Staments[0].(*lpp.ExpressionStament)
+	assert.NotNil(body.Expression)
+	testInfixExpression(t, body.Expression, "x", "+", "y")
+}
+
+func TestFunctionParameter(t *testing.T) {
+	assert := assert.New(t)
+	tests := []map[string]interface{}{
+		{
+			"input":    "funcion() {};",
+			"expected": []string{},
+		},
+		{
+			"input":    "funcion(x) {};",
+			"expected": []string{"x"},
+		},
+		{
+			"input":    "funcion(x, y, z) {};",
+			"expected": []string{"x", "y", "z"},
+		},
+	}
+
+	for _, test := range tests {
+		_, program := InitParserTests(test["input"].(string))
+		function := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.Function)
+		assert.Equal(len(test["expected"].([]string)), len(function.Parameters))
+
+		for idx, param := range test["expected"].([]string) {
+			testLiteralExpression(t, function.Parameters[idx], param)
+		}
 	}
 }
 
@@ -293,10 +379,19 @@ func TestOperatorPrecedence(t *testing.T) {
 		{source: "(5 + 5) * 2;", expected: "((5 + 5) * 2)", expectedCount: 1},
 		{source: "2 / (5 + 5);", expected: "(2 / (5 + 5))", expectedCount: 1},
 		{source: "-(5 + 5);", expected: "(- (5 + 5))", expectedCount: 1},
+		{source: "-(5 + 5);", expected: "(- (5 + 5))", expectedCount: 1},
+		{source: "a + suma(b * c) + d;", expected: "((a + suma((b * c))) + d)", expectedCount: 1},
+		{source: "a + suma(b * c) + d;", expected: "((a + suma((b * c))) + d)", expectedCount: 1},
+		{
+			source:        "suma(a, b, 1, 2 * 3, 4 + 5, suma(6, 7 * 8))",
+			expected:      "suma(a, b, 1, (2 * 3), (4 + 5), suma(6, (7 * 8)))",
+			expectedCount: 1,
+		},
 	}
 
 	for _, source := range test_source {
 		parser, program := InitParserTests(source.source)
+		fmt.Println(parser.Errors())
 		testProgramStatements(t, parser, program, source.expectedCount)
 		assert.Equal(t, source.expected, program.Str())
 	}
