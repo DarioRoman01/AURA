@@ -235,6 +235,34 @@ func TestInfixExpressions(t *testing.T) {
 	}
 }
 
+func TestIfExpression(t *testing.T) {
+	assert := assert.New(t)
+	source := "si (x > y) { z } si_no { w }"
+	parser, program := InitParserTests(source)
+	testProgramStatements(t, parser, program, 1)
+
+	ifExpression := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.If)
+	assert.IsType(&lpp.If{}, ifExpression)
+	assert.NotNil(ifExpression.Condition)
+
+	testInfixExpression(t, ifExpression.Condition, "x", ">", "y")
+	assert.NotNil(ifExpression.Consequence)
+	assert.IsType(&lpp.Block{}, ifExpression.Consequence)
+	assert.Equal(1, len(ifExpression.Consequence.Staments))
+
+	consequenceStament := ifExpression.Consequence.Staments[0].(*lpp.ExpressionStament)
+	assert.NotNil(consequenceStament.Expression)
+	testIdentifier(t, consequenceStament.Expression, "z")
+
+	assert.NotNil(ifExpression.Alternative)
+	assert.IsType(&lpp.Block{}, ifExpression.Alternative)
+	assert.Equal(1, len(ifExpression.Alternative.Staments))
+
+	alternativeStament := ifExpression.Alternative.Staments[0].(*lpp.ExpressionStament)
+	assert.NotNil(alternativeStament.Expression)
+	testIdentifier(t, alternativeStament.Expression, "w")
+}
+
 func TestBooleanExpressions(t *testing.T) {
 	source := "verdadero; falso;"
 	parser, program := InitParserTests(source)
@@ -261,12 +289,16 @@ func TestOperatorPrecedence(t *testing.T) {
 		{source: "a + b / c;", expected: "(a + (b / c))", expectedCount: 1},
 		{source: "3 + 4; -5 * 5;", expected: "(3 + 4) ((- 5) * 5)", expectedCount: 2},
 		{source: "a + b * c + d / e - f;", expected: "(((a + (b * c)) + (d / e)) - f)", expectedCount: 1},
+		{source: "1 + (2 + 3) + 4;", expected: "((1 + (2 + 3)) + 4)", expectedCount: 1},
+		{source: "(5 + 5) * 2;", expected: "((5 + 5) * 2)", expectedCount: 1},
+		{source: "2 / (5 + 5);", expected: "(2 / (5 + 5))", expectedCount: 1},
+		{source: "-(5 + 5);", expected: "(- (5 + 5))", expectedCount: 1},
 	}
 
-	for i, source := range test_source {
+	for _, source := range test_source {
 		parser, program := InitParserTests(source.source)
-		testProgramStatements(t, parser, program, test_source[i].expectedCount)
-		assert.Equal(t, test_source[i].expected, program.Str())
+		testProgramStatements(t, parser, program, source.expectedCount)
+		assert.Equal(t, source.expected, program.Str())
 	}
 }
 
