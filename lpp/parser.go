@@ -33,6 +33,7 @@ var PRECEDENCES = map[TokenType]Precedence{
 	MINUS:    SUM,
 	DIVISION: PRODUCT,
 	TIMES:    PRODUCT,
+	LPAREN:   CALL,
 }
 
 type Parser struct {
@@ -149,6 +150,41 @@ func (p *Parser) parseBlock() *Block {
 	return blockStament
 }
 
+func (p *Parser) parseCall(function Expression) Expression {
+	p.checkCurrentTokenIsNotNil()
+	call := NewCall(*p.currentToken, function)
+	call.Arguments = p.parseCallArguments()
+	return call
+}
+
+func (p *Parser) parseCallArguments() []Expression {
+	var args []Expression
+	p.checkPeekTokenIsNotNil()
+	if p.peekToken.Token_type == RPAREN {
+		p.advanceTokens()
+		return args
+	}
+
+	p.advanceTokens()
+	if expression := p.parseExpression(LOWEST); expression != nil {
+		args = append(args, expression)
+	}
+
+	for p.peekToken.Token_type == COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		if expression := p.parseExpression(LOWEST); expression != nil {
+			args = append(args, expression)
+		}
+	}
+
+	if !p.expepectedToken(RPAREN) {
+		return nil
+	}
+
+	return args
+}
+
 func (p *Parser) parseExpression(precedence Precedence) Expression {
 	p.checkCurrentTokenIsNotNil()
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
@@ -200,6 +236,49 @@ func (p *Parser) parseGroupExpression() Expression {
 	}
 
 	return expression
+}
+
+func (p *Parser) parseFunction() Expression {
+	p.checkCurrentTokenIsNotNil()
+	function := NewFunction(*p.currentToken, nil)
+	if !p.expepectedToken(LPAREN) {
+		return nil
+	}
+
+	function.Parameters = p.parseFunctionParameters()
+	if !p.expepectedToken(LBRACE) {
+		return nil
+	}
+
+	function.Body = p.parseBlock()
+	return function
+}
+
+func (p *Parser) parseFunctionParameters() []*Identifier {
+	var params []*Identifier
+	p.checkPeekTokenIsNotNil()
+	if p.peekToken.Token_type == RPAREN {
+		p.advanceTokens()
+		return params
+	}
+
+	p.advanceTokens()
+	p.checkCurrentTokenIsNotNil()
+	identifier := NewIdentifier(*p.currentToken, p.currentToken.Literal)
+	params = append(params, identifier)
+
+	for p.peekToken.Token_type == COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		identifier = NewIdentifier(*p.currentToken, p.currentToken.Literal)
+		params = append(params, identifier)
+	}
+
+	if !p.expepectedToken(RPAREN) {
+		return make([]*Identifier, 0)
+	}
+
+	return params
 }
 
 func (p *Parser) parseIdentifier() Expression {
@@ -274,8 +353,10 @@ func (p *Parser) parseLetSatement() Stmt {
 		return nil
 	}
 
-	// todo finish when i know how to parse expressions
-	for p.currentToken.Token_type != SEMICOLON {
+	p.advanceTokens()
+	stament.Value = p.parseExpression(LOWEST)
+	p.checkPeekTokenIsNotNil()
+	if p.peekToken.Token_type == SEMICOLON {
 		p.advanceTokens()
 	}
 
@@ -295,8 +376,9 @@ func (p *Parser) parseReturnStatement() Stmt {
 	stament := NewReturnStatement(*p.currentToken, nil)
 	p.advanceTokens()
 
-	// todo finish when i know how to parse expressions
-	for p.currentToken.Token_type != SEMICOLON {
+	stament.ReturnValue = p.parseExpression(LOWEST)
+	p.checkPeekTokenIsNotNil()
+	if p.peekToken.Token_type == SEMICOLON {
 		p.advanceTokens()
 	}
 
@@ -334,12 +416,14 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[NOT_EQ] = p.parseInfixExpression
 	inFixFns[LT] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
+	inFixFns[LPAREN] = p.parseCall
 	return inFixFns
 }
 
 func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
 	prefixFns[FALSE] = p.parseBoolean
+	prefixFns[FUNCTION] = p.parseFunction
 	prefixFns[IDENT] = p.parseIdentifier
 	prefixFns[IF] = p.parseIf
 	prefixFns[INT] = p.parseInteger

@@ -143,7 +143,6 @@ func (i Integer) TokenLiteral() string {
 }
 
 func (i Integer) expressNode() {}
-
 func (i Integer) Str() string {
 	return fmt.Sprint(*i.Value)
 }
@@ -167,7 +166,6 @@ func (p *Prefix) TokenLiteral() string {
 }
 
 func (p *Prefix) expressNode() {}
-
 func (p *Prefix) Str() string {
 	return fmt.Sprintf("(%s %s)", p.Operator, p.Rigth.Str())
 }
@@ -193,7 +191,6 @@ func (i Infix) TokenLiteral() string {
 }
 
 func (i Infix) expressNode() {}
-
 func (i Infix) Str() string {
 	return fmt.Sprintf("(%s %s %s)", i.Left.Str(), i.Operator, i.Rigth.Str())
 }
@@ -212,7 +209,6 @@ func (b Boolean) TokenLiteral() string {
 }
 
 func (b Boolean) expressNode() {}
-
 func (b Boolean) Str() string {
 	return b.TokenLiteral()
 }
@@ -234,7 +230,6 @@ func (b Block) TokenLiteral() string {
 }
 
 func (b Block) stmtNode() {}
-
 func (b Block) Str() string {
 	var out []string
 	for _, stament := range b.Staments {
@@ -265,7 +260,6 @@ func (i If) TokenLiteral() string {
 }
 
 func (i If) expressNode() {}
-
 func (i If) Str() string {
 	var out strings.Builder
 	out.WriteString(fmt.Sprintf("si %s %s ", i.Condition.Str(), i.Consequence.Str()))
@@ -274,4 +268,62 @@ func (i If) Str() string {
 	}
 
 	return out.String()
+}
+
+type Function struct {
+	Token      Token
+	Parameters []*Identifier
+	Body       *Block
+}
+
+func NewFunction(token Token, body *Block, parameters ...*Identifier) *Function {
+	return &Function{
+		Token:      token,
+		Parameters: parameters,
+		Body:       body,
+	}
+}
+
+func (f Function) TokenLiteral() string {
+	return f.Token.Literal
+}
+
+func (f Function) expressNode() {}
+func (f Function) Str() string {
+	var paramList []string
+	for _, parameter := range f.Parameters {
+		paramList = append(paramList, parameter.Str())
+	}
+
+	params := strings.Join(paramList, ", ")
+	return fmt.Sprintf("%s(%s) %s", f.TokenLiteral(), params, f.Body.Str())
+}
+
+type Call struct {
+	Token     Token
+	Function  Expression
+	Arguments []Expression
+}
+
+func NewCall(token Token, function Expression, arguments ...Expression) *Call {
+	return &Call{
+		Token:     token,
+		Function:  function,
+		Arguments: arguments,
+	}
+}
+
+func (c Call) TokenLiteral() string {
+	return c.Token.Literal
+}
+
+func (C Call) expressNode() {}
+func (c Call) Str() string {
+	var argsList []string
+	for _, arg := range c.Arguments {
+		argsList = append(argsList, arg.Str())
+	}
+
+	args := strings.Join(argsList, ", ")
+	return fmt.Sprintf("%s(%s)", c.Function.Str(), args)
 }
