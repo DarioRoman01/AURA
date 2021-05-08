@@ -216,3 +216,62 @@ func (b Boolean) expressNode() {}
 func (b Boolean) Str() string {
 	return b.TokenLiteral()
 }
+
+type Block struct {
+	Token    Token
+	Staments []Stmt
+}
+
+func NewBlock(token Token, staments ...Stmt) *Block {
+	return &Block{
+		Token:    token,
+		Staments: staments,
+	}
+}
+
+func (b Block) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+func (b Block) stmtNode() {}
+
+func (b Block) Str() string {
+	var out []string
+	for _, stament := range b.Staments {
+		out = append(out, stament.Str())
+	}
+
+	return strings.Join(out, " ")
+}
+
+type If struct {
+	Token       Token
+	Condition   Expression
+	Consequence *Block
+	Alternative *Block
+}
+
+func NewIf(token Token, condition Expression, consequence, alternative *Block) *If {
+	return &If{
+		Token:       token,
+		Condition:   condition,
+		Consequence: consequence,
+		Alternative: alternative,
+	}
+}
+
+func (i If) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+func (i If) expressNode() {}
+
+func (i If) Str() string {
+	var out strings.Builder
+	out.WriteString(fmt.Sprintf("si %s %s ", i.Condition.Str(), i.Consequence.Str()))
+	if i.Alternative != nil {
+		out.WriteString(fmt.Sprintf("si_no %s", i.Alternative.Str()))
+	}
+
+	return out.String()
+}

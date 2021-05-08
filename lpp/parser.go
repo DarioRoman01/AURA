@@ -132,6 +132,23 @@ func (p *Parser) parseBoolean() Expression {
 	return NewBoolean(*p.currentToken, &value)
 }
 
+func (p *Parser) parseBlock() *Block {
+	p.checkCurrentTokenIsNotNil()
+	blockStament := NewBlock(*p.currentToken)
+	p.advanceTokens()
+
+	for !(p.currentToken.Token_type == RBRACE) && !(p.currentToken.Token_type == EOF) {
+		stament := p.parseStament()
+		if stament != nil {
+			blockStament.Staments = append(blockStament.Staments, stament)
+		}
+
+		p.advanceTokens()
+	}
+
+	return blockStament
+}
+
 func (p *Parser) parseExpression(precedence Precedence) Expression {
 	p.checkCurrentTokenIsNotNil()
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
@@ -175,6 +192,16 @@ func (p *Parser) parserExpressionStatement() *ExpressionStament {
 	return expressionStament
 }
 
+func (p *Parser) parseGroupExpression() Expression {
+	p.advanceTokens()
+	expression := p.parseExpression(LOWEST)
+	if !p.expepectedToken(RPAREN) {
+		return nil
+	}
+
+	return expression
+}
+
 func (p *Parser) parseIdentifier() Expression {
 	p.checkCurrentTokenIsNotNil()
 	return &Identifier{token: *p.currentToken, value: p.currentToken.Literal}
@@ -187,6 +214,38 @@ func (p *Parser) parseInfixExpression(left Expression) Expression {
 	p.advanceTokens()
 	infix.Rigth = p.parseExpression(precedence)
 	return infix
+}
+
+func (p *Parser) parseIf() Expression {
+	p.checkCurrentTokenIsNotNil()
+	ifExpression := NewIf(*p.currentToken, nil, nil, nil)
+	if !p.expepectedToken(LPAREN) {
+		return nil
+	}
+
+	p.advanceTokens()
+	ifExpression.Condition = p.parseExpression(LOWEST)
+	if !p.expepectedToken(RPAREN) {
+		return nil
+	}
+
+	if !p.expepectedToken(LBRACE) {
+		return nil
+	}
+
+	ifExpression.Consequence = p.parseBlock()
+
+	p.checkPeekTokenIsNotNil()
+	if p.peekToken.Token_type == ELSE {
+		p.advanceTokens()
+		if !p.expepectedToken(LBRACE) {
+			return nil
+		}
+
+		ifExpression.Alternative = p.parseBlock()
+	}
+
+	return ifExpression
 }
 
 func (p *Parser) parseInteger() Expression {
@@ -282,7 +341,9 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
 	prefixFns[FALSE] = p.parseBoolean
 	prefixFns[IDENT] = p.parseIdentifier
+	prefixFns[IF] = p.parseIf
 	prefixFns[INT] = p.parseInteger
+	prefixFns[LPAREN] = p.parseGroupExpression
 	prefixFns[MINUS] = p.parsePrefixExpression
 	prefixFns[NOT] = p.parsePrefixExpression
 	prefixFns[TRUE] = p.parseBoolean
