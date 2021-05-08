@@ -352,7 +352,7 @@ func TestIfExpression(t *testing.T) {
 func TestBooleanExpressions(t *testing.T) {
 	source := "verdadero; falso;"
 	parser, program := InitParserTests(source)
-	fmt.Println(parser.Errors())
+
 	testProgramStatements(t, parser, program, 2)
 	expectedValues := []bool{true, false}
 
@@ -391,7 +391,7 @@ func TestOperatorPrecedence(t *testing.T) {
 
 	for _, source := range test_source {
 		parser, program := InitParserTests(source.source)
-		fmt.Println(parser.Errors())
+
 		testProgramStatements(t, parser, program, source.expectedCount)
 		assert.Equal(t, source.expected, program.Str())
 	}
