@@ -1,5 +1,7 @@
 package lpp
 
+import "fmt"
+
 var singletonTRUE = &Bool{Value: true}
 var singletonFALSE = &Bool{Value: false}
 var SingletonNUll = &Null{}
@@ -64,7 +66,7 @@ func evaluateBLockStaments(block *Block) Object {
 	var result Object = nil
 	for _, statement := range block.Staments {
 		result = Evaluate(statement)
-		if result != nil && result.Type() == RETURNTYPE {
+		if result != nil && result.Type() == RETURNTYPE || result.Type() == ERROR {
 			return result
 		}
 	}
@@ -78,8 +80,9 @@ func evaluateProgram(program Program) Object {
 		result = Evaluate(statement)
 
 		if _, isReturn := result.(*Return); isReturn {
-			returnObj := result.(*Return)
-			return returnObj.Value
+			return result.(*Return).Value
+		} else if _, isError := result.(*Error); isError {
+			return result
 		}
 	}
 
@@ -110,6 +113,7 @@ func evaluateIfExpression(ifExpression *If) Object {
 	if isTruthy(condition) {
 		CheckIsNotNil(ifExpression.Consequence)
 		return Evaluate(ifExpression.Consequence)
+
 	} else if ifExpression.Alternative != nil {
 		return Evaluate(ifExpression.Alternative)
 	}
@@ -134,15 +138,32 @@ func isTruthy(obj Object) bool {
 }
 
 func evaluateInfixExpression(operator string, left Object, right Object) Object {
-	if left.Type() == INTEGERS && right.Type() == INTEGERS {
+	switch {
+
+	case left.Type() == INTEGERS && right.Type() == INTEGERS:
 		return evaluateIntegerInfixExpression(operator, left, right)
-	} else if operator == "==" {
+
+	case operator == "==":
 		return toBooleanObject(left == right)
-	} else if operator == "!=" {
+
+	case operator == "!=":
 		return toBooleanObject(left != right)
+
+	case left.Type() != right.Type():
+		return newError(typeMismatchError(
+			types[left.Type()],
+			operator,
+			types[right.Type()],
+		))
+
+	default:
+		return newError(unknownInfixOperator(
+			types[left.Type()],
+			operator,
+			types[right.Type()],
+		))
 	}
 
-	return SingletonNUll
 }
 
 func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) Object {
@@ -167,14 +188,19 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 	case "!=":
 		return toBooleanObject(leftVal != rigthVal)
 	default:
-		return SingletonNUll
+		return newError(unknownInfixOperator(
+			types[left.Type()],
+			operator,
+			types[rigth.Type()],
+		))
 	}
 }
 
 func evaluateMinusOperatorExpression(rigth Object) Object {
 	if _, isNumber := rigth.(*Number); !isNumber {
-		return SingletonNUll
+		return newError(unknownPrefixOperator("-", types[rigth.Type()]))
 	}
+
 	right := rigth.(*Number)
 	right.Value = -right.Value
 	return right
@@ -189,8 +215,12 @@ func evaluatePrefixExpression(operator string, rigth Object) Object {
 		return evaluateMinusOperatorExpression(rigth)
 
 	default:
-		return SingletonNUll
+		return newError(unknownPrefixOperator(operator, types[rigth.Type()]))
 	}
+}
+
+func newError(message string) *Error {
+	return &Error{Message: message}
 }
 
 func toBooleanObject(val bool) Object {
@@ -198,4 +228,16 @@ func toBooleanObject(val bool) Object {
 		return singletonTRUE
 	}
 	return singletonFALSE
+}
+
+func typeMismatchError(left, operator, rigth string) string {
+	return fmt.Sprintf("Discrepancia de tipos: %s %s %s", left, operator, rigth)
+}
+
+func unknownPrefixOperator(operator, rigth string) string {
+	return fmt.Sprintf("Operador desconocido: %s%s", operator, rigth)
+}
+
+func unknownInfixOperator(left, operator, rigth string) string {
+	return fmt.Sprintf("Operador desconocido: %s %s %s", left, operator, rigth)
 }
