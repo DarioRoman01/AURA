@@ -110,6 +110,34 @@ func (e *EvaluatorTests) TestIfElseEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestReturnEvaluation() {
+	tests := []struct {
+		source   string
+		expected int
+	}{
+		{"regresa 10;", 10},
+		{"regresa 10; 9;", 10},
+		{"regresa 2 * 5; 9;", 10},
+		{"9; regresa 3 * 6; 9;", 18},
+		{source: `
+			si (10 > 1) {
+				si (20 > 10) {
+					regresa 1;
+				}
+
+				regresa 0;
+			}
+		`,
+			expected: 1,
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) testNullObject(eval lpp.Object) {
 	e.Assert().Equal(lpp.SingletonNUll, eval.(*lpp.Null))
 }
