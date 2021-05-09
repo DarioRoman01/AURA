@@ -7,10 +7,19 @@ type ObjectType int
 const (
 	ObjTypeHead = iota
 	BOOLEAN
+	ERROR
 	INTEGERS
 	NULL
 	RETURNTYPE
 )
+
+var types = [...]string{
+	BOOLEAN:    "BOOLEAN",
+	ERROR:      "ERROR",
+	INTEGERS:   "INTEGERS",
+	NULL:       "NULL",
+	RETURNTYPE: "RETURN",
+}
 
 type Object interface {
 	Type() ObjectType
@@ -41,9 +50,20 @@ type Null struct{}
 func (n *Null) Type() ObjectType { return NULL }
 func (n *Null) Inspect() string  { return "nulo" }
 
+// return object type
 type Return struct {
 	Value Object
 }
 
 func (r *Return) Type() ObjectType { return RETURNTYPE }
 func (r *Return) Inspect() string  { return r.Value.Inspect() }
+
+// error object type
+type Error struct {
+	Message string
+}
+
+func (e *Error) Type() ObjectType { return ERROR }
+func (e *Error) Inspect() string {
+	return fmt.Sprintf("Error: %s", e.Message)
+}
