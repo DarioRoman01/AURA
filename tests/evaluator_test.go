@@ -7,15 +7,17 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+type tuple struct {
+	source   string
+	expected int
+}
+
 type EvaluatorTests struct {
 	suite.Suite
 }
 
 func (e *EvaluatorTests) TestIntegerEvaluation() {
-	tests := []struct {
-		source   string
-		expected int
-	}{
+	tests := []tuple{
 		{"5", 5},
 		{"10", 10},
 		{"-5", -5},
@@ -111,10 +113,7 @@ func (e *EvaluatorTests) TestIfElseEvaluation() {
 }
 
 func (e *EvaluatorTests) TestReturnEvaluation() {
-	tests := []struct {
-		source   string
-		expected int
-	}{
+	tests := []tuple{
 		{"regresa 10;", 10},
 		{"regresa 10; 9;", 10},
 		{"regresa 2 * 5; 9;", 10},
@@ -176,14 +175,66 @@ func (e *EvaluatorTests) TestErrorhandling() {
 }
 
 func (e *EvaluatorTests) TestAssingmentEvaluation() {
-	tests := []struct {
-		source   string
-		expected int
-	}{
+	tests := []tuple{
 		{"var a = 5; a;", 5},
 		{"var a = 5 * 5; a", 25},
 		{"var a = 5; var b = a; b;", 5},
 		{"var a = 5; var b = a; var c = a + b + 5; c;", 15},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
+func (e *EvaluatorTests) TestFunctionEvaluation() {
+	source := "funcion(x) { x + 2; };"
+	evaluated := e.evaluateTests(source)
+	e.IsType(&lpp.Def{}, evaluated.(*lpp.Def))
+
+	function := evaluated.(*lpp.Def)
+	e.Equal(1, len(function.Parameters))
+	e.Equal("x", function.Parameters[0].Str())
+	e.Equal("(x + 2)", function.Body.Str())
+}
+
+func (e *EvaluatorTests) TestFunctionCalls() {
+	tests := []tuple{
+		{"var identidad = funcion(x) { x }; identidad(5);", 5},
+		{`
+			var identidad = funcion(x) {
+				regresa x;
+			};
+
+			identidad(5);
+		`, 5,
+		},
+		{`
+			var doble = funcion(x) {
+				regresa 2 * x;
+			};
+
+			doble(5);
+		`, 10,
+		},
+		{`
+			var suma = funcion(x, y) {
+				regresa x + y;
+			};
+
+			suma(3, 8);
+		`, 11,
+		},
+		{`
+			var suma = funcion(x, y) {
+				regresa x + y;
+			};
+
+			suma(5 + 5, suma(10, 10));
+		`, 30,
+		},
+		{"funcion(x) { x }(5)", 5},
 	}
 
 	for _, test := range tests {
@@ -200,7 +251,7 @@ func (e *EvaluatorTests) evaluateTests(source string) lpp.Object {
 	lexer := lpp.NewLexer(source)
 	parser := lpp.NewParser(lexer)
 	program := parser.ParseProgam()
-	env := lpp.NewEnviroment()
+	env := lpp.NewEnviroment(nil)
 	evaluated := lpp.Evaluate(program, env)
 	e.Assert().NotNil(evaluated)
 	return evaluated
