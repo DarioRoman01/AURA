@@ -6,15 +6,15 @@ var singletonTRUE = &Bool{Value: true}
 var singletonFALSE = &Bool{Value: false}
 var SingletonNUll = &Null{}
 
-func Evaluate(baseNode ASTNode) Object {
+func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	switch node := baseNode.(type) {
 
 	case Program:
-		return evaluateProgram(node)
+		return evaluateProgram(node, env)
 
 	case *ExpressionStament:
 		CheckIsNotNil(node.Expression)
-		return Evaluate(node.Expression)
+		return Evaluate(node.Expression, env)
 
 	case *Integer:
 		CheckIsNotNil(node.Value)
@@ -26,30 +26,40 @@ func Evaluate(baseNode ASTNode) Object {
 
 	case *Prefix:
 		CheckIsNotNil(node.Rigth)
-		rigth := Evaluate(node.Rigth)
+		rigth := Evaluate(node.Rigth, env)
 		CheckIsNotNil(rigth)
 		return evaluatePrefixExpression(node.Operator, rigth)
 
 	case *Infix:
 		go CheckIsNotNil(node.Left)
 		CheckIsNotNil(node.Rigth)
-		left := Evaluate(node.Left)
-		rigth := Evaluate(node.Rigth)
+		left := Evaluate(node.Left, env)
+		rigth := Evaluate(node.Rigth, env)
 		go CheckIsNotNil(left)
 		CheckIsNotNil(rigth)
 		return evaluateInfixExpression(node.Operator, left, rigth)
 
 	case *Block:
-		return evaluateBLockStaments(node)
+		return evaluateBLockStaments(node, env)
 
 	case *If:
-		return evaluateIfExpression(node)
+		return evaluateIfExpression(node, env)
 
 	case *ReturnStament:
 		CheckIsNotNil(node.ReturnValue)
-		value := Evaluate(node.ReturnValue)
+		value := Evaluate(node.ReturnValue, env)
 		CheckIsNotNil(value)
 		return &Return{Value: value}
+
+	case *LetStatement:
+		CheckIsNotNil(node.Value)
+		value := Evaluate(node.Value, env)
+		CheckIsNotNil(node.Name)
+		env.SetItem(node.Name.value, value)
+		return nil
+
+	case *Identifier:
+		return evaluateIdentifier(node, env)
 
 	default:
 		return SingletonNUll
@@ -62,10 +72,10 @@ func CheckIsNotNil(val interface{}) {
 	}
 }
 
-func evaluateBLockStaments(block *Block) Object {
+func evaluateBLockStaments(block *Block, env *Enviroment) Object {
 	var result Object = nil
 	for _, statement := range block.Staments {
-		result = Evaluate(statement)
+		result = Evaluate(statement, env)
 		if result != nil && result.Type() == RETURNTYPE || result.Type() == ERROR {
 			return result
 		}
@@ -74,10 +84,19 @@ func evaluateBLockStaments(block *Block) Object {
 	return result
 }
 
-func evaluateProgram(program Program) Object {
+func evaluateIdentifier(node *Identifier, env *Enviroment) Object {
+	value, exists := env.store[node.value]
+	if !exists {
+		return newError(unknownIdentifier(node.value))
+	}
+
+	return value
+}
+
+func evaluateProgram(program Program, env *Enviroment) Object {
 	var result Object
 	for _, statement := range program.Staments {
-		result = Evaluate(statement)
+		result = Evaluate(statement, env)
 
 		if _, isReturn := result.(*Return); isReturn {
 			return result.(*Return).Value
@@ -105,17 +124,17 @@ func evaluateBangOperatorExpression(rigth Object) Object {
 	}
 }
 
-func evaluateIfExpression(ifExpression *If) Object {
+func evaluateIfExpression(ifExpression *If, env *Enviroment) Object {
 	CheckIsNotNil(ifExpression.Condition)
-	condition := Evaluate(ifExpression.Condition)
+	condition := Evaluate(ifExpression.Condition, env)
 
 	CheckIsNotNil(condition)
 	if isTruthy(condition) {
 		CheckIsNotNil(ifExpression.Consequence)
-		return Evaluate(ifExpression.Consequence)
+		return Evaluate(ifExpression.Consequence, env)
 
 	} else if ifExpression.Alternative != nil {
-		return Evaluate(ifExpression.Alternative)
+		return Evaluate(ifExpression.Alternative, env)
 	}
 
 	return SingletonNUll
@@ -240,4 +259,8 @@ func unknownPrefixOperator(operator, rigth string) string {
 
 func unknownInfixOperator(left, operator, rigth string) string {
 	return fmt.Sprintf("Operador desconocido: %s %s %s", left, operator, rigth)
+}
+
+func unknownIdentifier(identifier string) string {
+	return fmt.Sprintf("Identificador no encontrado: %s", identifier)
 }
