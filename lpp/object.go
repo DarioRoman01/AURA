@@ -1,12 +1,16 @@
 package lpp
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type ObjectType int
 
 const (
 	ObjTypeHead = iota
 	BOOLEAN
+	DEF
 	ERROR
 	INTEGERS
 	NULL
@@ -68,18 +72,53 @@ func (e *Error) Inspect() string {
 	return fmt.Sprintf("Error: %s", e.Message)
 }
 
-type Enviroment struct {
-	store map[interface{}]Object
+type Def struct {
+	Parameters []*Identifier
+	Body       *Block
+	Env        *Enviroment
 }
 
-func NewEnviroment() *Enviroment {
+func NewDef(body *Block, env *Enviroment, parameters ...*Identifier) *Def {
+	return &Def{Parameters: parameters, Body: body, Env: env}
+}
+
+func (d *Def) Type() ObjectType {
+	return DEF
+}
+
+func (d *Def) Inspect() string {
+	var argsList []string
+
+	for _, arg := range d.Parameters {
+		argsList = append(argsList, arg.Str())
+	}
+
+	return fmt.Sprintf("funcion(%s) {\n %s \n}", strings.Join(argsList, ", "), d.Body.Str())
+}
+
+// enviroment handles stores the variables of the given program
+type Enviroment struct {
+	store map[interface{}]Object
+	outer *Enviroment
+}
+
+func NewEnviroment(outer *Enviroment) *Enviroment {
 	return &Enviroment{
 		store: make(map[interface{}]Object),
+		outer: outer,
 	}
 }
 
-func (e *Enviroment) GetItem(key interface{}) interface{} {
-	return e.store[key]
+func (e *Enviroment) GetItem(key interface{}) (Object, bool) {
+	val, exists := e.store[key]
+	if !exists {
+		if e.outer != nil {
+			return e.outer.GetItem(key)
+		}
+
+		return nil, false
+	}
+	return val, true
 }
 
 func (e *Enviroment) SetItem(key interface{}, val Object) {
