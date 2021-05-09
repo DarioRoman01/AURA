@@ -18,12 +18,48 @@ func (e *EvaluatorTests) TestIntegerEvaluation() {
 	}{
 		{"5", 5},
 		{"10", 10},
+		{"-5", -5},
+		{"-10", -10},
 	}
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
 		e.testIntegerObject(evaluated, test.expected)
 
+	}
+}
+
+func (e *EvaluatorTests) TestBangOperator() {
+	tests := []struct {
+		source   string
+		expected bool
+	}{
+		{"!verdadero", false},
+		{"!falso", true},
+		{"!!verdadero", true},
+		{"!!falso", false},
+		{"!5", false},
+		{"!!5", true},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testBooleanObject(evaluated, test.expected)
+	}
+}
+
+func (e *EvaluatorTests) TestBooleanEvaluation() {
+	tests := []struct {
+		source   string
+		expected bool
+	}{
+		{"verdadero", true},
+		{"falso", false},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testBooleanObject(evaluated, test.expected)
 	}
 }
 
@@ -34,6 +70,12 @@ func (e *EvaluatorTests) evaluateTests(source string) lpp.Object {
 	evaluated := lpp.Evaluate(program)
 	e.Assert().NotNil(evaluated)
 	return evaluated
+}
+
+func (e *EvaluatorTests) testBooleanObject(object lpp.Object, expected bool) {
+	e.Assert().IsType(&lpp.Bool{}, object.(*lpp.Bool))
+	evaluated := object.(*lpp.Bool)
+	e.Assert().Equal(expected, evaluated.Value)
 }
 
 func (e *EvaluatorTests) testIntegerObject(evaluated lpp.Object, expected int) {
