@@ -2,7 +2,7 @@ package lpp
 
 var singletonTRUE = &Bool{Value: true}
 var singletonFALSE = &Bool{Value: false}
-var singletonNUll = &Null{}
+var SingletonNUll = &Null{}
 
 func Evaluate(baseNode ASTNode) Object {
 	switch node := baseNode.(type) {
@@ -37,8 +37,14 @@ func Evaluate(baseNode ASTNode) Object {
 		CheckIsNotNil(rigth)
 		return evaluateInfixExpression(node.Operator, left, rigth)
 
+	case *Block:
+		return evaluateStaments(node.Staments)
+
+	case *If:
+		return evaluateIfExpression(node)
+
 	default:
-		return nil
+		return SingletonNUll
 	}
 }
 
@@ -73,6 +79,37 @@ func evaluateBangOperatorExpression(rigth Object) Object {
 	}
 }
 
+func evaluateIfExpression(ifExpression *If) Object {
+	CheckIsNotNil(ifExpression.Condition)
+	condition := Evaluate(ifExpression.Condition)
+
+	CheckIsNotNil(condition)
+	if isTruthy(condition) {
+		CheckIsNotNil(ifExpression.Consequence)
+		return Evaluate(ifExpression.Consequence)
+	} else if ifExpression.Alternative != nil {
+		return Evaluate(ifExpression.Alternative)
+	}
+
+	return SingletonNUll
+}
+
+func isTruthy(obj Object) bool {
+	switch {
+	case obj == SingletonNUll:
+		return false
+
+	case obj == singletonTRUE:
+		return true
+
+	case obj == singletonFALSE:
+		return false
+
+	default:
+		return true
+	}
+}
+
 func evaluateInfixExpression(operator string, left Object, right Object) Object {
 	if left.Type() == INTEGERS && right.Type() == INTEGERS {
 		return evaluateIntegerInfixExpression(operator, left, right)
@@ -82,7 +119,7 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 		return toBooleanObject(left != right)
 	}
 
-	return singletonNUll
+	return SingletonNUll
 }
 
 func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) Object {
@@ -107,13 +144,13 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 	case "!=":
 		return toBooleanObject(leftVal != rigthVal)
 	default:
-		return singletonNUll
+		return SingletonNUll
 	}
 }
 
 func evaluateMinusOperatorExpression(rigth Object) Object {
 	if _, isNumber := rigth.(*Number); !isNumber {
-		return nil
+		return SingletonNUll
 	}
 	right := rigth.(*Number)
 	right.Value = -right.Value
@@ -129,7 +166,7 @@ func evaluatePrefixExpression(operator string, rigth Object) Object {
 		return evaluateMinusOperatorExpression(rigth)
 
 	default:
-		return nil
+		return SingletonNUll
 	}
 }
 

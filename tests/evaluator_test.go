@@ -86,6 +86,34 @@ func (e *EvaluatorTests) TestBooleanEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestIfElseEvaluation() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{"si (verdadero) { 10 }", 10},
+		{"si (falso) { 10 }", nil},
+		{"si (1) { 10 }", 10},
+		{"si (1 < 2) { 10 }", 10},
+		{"si (1 > 2) { 10 }", nil},
+		{"si (1 < 2) { 10 } si_no { 20 }", 10},
+		{"si (1 > 2) { 10 } si_no { 20 }", 20},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if _, isInt := test.expected.(int); isInt {
+			e.testIntegerObject(evaluated, test.expected.(int))
+		} else {
+			e.testNullObject(evaluated)
+		}
+	}
+}
+
+func (e *EvaluatorTests) testNullObject(eval lpp.Object) {
+	e.Assert().Equal(lpp.SingletonNUll, eval.(*lpp.Null))
+}
+
 func (e *EvaluatorTests) evaluateTests(source string) lpp.Object {
 	lexer := lpp.NewLexer(source)
 	parser := lpp.NewParser(lexer)
