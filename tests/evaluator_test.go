@@ -164,6 +164,7 @@ func (e *EvaluatorTests) TestErrorhandling() {
 		`,
 			expected: "Operador desconocido: BOOLEAN / BOOLEAN",
 		},
+		{source: "foobar;", expected: "Identificador no encontrado: foobar"},
 	}
 
 	for _, test := range tests {
@@ -171,6 +172,23 @@ func (e *EvaluatorTests) TestErrorhandling() {
 		e.Assert().IsType(&lpp.Error{}, evaluated.(*lpp.Error))
 		evaluatedError := evaluated.(*lpp.Error)
 		e.Assert().Equal(test.expected, evaluatedError.Message)
+	}
+}
+
+func (e *EvaluatorTests) TestAssingmentEvaluation() {
+	tests := []struct {
+		source   string
+		expected int
+	}{
+		{"var a = 5; a;", 5},
+		{"var a = 5 * 5; a", 25},
+		{"var a = 5; var b = a; b;", 5},
+		{"var a = 5; var b = a; var c = a + b + 5; c;", 15},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
 	}
 }
 
@@ -182,7 +200,8 @@ func (e *EvaluatorTests) evaluateTests(source string) lpp.Object {
 	lexer := lpp.NewLexer(source)
 	parser := lpp.NewParser(lexer)
 	program := parser.ParseProgam()
-	evaluated := lpp.Evaluate(program)
+	env := lpp.NewEnviroment()
+	evaluated := lpp.Evaluate(program, env)
 	e.Assert().NotNil(evaluated)
 	return evaluated
 }
