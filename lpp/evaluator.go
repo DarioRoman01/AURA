@@ -8,7 +8,7 @@ func Evaluate(baseNode ASTNode) Object {
 	switch node := baseNode.(type) {
 
 	case Program:
-		return evaluateStaments(node.Staments)
+		return evaluateProgram(node)
 
 	case *ExpressionStament:
 		CheckIsNotNil(node.Expression)
@@ -38,10 +38,16 @@ func Evaluate(baseNode ASTNode) Object {
 		return evaluateInfixExpression(node.Operator, left, rigth)
 
 	case *Block:
-		return evaluateStaments(node.Staments)
+		return evaluateBLockStaments(node)
 
 	case *If:
 		return evaluateIfExpression(node)
+
+	case *ReturnStament:
+		CheckIsNotNil(node.ReturnValue)
+		value := Evaluate(node.ReturnValue)
+		CheckIsNotNil(value)
+		return &Return{Value: value}
 
 	default:
 		return SingletonNUll
@@ -54,10 +60,27 @@ func CheckIsNotNil(val interface{}) {
 	}
 }
 
-func evaluateStaments(statements []Stmt) Object {
-	var result Object
-	for _, statement := range statements {
+func evaluateBLockStaments(block *Block) Object {
+	var result Object = nil
+	for _, statement := range block.Staments {
 		result = Evaluate(statement)
+		if result != nil && result.Type() == RETURNTYPE {
+			return result
+		}
+	}
+
+	return result
+}
+
+func evaluateProgram(program Program) Object {
+	var result Object
+	for _, statement := range program.Staments {
+		result = Evaluate(statement)
+
+		if _, isReturn := result.(*Return); isReturn {
+			returnObj := result.(*Return)
+			return returnObj.Value
+		}
 	}
 
 	return result

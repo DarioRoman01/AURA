@@ -9,6 +9,7 @@ const (
 	BOOLEAN
 	INTEGERS
 	NULL
+	RETURNTYPE
 )
 
 type Object interface {
@@ -39,3 +40,10 @@ type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL }
 func (n *Null) Inspect() string  { return "nulo" }
+
+type Return struct {
+	Value Object
+}
+
+func (r *Return) Type() ObjectType { return RETURNTYPE }
+func (r *Return) Inspect() string  { return r.Value.Inspect() }
