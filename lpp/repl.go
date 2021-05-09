@@ -24,7 +24,11 @@ func StartRpl() {
 			printParseErros(parser.Errors())
 		}
 
-		fmt.Println(program.Str())
+		evaluated := Evaluate(program)
+		if evaluated != nil {
+			fmt.Println(evaluated.Inspect())
+		}
+
 		source, _ = reader.ReadString('\n')
 	}
 }

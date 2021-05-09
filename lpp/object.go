@@ -19,17 +19,15 @@ type Object interface {
 // int object type
 type Number struct{ Value int }
 
-func NewNumber(value int) *Number  { return &Number{Value: value} }
 func (i *Number) Type() ObjectType { return INTEGERS }
 func (i *Number) Inspect() string  { return fmt.Sprint(i.Value) }
 
 // Bool object type
-type Bool struct{ value bool }
+type Bool struct{ Value bool }
 
-func NewBool(value bool) *Bool   { return &Bool{value: value} }
 func (b *Bool) Type() ObjectType { return BOOLEAN }
 func (b *Bool) Inspect() string {
-	if b.value {
+	if b.Value {
 		return "verdero"
 	}
 
