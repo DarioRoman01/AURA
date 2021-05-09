@@ -24,7 +24,7 @@ func StartRpl() {
 		lexer := NewLexer(strings.Join(scanned, " "))
 		parser := NewParser(lexer)
 
-		env := NewEnviroment()
+		env := NewEnviroment(nil)
 		program := parser.ParseProgam()
 
 		if len(parser.Errors()) > 0 {

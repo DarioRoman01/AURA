@@ -61,9 +61,49 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	case *Identifier:
 		return evaluateIdentifier(node, env)
 
+	case *Function:
+		CheckIsNotNil(node.Body)
+		return NewDef(node.Body, env, node.Parameters...)
+
+	case *Call:
+		function := Evaluate(node.Function, env)
+		CheckIsNotNil(node.Arguments)
+		args := evaluateExpression(node.Arguments, env)
+		CheckIsNotNil(function)
+		return applyFunction(function, args)
+
 	default:
 		return SingletonNUll
 	}
+}
+
+func applyFunction(fn Object, args []Object) Object {
+	if _, isFn := fn.(*Def); !isFn {
+		return newError(notAFunction(types[fn.Type()]))
+	}
+
+	function := fn.(*Def)
+	extendedEnviron := extendFunctionEnviroment(function, args)
+	evaluated := Evaluate(function.Body, extendedEnviron)
+	CheckIsNotNil(evaluated)
+	return unwrapReturnValue(evaluated)
+}
+
+func unwrapReturnValue(obj Object) Object {
+	if _, isReturn := obj.(*Return); isReturn {
+		newObj := obj.(*Return)
+		return newObj.Value
+	}
+	return obj
+}
+
+func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
+	env := NewEnviroment(fn.Env)
+	for idx, param := range fn.Parameters {
+		env.SetItem(param.value, args[idx])
+	}
+
+	return env
 }
 
 func CheckIsNotNil(val interface{}) {
@@ -84,8 +124,20 @@ func evaluateBLockStaments(block *Block, env *Enviroment) Object {
 	return result
 }
 
+func evaluateExpression(expressions []Expression, env *Enviroment) []Object {
+	var result []Object
+
+	for _, expression := range expressions {
+		evaluated := Evaluate(expression, env)
+		CheckIsNotNil(evaluated)
+		result = append(result, evaluated)
+	}
+
+	return result
+}
+
 func evaluateIdentifier(node *Identifier, env *Enviroment) Object {
-	value, exists := env.store[node.value]
+	value, exists := env.GetItem(node.value)
 	if !exists {
 		return newError(unknownIdentifier(node.value))
 	}
@@ -263,4 +315,8 @@ func unknownInfixOperator(left, operator, rigth string) string {
 
 func unknownIdentifier(identifier string) string {
 	return fmt.Sprintf("Identificador no encontrado: %s", identifier)
+}
+
+func notAFunction(identifier string) string {
+	return fmt.Sprintf("No es una funcion: %s", identifier)
 }
