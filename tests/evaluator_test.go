@@ -20,6 +20,14 @@ func (e *EvaluatorTests) TestIntegerEvaluation() {
 		{"10", 10},
 		{"-5", -5},
 		{"-10", -10},
+		{"5 + 5;", 10},
+		{"5 - 10;", -5},
+		{"2 * 2 * 2 * 2;", 16},
+		{"50 / 2;", 25},
+		{"2 * (5 - 3)", 4},
+		{"(2 + 7) / 3", 3},
+		{"50 / 2 * 2 + 10", 60},
+		{"5 / 2", 2},
 	}
 
 	for _, test := range tests {
@@ -55,6 +63,21 @@ func (e *EvaluatorTests) TestBooleanEvaluation() {
 	}{
 		{"verdadero", true},
 		{"falso", false},
+		{"1 < 2", true},
+		{"1 > 2", false},
+		{"1 < 1", false},
+		{"1 > 1", false},
+		{"1 == 1", true},
+		{"1 == 2", false},
+		{"1 != 2", true},
+		{"verdadero == verdadero", true},
+		{"verdadero == falso", false},
+		{"verdadero != falso", true},
+		{"falso == falso", true},
+		{"(1 < 2) == verdadero", true},
+		{"(1 < 2) == falso", false},
+		{"(1 > 2) == verdadero", false},
+		{"(1 > 2) == falso", true},
 	}
 
 	for _, test := range tests {

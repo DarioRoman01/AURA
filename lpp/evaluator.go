@@ -28,6 +28,15 @@ func Evaluate(baseNode ASTNode) Object {
 		CheckIsNotNil(rigth)
 		return evaluatePrefixExpression(node.Operator, rigth)
 
+	case *Infix:
+		go CheckIsNotNil(node.Left)
+		CheckIsNotNil(node.Rigth)
+		left := Evaluate(node.Left)
+		rigth := Evaluate(node.Rigth)
+		go CheckIsNotNil(left)
+		CheckIsNotNil(rigth)
+		return evaluateInfixExpression(node.Operator, left, rigth)
+
 	default:
 		return nil
 	}
@@ -64,12 +73,51 @@ func evaluateBangOperatorExpression(rigth Object) Object {
 	}
 }
 
+func evaluateInfixExpression(operator string, left Object, right Object) Object {
+	if left.Type() == INTEGERS && right.Type() == INTEGERS {
+		return evaluateIntegerInfixExpression(operator, left, right)
+	} else if operator == "==" {
+		return toBooleanObject(left == right)
+	} else if operator == "!=" {
+		return toBooleanObject(left != right)
+	}
+
+	return singletonNUll
+}
+
+func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) Object {
+	leftVal := left.(*Number).Value
+	rigthVal := rigth.(*Number).Value
+
+	switch operator {
+	case "+":
+		return &Number{Value: leftVal + rigthVal}
+	case "-":
+		return &Number{Value: leftVal - rigthVal}
+	case "*":
+		return &Number{Value: leftVal * rigthVal}
+	case "/":
+		return &Number{Value: leftVal / rigthVal}
+	case ">":
+		return toBooleanObject(leftVal > rigthVal)
+	case "<":
+		return toBooleanObject(leftVal < rigthVal)
+	case "==":
+		return toBooleanObject(leftVal == rigthVal)
+	case "!=":
+		return toBooleanObject(leftVal != rigthVal)
+	default:
+		return singletonNUll
+	}
+}
+
 func evaluateMinusOperatorExpression(rigth Object) Object {
 	if _, isNumber := rigth.(*Number); !isNumber {
 		return nil
 	}
 	right := rigth.(*Number)
-	return &Number{Value: -right.Value}
+	right.Value = -right.Value
+	return right
 }
 
 func evaluatePrefixExpression(operator string, rigth Object) Object {
