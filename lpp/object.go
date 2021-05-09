@@ -67,3 +67,25 @@ func (e *Error) Type() ObjectType { return ERROR }
 func (e *Error) Inspect() string {
 	return fmt.Sprintf("Error: %s", e.Message)
 }
+
+type Enviroment struct {
+	store map[interface{}]Object
+}
+
+func NewEnviroment() *Enviroment {
+	return &Enviroment{
+		store: make(map[interface{}]Object),
+	}
+}
+
+func (e *Enviroment) GetItem(key interface{}) interface{} {
+	return e.store[key]
+}
+
+func (e *Enviroment) SetItem(key interface{}, val Object) {
+	e.store[key] = val
+}
+
+func (e *Enviroment) DelItem(key interface{}) {
+	delete(e.store, key)
+}
