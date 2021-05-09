@@ -138,6 +138,42 @@ func (e *EvaluatorTests) TestReturnEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestErrorhandling() {
+	tests := []struct {
+		source   string
+		expected string
+	}{
+		{source: "5 + verdadero;", expected: "Discrepancia de tipos: INTEGERS + BOOLEAN"},
+		{source: "5 + verdadero; 9;", expected: "Discrepancia de tipos: INTEGERS + BOOLEAN"},
+		{source: "-verdadero", expected: "Operador desconocido: -BOOLEAN"},
+		{source: "verdadero + falso", expected: "Operador desconocido: BOOLEAN + BOOLEAN"},
+		{source: "5; verdadero - falso; 10;", expected: "Operador desconocido: BOOLEAN - BOOLEAN"},
+		{source: `
+			si (10 > 7) {
+				regresa verdadero + falso;
+			}
+		`,
+			expected: "Operador desconocido: BOOLEAN + BOOLEAN",
+		},
+		{source: `
+			si (5 < 2) {
+				regresa 1;
+			} si_no {
+				regresa verdadero / falso;
+			}
+		`,
+			expected: "Operador desconocido: BOOLEAN / BOOLEAN",
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.Assert().IsType(&lpp.Error{}, evaluated.(*lpp.Error))
+		evaluatedError := evaluated.(*lpp.Error)
+		e.Assert().Equal(test.expected, evaluatedError.Message)
+	}
+}
+
 func (e *EvaluatorTests) testNullObject(eval lpp.Object) {
 	e.Assert().Equal(lpp.SingletonNUll, eval.(*lpp.Null))
 }
