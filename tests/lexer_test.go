@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"testing"
 	"unicode/utf8"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func loadTokens(rangee int, source string) []lpp.Token {
@@ -263,4 +265,21 @@ func TestUnderscoreVar(t *testing.T) {
 		t.Log("found: ", tokens)
 		t.Fail()
 	}
+}
+
+func TestString(t *testing.T) {
+	source := `
+		"foo";
+		"lpp is a great programing lenguage";
+	`
+
+	tokens := loadTokens(4, source)
+	expectedTokens := []lpp.Token{
+		{Token_type: lpp.STRING, Literal: "foo"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+		{Token_type: lpp.STRING, Literal: "lpp is a great programing lenguage"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+	}
+
+	assert.Equal(t, expectedTokens, tokens)
 }

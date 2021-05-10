@@ -243,6 +243,26 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 	}
 }
 
+func (e *EvaluatorTests) TestStringEvaluation() {
+	tests := []struct {
+		source   string
+		expected string
+	}{
+		{source: `"hello world!"`, expected: "hello world!"},
+		{
+			source:   `funcion() { regresa "lpp is awesome"; }()`,
+			expected: "lpp is awesome",
+		},
+	}
+
+	for _, test := range tests {
+		evluated := e.evaluateTests(test.source)
+		e.IsType(&lpp.String{}, evluated.(*lpp.String))
+		stringObj := evluated.(*lpp.String)
+		e.Equal(test.expected, stringObj.Value)
+	}
+}
+
 func (e *EvaluatorTests) testNullObject(eval lpp.Object) {
 	e.Assert().Equal(lpp.SingletonNUll, eval.(*lpp.Null))
 }

@@ -397,6 +397,17 @@ func TestOperatorPrecedence(t *testing.T) {
 	}
 }
 
+func TestStringLiteral(t *testing.T) {
+	source := `"hello world!";`
+
+	_, program := InitParserTests(source)
+	expressionStatement := program.Staments[0].(*lpp.ExpressionStament)
+	stringLiteral := expressionStatement.Expression.(*lpp.StringLiteral)
+
+	assert.IsType(t, &lpp.StringLiteral{}, stringLiteral)
+	assert.Equal(t, "hello world!", stringLiteral.Value)
+}
+
 func testBoolean(t *testing.T, expression lpp.Expression, expectedValue bool) {
 	boolean := expression.(*lpp.Boolean)
 	assert.Equal(t, *boolean.Value, expectedValue)
