@@ -164,6 +164,7 @@ func (e *EvaluatorTests) TestErrorhandling() {
 			expected: "Operador desconocido: BOOLEAN / BOOLEAN",
 		},
 		{source: "foobar;", expected: "Identificador no encontrado: foobar"},
+		{source: `"foo" - "bar";`, expected: "Operador desconocido: STRING - STRING"},
 	}
 
 	for _, test := range tests {
@@ -186,6 +187,38 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 		evaluated := e.evaluateTests(test.source)
 		e.testIntegerObject(evaluated, test.expected)
 	}
+}
+
+func (e *EvaluatorTests) TestBuiltinFunctions() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{source: `longitud("");`, expected: 0},
+		{source: `longitud("cuatro");`, expected: 6},
+		{source: `longitud("hola mundo");`, expected: 10},
+		{source: "longitud(1);", expected: "argumento para longitud no valido, se recibio INTEGERS"},
+		{
+			source:   `longitud("uno", "dos");`,
+			expected: "numero incorrecto de argumentos para longitud, se recibieron 2, se requieren 1",
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if val, isInt := test.expected.(int); isInt {
+			e.testIntegerObject(evaluated, val)
+		} else {
+			expected := test.expected.(string)
+			e.testErrorObject(evaluated, expected)
+		}
+	}
+}
+
+func (e *EvaluatorTests) testErrorObject(evlauated lpp.Object, expected string) {
+	e.IsType(&lpp.Error{}, evlauated.(*lpp.Error))
+	err := evlauated.(*lpp.Error)
+	e.Equal(expected, err.Message)
 }
 
 func (e *EvaluatorTests) TestFunctionEvaluation() {
@@ -260,6 +293,53 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 		e.IsType(&lpp.String{}, evluated.(*lpp.String))
 		stringObj := evluated.(*lpp.String)
 		e.Equal(test.expected, stringObj.Value)
+	}
+}
+
+func (e *EvaluatorTests) TestStringConcatenation() {
+	tests := []struct {
+		source   string
+		expected string
+	}{
+		{source: `"foo" + "bar";`, expected: "foobar"},
+		{source: `"hello," + " " + "world!";`, expected: "hello, world!"},
+		{source: `
+			var saludo = funcion(nombre) {
+				regresa "Hola " + nombre + "!";
+			};
+
+			saludo("David");
+		`,
+			expected: "Hola David!",
+		},
+	}
+
+	for _, test := range tests {
+		evluated := e.evaluateTests(test.source)
+		e.testStringObject(evluated, test.expected)
+	}
+}
+
+func (e *EvaluatorTests) testStringObject(evaluated lpp.Object, expected string) {
+	e.IsType(&lpp.String{}, evaluated.(*lpp.String))
+	str := evaluated.(*lpp.String)
+	e.Equal(expected, str.Value)
+}
+
+func (e *EvaluatorTests) TestStringComparison() {
+	tests := []struct {
+		source   string
+		expected bool
+	}{
+		{`"a" == "a"`, true},
+		{`"a" != "a"`, false},
+		{`"a" == "b"`, false},
+		{`"a" != "b"`, true},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testBooleanObject(evaluated, test.expected)
 	}
 }
 
