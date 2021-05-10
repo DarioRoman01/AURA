@@ -84,15 +84,17 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 
 // generates a new function object
 func applyFunction(fn Object, args []Object) Object {
-	if _, isFn := fn.(*Def); !isFn {
-		return newError(notAFunction(types[fn.Type()]))
+	if function, isFn := fn.(*Def); isFn {
+		extendedEnviron := extendFunctionEnviroment(function, args)
+		evaluated := Evaluate(function.Body, extendedEnviron)
+		CheckIsNotNil(evaluated)
+		return unwrapReturnValue(evaluated)
+
+	} else if builtin, isBuiltin := fn.(*Builtin); isBuiltin {
+		return builtin.Fn(args...)
 	}
 
-	function := fn.(*Def)
-	extendedEnviron := extendFunctionEnviroment(function, args)
-	evaluated := Evaluate(function.Body, extendedEnviron)
-	CheckIsNotNil(evaluated)
-	return unwrapReturnValue(evaluated)
+	return newError(notAFunction(types[fn.Type()]))
 }
 
 // unwrap the return value of a function
@@ -150,7 +152,12 @@ func evaluateExpression(expressions []Expression, env *Enviroment) []Object {
 func evaluateIdentifier(node *Identifier, env *Enviroment) Object {
 	value, exists := env.GetItem(node.value)
 	if !exists {
-		return newError(unknownIdentifier(node.value))
+		builtint, exists := BUILTINS[node.value]
+		if !exists {
+			return newError(unknownIdentifier(node.value))
+		}
+
+		return builtint
 	}
 
 	return value
@@ -229,6 +236,9 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 	case left.Type() == INTEGERS && right.Type() == INTEGERS:
 		return evaluateIntegerInfixExpression(operator, left, right)
 
+	case left.Type() == STRINGTYPE && right.Type() == STRINGTYPE:
+		return evaluateStringInfixExpression(operator, left, right)
+
 	case operator == "==":
 		return toBooleanObject(left == right)
 
@@ -250,6 +260,26 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 		))
 	}
 
+}
+
+func evaluateStringInfixExpression(operator string, left Object, rigth Object) Object {
+	leftVal := left.(*String).Value
+	rigthVal := rigth.(*String).Value
+
+	switch operator {
+	case "+":
+		return &String{Value: leftVal + rigthVal}
+	case "==":
+		return toBooleanObject(leftVal == rigthVal)
+	case "!=":
+		return toBooleanObject(leftVal != rigthVal)
+	default:
+		return newError(unknownInfixOperator(
+			types[left.Type()],
+			operator,
+			types[rigth.Type()],
+		))
+	}
 }
 
 // evluate infix integer operations
