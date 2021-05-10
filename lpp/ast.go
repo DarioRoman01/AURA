@@ -393,3 +393,22 @@ func (c Call) Str() string {
 	args := strings.Join(argsList, ", ")
 	return fmt.Sprintf("%s(%s)", c.Function.Str(), args)
 }
+
+type StringLiteral struct {
+	Token Token
+	Value string
+}
+
+func NewStringLiteral(token Token, value string) *StringLiteral {
+	return &StringLiteral{Token: token, Value: value}
+}
+
+func (s StringLiteral) TokenLiteral() string {
+	return s.Token.Literal
+}
+
+func (s StringLiteral) expressNode() {}
+
+func (s StringLiteral) Str() string {
+	return s.Value
+}

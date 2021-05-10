@@ -74,6 +74,9 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		CheckIsNotNil(function)
 		return applyFunction(function, args)
 
+	case *StringLiteral:
+		return &String{Value: node.Value}
+
 	default:
 		return SingletonNUll
 	}

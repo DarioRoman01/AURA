@@ -423,6 +423,11 @@ func (p *Parser) parseStament() Stmt {
 	return p.parserExpressionStatement()
 }
 
+func (p *Parser) parseStringLiteral() Expression {
+	p.checkCurrentTokenIsNotNil()
+	return NewStringLiteral(*p.currentToken, p.currentToken.Literal)
+}
+
 // check the precedence of the current token
 func (p *Parser) peekPrecedence() Precedence {
 	p.checkPeekTokenIsNotNil()
@@ -461,5 +466,6 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[MINUS] = p.parsePrefixExpression
 	prefixFns[NOT] = p.parsePrefixExpression
 	prefixFns[TRUE] = p.parseBoolean
+	prefixFns[STRING] = p.parseStringLiteral
 	return prefixFns
 }

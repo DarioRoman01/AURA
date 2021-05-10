@@ -32,6 +32,7 @@ const (
 	RPAREN
 	SEMICOLON
 	TIMES // *
+	STRING
 	TRUE
 )
 
@@ -62,6 +63,7 @@ var tokens = [...]string{
 	RPAREN:    "RPAREN",
 	SEMICOLON: "SEMICOLON",
 	TIMES:     "TIMES",
+	STRING:    "STRING",
 	TRUE:      "TRUE",
 }
 

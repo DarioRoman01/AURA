@@ -15,6 +15,7 @@ const (
 	INTEGERS
 	NULL
 	RETURNTYPE
+	STRINGTYPE
 )
 
 var types = [...]string{
@@ -23,6 +24,7 @@ var types = [...]string{
 	INTEGERS:   "INTEGERS",
 	NULL:       "NULL",
 	RETURNTYPE: "RETURN",
+	STRINGTYPE: "STRING",
 }
 
 type Object interface {
@@ -95,6 +97,13 @@ func (d *Def) Inspect() string {
 
 	return fmt.Sprintf("funcion(%s) {\n %s \n}", strings.Join(argsList, ", "), d.Body.Str())
 }
+
+type String struct {
+	Value string
+}
+
+func (s *String) Type() ObjectType { return STRINGTYPE }
+func (s *String) Inspect() string  { return s.Value }
 
 // enviroment handles stores the variables of the given program
 type Enviroment struct {

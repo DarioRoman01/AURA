@@ -93,6 +93,10 @@ func (l *Lexer) NextToken() Token {
 		literal := l.readNumber()
 		return Token{Token_type: INT, Literal: literal}
 
+	} else if equal, _ := regexp.MatchString(`^"$`, l.character); equal {
+		literal := l.readString()
+		token = Token{Token_type: STRING, Literal: literal}
+
 	} else {
 		token = Token{Token_type: ILLEGAL, Literal: l.character}
 	}
@@ -151,6 +155,18 @@ func (l *Lexer) readNumber() string {
 	}
 
 	return string(l.source[initialPosition:l.position])
+}
+
+func (l *Lexer) readString() string {
+	l.readCharacter()
+	initialPosition := l.position
+
+	for l.character != `"` && l.read_position <= utf8.RuneCountInString(l.source) {
+		l.readCharacter()
+	}
+
+	str := string(l.source[initialPosition:l.position])
+	return str
 }
 
 // return the next of character of the current string
