@@ -10,6 +10,7 @@ type ObjectType int
 const (
 	ObjTypeHead = iota
 	BOOLEAN
+	BUILTIN
 	DEF
 	ERROR
 	INTEGERS
@@ -104,6 +105,17 @@ type String struct {
 
 func (s *String) Type() ObjectType { return STRINGTYPE }
 func (s *String) Inspect() string  { return s.Value }
+
+type BuiltinFunction func(args ...Object) Object
+
+type Builtin struct {
+	Fn BuiltinFunction
+}
+
+func NewBuiltin(fn BuiltinFunction) *Builtin { return &Builtin{Fn: fn} }
+
+func (b *Builtin) Type() ObjectType { return BUILTIN }
+func (b *Builtin) Inspect() string  { return "builtin function" }
 
 // enviroment handles stores the variables of the given program
 type Enviroment struct {
