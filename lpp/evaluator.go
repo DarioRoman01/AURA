@@ -2,10 +2,12 @@ package lpp
 
 import "fmt"
 
+// use singleton patern with true false and null
 var singletonTRUE = &Bool{Value: true}
 var singletonFALSE = &Bool{Value: false}
 var SingletonNUll = &Null{}
 
+// evlauate given nodes of an ast
 func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	switch node := baseNode.(type) {
 
@@ -77,6 +79,7 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	}
 }
 
+// generates a new function object
 func applyFunction(fn Object, args []Object) Object {
 	if _, isFn := fn.(*Def); !isFn {
 		return newError(notAFunction(types[fn.Type()]))
@@ -89,14 +92,15 @@ func applyFunction(fn Object, args []Object) Object {
 	return unwrapReturnValue(evaluated)
 }
 
+// unwrap the return value of a function
 func unwrapReturnValue(obj Object) Object {
 	if _, isReturn := obj.(*Return); isReturn {
-		newObj := obj.(*Return)
-		return newObj.Value
+		return obj.(*Return).Value
 	}
 	return obj
 }
 
+// create a new enviroment when a function is called
 func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
 	env := NewEnviroment(fn.Env)
 	for idx, param := range fn.Parameters {
@@ -106,12 +110,14 @@ func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
 	return env
 }
 
+// check that the given value is not nil
 func CheckIsNotNil(val interface{}) {
 	if val == nil {
 		panic("expression or stament cannot be nil :(")
 	}
 }
 
+// evluate a block statement
 func evaluateBLockStaments(block *Block, env *Enviroment) Object {
 	var result Object = nil
 	for _, statement := range block.Staments {
@@ -124,6 +130,7 @@ func evaluateBLockStaments(block *Block, env *Enviroment) Object {
 	return result
 }
 
+// evaluate an slice of expressions
 func evaluateExpression(expressions []Expression, env *Enviroment) []Object {
 	var result []Object
 
@@ -136,6 +143,7 @@ func evaluateExpression(expressions []Expression, env *Enviroment) []Object {
 	return result
 }
 
+// check if given identifier exists in the enviroment
 func evaluateIdentifier(node *Identifier, env *Enviroment) Object {
 	value, exists := env.GetItem(node.value)
 	if !exists {
@@ -145,6 +153,7 @@ func evaluateIdentifier(node *Identifier, env *Enviroment) Object {
 	return value
 }
 
+// evaluate program node
 func evaluateProgram(program Program, env *Enviroment) Object {
 	var result Object
 	for _, statement := range program.Staments {
@@ -160,6 +169,7 @@ func evaluateProgram(program Program, env *Enviroment) Object {
 	return result
 }
 
+// change the bool value of the object
 func evaluateBangOperatorExpression(rigth Object) Object {
 	switch {
 	case rigth == singletonTRUE:
@@ -192,6 +202,7 @@ func evaluateIfExpression(ifExpression *If, env *Enviroment) Object {
 	return SingletonNUll
 }
 
+// check that the current object is true or false
 func isTruthy(obj Object) bool {
 	switch {
 	case obj == SingletonNUll:
@@ -208,6 +219,7 @@ func isTruthy(obj Object) bool {
 	}
 }
 
+// evluate infix expressions between objects
 func evaluateInfixExpression(operator string, left Object, right Object) Object {
 	switch {
 
@@ -237,6 +249,7 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 
 }
 
+// evluate infix integer operations
 func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) Object {
 	leftVal := left.(*Number).Value
 	rigthVal := rigth.(*Number).Value
@@ -267,6 +280,7 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 	}
 }
 
+// check that the character after - is a number
 func evaluateMinusOperatorExpression(rigth Object) Object {
 	if _, isNumber := rigth.(*Number); !isNumber {
 		return newError(unknownPrefixOperator("-", types[rigth.Type()]))
@@ -277,6 +291,7 @@ func evaluateMinusOperatorExpression(rigth Object) Object {
 	return right
 }
 
+// evaluate prefix expressions
 func evaluatePrefixExpression(operator string, rigth Object) Object {
 	switch operator {
 	case "!":
@@ -290,10 +305,12 @@ func evaluatePrefixExpression(operator string, rigth Object) Object {
 	}
 }
 
+// generates a new error instance
 func newError(message string) *Error {
 	return &Error{Message: message}
 }
 
+// recibe an expression and return the corresponding object type
 func toBooleanObject(val bool) Object {
 	if val {
 		return singletonTRUE
@@ -301,6 +318,7 @@ func toBooleanObject(val bool) Object {
 	return singletonFALSE
 }
 
+// utils functions to return errors
 func typeMismatchError(left, operator, rigth string) string {
 	return fmt.Sprintf("Discrepancia de tipos: %s %s %s", left, operator, rigth)
 }

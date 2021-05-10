@@ -98,18 +98,18 @@ func (d *Def) Inspect() string {
 
 // enviroment handles stores the variables of the given program
 type Enviroment struct {
-	store map[interface{}]Object
+	store map[string]Object
 	outer *Enviroment
 }
 
 func NewEnviroment(outer *Enviroment) *Enviroment {
 	return &Enviroment{
-		store: make(map[interface{}]Object),
+		store: make(map[string]Object),
 		outer: outer,
 	}
 }
 
-func (e *Enviroment) GetItem(key interface{}) (Object, bool) {
+func (e *Enviroment) GetItem(key string) (Object, bool) {
 	val, exists := e.store[key]
 	if !exists {
 		if e.outer != nil {
@@ -121,10 +121,10 @@ func (e *Enviroment) GetItem(key interface{}) (Object, bool) {
 	return val, true
 }
 
-func (e *Enviroment) SetItem(key interface{}, val Object) {
+func (e *Enviroment) SetItem(key string, val Object) {
 	e.store[key] = val
 }
 
-func (e *Enviroment) DelItem(key interface{}) {
+func (e *Enviroment) DelItem(key string) {
 	delete(e.store, key)
 }
