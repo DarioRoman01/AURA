@@ -20,7 +20,6 @@ func StartRpl() {
 	var scanned []string
 
 	for {
-
 		fmt.Print(">> ")
 		scanner.Scan()
 		source := scanner.Text()
@@ -44,6 +43,5 @@ func StartRpl() {
 		if evaluated != nil {
 			fmt.Println(evaluated.Inspect())
 		}
-
 	}
 }

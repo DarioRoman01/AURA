@@ -16,11 +16,11 @@ c; // this will print 10
 
 ```
 var suma = funcion(x, y) {
-    regresa x + 5;
+    regresa x + y;
 };
 
 var resultado = suma(5, 4);
-resultado; // this will print the variable resultado
+resultado; // this will print 9
 ```
 
 ```
