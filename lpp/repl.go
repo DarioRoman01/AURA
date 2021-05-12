@@ -16,10 +16,19 @@ func printParseErros(errors []string) {
 }
 
 func StartRpl() {
-	reader := bufio.NewReader(os.Stdin)
+	scanner := bufio.NewScanner(os.Stdin)
 	var scanned []string
 
-	for source, _ := reader.ReadString('\n'); source != "salir()\n"; {
+	for {
+
+		fmt.Print(">> ")
+		scanner.Scan()
+		source := scanner.Text()
+
+		if source == "salir()" {
+			break
+		}
+
 		scanned = append(scanned, source)
 		lexer := NewLexer(strings.Join(scanned, " "))
 		parser := NewParser(lexer)
@@ -36,6 +45,5 @@ func StartRpl() {
 			fmt.Println(evaluated.Inspect())
 		}
 
-		source, _ = reader.ReadString('\n')
 	}
 }
