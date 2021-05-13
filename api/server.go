@@ -29,6 +29,7 @@ func handleParsing(w http.ResponseWriter, r *http.Request) {
 	if !exist {
 		response = "source field is required"
 		http.Error(w, response, http.StatusBadRequest)
+		return
 	}
 
 	evaluated, erros := Parse(source.(string))

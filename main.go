@@ -1,9 +1,9 @@
 package main
 
 import (
-	"lpp/api"
+	"lpp/lpp"
 )
 
 func main() {
-	api.Run()
+	lpp.StartRpl()
 }
