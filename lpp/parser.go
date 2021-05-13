@@ -129,7 +129,12 @@ func (p *Parser) expepectedToken(tokenType TokenType) bool {
 // add a error to errors list if there is a unexpected token error
 func (p *Parser) expectedTokenError(tokenType TokenType) {
 	p.checkCurrentTokenIsNotNil()
-	err := fmt.Sprintf("se esperaba que el siguient token fuera %s pero se obtuvo %s", tokens[tokenType], tokens[p.peekToken.Token_type])
+	err := fmt.Sprintf(
+		"se esperaba que el siguient token fuera %s pero se obtuvo %s",
+		tokens[tokenType],
+		tokens[p.peekToken.Token_type],
+	)
+
 	p.errors = append(p.errors, err)
 }
 
@@ -224,6 +229,7 @@ func (p *Parser) parseExpression(precedence Precedence) Expression {
 		if leftExpression == nil {
 			panic("left expression cannot be nil while parsing a expression")
 		}
+
 		leftExpression = infixParseFn(leftExpression)
 	}
 

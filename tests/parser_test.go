@@ -117,7 +117,6 @@ func TestNamesInLetStatements(t *testing.T) {
 func TestParseErrors(t *testing.T) {
 	source := "var x 5;"
 	parser, _ := InitParserTests(source)
-
 	if !assert.Equal(t, 1, len(parser.Errors())) {
 		t.Fail()
 	}

@@ -41,6 +41,7 @@ func StartRpl() {
 		if len(parser.Errors()) > 0 {
 			printParseErros(parser.Errors())
 			scanned = scanned[:len(scanned)-1]
+			continue
 		}
 
 		evaluated := Evaluate(program, env)
@@ -48,7 +49,7 @@ func StartRpl() {
 			fmt.Println(evaluated.Inspect())
 
 			if _, isError := evaluated.(*Error); isError {
-				scanned = scanned[:len(scanned)-1] // delete erros in scanned array
+				scanned = scanned[:len(scanned)-1] // delete error in scanned array
 			}
 		}
 	}
