@@ -19,6 +19,9 @@ func StartRpl() {
 	scanner := bufio.NewScanner(os.Stdin)
 	var scanned []string
 
+	fmt.Println("Bienvenido a lpp")
+	fmt.Println("escribe un comando para comenzar")
+
 	for {
 		fmt.Print(">> ")
 		scanner.Scan()
