@@ -222,7 +222,7 @@ func (p *Parser) parseExpression(precedence Precedence) Expression {
 
 		p.advanceTokens()
 		if leftExpression == nil {
-			panic("cannot be nil")
+			panic("left expression cannot be nil while parsing a expression")
 		}
 		leftExpression = infixParseFn(leftExpression)
 	}
@@ -284,7 +284,6 @@ func (p *Parser) parseFunctionParameters() []*Identifier {
 	}
 
 	p.advanceTokens()
-	p.checkCurrentTokenIsNotNil()
 	identifier := NewIdentifier(*p.currentToken, p.currentToken.Literal)
 	params = append(params, identifier)
 
@@ -355,6 +354,7 @@ func (p *Parser) parseIf() Expression {
 func (p *Parser) parseInteger() Expression {
 	p.checkCurrentTokenIsNotNil()
 	integer := NewInteger(*p.currentToken, nil)
+
 	val, err := strconv.Atoi(p.currentToken.Literal)
 	if err != nil {
 		message := fmt.Sprintf("no se pudo parsear %s como entero", p.currentToken.Literal)

@@ -11,7 +11,9 @@ in spanish
 var a = 5;
 var b = 5;
 var c = a + b;
-c; // this will print 10
+
+// this will print 10
+c; 
 ```
 
 ```
@@ -19,24 +21,30 @@ var suma = funcion(x, y) {
     regresa x + y;
 };
 
+// this will print 9
 var resultado = suma(5, 4);
-resultado; // this will print 9
+resultado; 
 ```
 
 ```
 var mayor_de_edad = funcion(edad) {
-    si (edad > 18) {
+    si (edad >= 18) {
         regresa verdadero;
     } si_no {
         regresa falso;
     }
 }
 
-mayor_de_edad(20) // this will print true
-mayor_de_edad(10) // this will print false
+// this will print verdadero
+mayor_de_edad(18);
 
+// this will print falso
+mayor_de_edad(10);   
+
+
+// this will print verdadero
 var edad = 30;
-mayor_de_edad(edad); // this will print true
+mayor_de_edad(edad); 
 ```
 
 
