@@ -93,7 +93,7 @@ func LookUpTokenType(literal string) TokenType {
 	TokenType, exists := keywords[literal]
 	if exists {
 		return TokenType
-	} else {
-		return IDENT
 	}
+
+	return IDENT
 }

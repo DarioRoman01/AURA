@@ -99,8 +99,8 @@ func applyFunction(fn Object, args []Object) Object {
 
 // unwrap the return value of a function
 func unwrapReturnValue(obj Object) Object {
-	if _, isReturn := obj.(*Return); isReturn {
-		return obj.(*Return).Value
+	if obj, isReturn := obj.(*Return); isReturn {
+		return obj.Value
 	}
 	return obj
 }
@@ -169,10 +169,10 @@ func evaluateProgram(program Program, env *Enviroment) Object {
 	for _, statement := range program.Staments {
 		result = Evaluate(statement, env)
 
-		if _, isReturn := result.(*Return); isReturn {
-			return result.(*Return).Value
-		} else if _, isError := result.(*Error); isError {
-			return result
+		if returnObj, isReturn := result.(*Return); isReturn {
+			return returnObj.Value
+		} else if err, isError := result.(*Error); isError {
+			return err
 		}
 	}
 
@@ -319,13 +319,12 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 
 // check that the character after - is a number
 func evaluateMinusOperatorExpression(rigth Object) Object {
-	if _, isNumber := rigth.(*Number); !isNumber {
-		return newError(unknownPrefixOperator("-", types[rigth.Type()]))
+	if right, isNumber := rigth.(*Number); isNumber {
+		right.Value = -right.Value
+		return right
 	}
 
-	right := rigth.(*Number)
-	right.Value = -right.Value
-	return right
+	return newError(unknownPrefixOperator("-", types[rigth.Type()]))
 }
 
 // evaluate prefix expressions
