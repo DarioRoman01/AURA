@@ -223,9 +223,11 @@ func TestTwoCharacterOperator(t *testing.T) {
 	source := `
 		10 == 10;
 		10 != 9;
+		10 >= 9;
+		10 <= 9;
 	`
 
-	tokens := loadTokens(8, source)
+	tokens := loadTokens(16, source)
 
 	expectedTokens := []lpp.Token{
 		{Token_type: lpp.INT, Literal: "10"},
@@ -234,6 +236,14 @@ func TestTwoCharacterOperator(t *testing.T) {
 		{Token_type: lpp.SEMICOLON, Literal: ";"},
 		{Token_type: lpp.INT, Literal: "10"},
 		{Token_type: lpp.NOT_EQ, Literal: "!="},
+		{Token_type: lpp.INT, Literal: "9"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+		{Token_type: lpp.INT, Literal: "10"},
+		{Token_type: lpp.GTOREQ, Literal: ">="},
+		{Token_type: lpp.INT, Literal: "9"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+		{Token_type: lpp.INT, Literal: "10"},
+		{Token_type: lpp.LTOREQ, Literal: "<="},
 		{Token_type: lpp.INT, Literal: "9"},
 		{Token_type: lpp.SEMICOLON, Literal: ";"},
 	}

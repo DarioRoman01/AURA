@@ -304,6 +304,10 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 		return toBooleanObject(leftVal == rigthVal)
 	case "!=":
 		return toBooleanObject(leftVal != rigthVal)
+	case ">=":
+		return toBooleanObject(leftVal >= rigthVal)
+	case "<=":
+		return toBooleanObject(leftVal <= rigthVal)
 	default:
 		return newError(unknownInfixOperator(
 			types[left.Type()],

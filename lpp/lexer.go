@@ -63,10 +63,18 @@ func (l *Lexer) NextToken() Token {
 		token = Token{Token_type: SEMICOLON, Literal: l.character}
 
 	} else if equal, _ := regexp.MatchString(`^<$`, l.character); equal {
-		token = Token{Token_type: LT, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(LTOREQ)
+		} else {
+			token = Token{Token_type: LT, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^>$`, l.character); equal {
-		token = Token{Token_type: GT, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(GTOREQ)
+		} else {
+			token = Token{Token_type: GT, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^\-$`, l.character); equal {
 		token = Token{Token_type: MINUS, Literal: l.character}

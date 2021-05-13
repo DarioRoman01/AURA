@@ -28,7 +28,9 @@ var PRECEDENCES = map[TokenType]Precedence{
 	EQ:       EQUEAL,
 	NOT_EQ:   EQUEAL,
 	LT:       LESSGRATER,
+	LTOREQ:   LESSGRATER,
 	GT:       LESSGRATER,
+	GTOREQ:   LESSGRATER,
 	PLUS:     SUM,
 	MINUS:    SUM,
 	DIVISION: PRODUCT,
@@ -448,6 +450,8 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[TIMES] = p.parseInfixExpression
 	inFixFns[EQ] = p.parseInfixExpression
 	inFixFns[NOT_EQ] = p.parseInfixExpression
+	inFixFns[GTOREQ] = p.parseInfixExpression
+	inFixFns[LTOREQ] = p.parseInfixExpression
 	inFixFns[LT] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall

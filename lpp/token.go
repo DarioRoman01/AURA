@@ -14,7 +14,8 @@ const (
 	EQ
 	FALSE
 	FUNCTION
-	GT // grather than
+	GT     // grather than
+	GTOREQ // grater than or equeal
 	IDENT
 	IF
 	ILLEGAL
@@ -22,9 +23,10 @@ const (
 	LBRACE
 	LET
 	LPAREN
-	LT    // less than
-	MINUS // -
-	NOT   // !
+	LT     // less than
+	LTOREQ // less than or equal
+	MINUS  // -
+	NOT    // !
 	NOT_EQ
 	PLUS
 	RBRACE
