@@ -72,6 +72,7 @@ func (p *Parser) advanceTokens() {
 
 // check that the current token is not nil
 func (p *Parser) checkCurrentTokenIsNotNil() {
+	defer p.handlePeekTokenPanic()
 	if p.currentToken == nil {
 		panic("current token cannot be nil")
 	}
@@ -79,8 +80,15 @@ func (p *Parser) checkCurrentTokenIsNotNil() {
 
 // check that the peek token is not nil
 func (p *Parser) checkPeekTokenIsNotNil() {
+	defer p.handlePeekTokenPanic()
 	if p.peekToken == nil {
 		panic("peek token cannot be nil")
+	}
+}
+
+func (p *Parser) handlePeekTokenPanic() {
+	if r := recover(); r != nil {
+		fmt.Println("Syntax error")
 	}
 }
 
@@ -208,6 +216,7 @@ func (p *Parser) parseCallArguments() []Expression {
 
 // parse a expression and check if there is a valid expression
 func (p *Parser) parseExpression(precedence Precedence) Expression {
+	defer p.handlePeekTokenPanic()
 	p.checkCurrentTokenIsNotNil()
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
 	if !exist {

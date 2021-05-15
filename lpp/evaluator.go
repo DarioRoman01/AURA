@@ -117,8 +117,15 @@ func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
 
 // check that the given value is not nil
 func CheckIsNotNil(val interface{}) {
+	defer handlePanic()
 	if val == nil {
 		panic("expression or stament cannot be nil :(")
+	}
+}
+
+func handlePanic() {
+	if r := recover(); r != nil {
+		fmt.Println("syntax Error")
 	}
 }
 
