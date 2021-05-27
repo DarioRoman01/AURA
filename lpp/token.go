@@ -28,6 +28,7 @@ const (
 	MINUS  // -
 	NOT    // !
 	NOT_EQ
+	MOD
 	PLUS
 	RBRACE
 	RETURN
@@ -59,6 +60,7 @@ var tokens = [...]string{
 	MINUS:     "MINNUS",
 	NOT:       "NOT",
 	NOT_EQ:    "NOT_EQ",
+	MOD:       "MOD",
 	PLUS:      "PLUS",
 	RBRACE:    "RBRACE",
 	RETURN:    "RETURN",

@@ -35,6 +35,7 @@ var PRECEDENCES = map[TokenType]Precedence{
 	MINUS:    SUM,
 	DIVISION: PRODUCT,
 	TIMES:    PRODUCT,
+	MOD:      PRODUCT,
 	LPAREN:   CALL,
 }
 
@@ -470,6 +471,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[LT] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
+	inFixFns[MOD] = p.parseInfixExpression
 	return inFixFns
 }
 

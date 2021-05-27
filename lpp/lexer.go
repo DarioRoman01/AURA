@@ -62,6 +62,9 @@ func (l *Lexer) NextToken() Token {
 	} else if equal, _ := regexp.MatchString(`^;$`, l.character); equal {
 		token = Token{Token_type: SEMICOLON, Literal: l.character}
 
+	} else if equal, _ := regexp.MatchString(`^\%$`, l.character); equal {
+		token = Token{Token_type: MOD, Literal: l.character}
+
 	} else if equal, _ := regexp.MatchString(`^<$`, l.character); equal {
 		if l.peekCharacter() == "=" {
 			token = l.makeTwoCharacterToken(LTOREQ)
