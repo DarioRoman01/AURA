@@ -12,8 +12,7 @@ var a = 5;
 var b = 5;
 var c = a + b;
 
-// this will print 10
-c; 
+escribir(c); // prints 10
 ```
 
 ```
@@ -23,7 +22,7 @@ var suma = funcion(x, y) {
 
 // this will print 9
 var resultado = suma(5, 4);
-resultado; 
+escribir(resultado); 
 ```
 
 ```
@@ -35,17 +34,18 @@ var mayor_de_edad = funcion(edad) {
     }
 }
 
-// this will print verdadero
-mayor_de_edad(18);
+var resultado = mayor_de_edad(18);
+escribir(resultado); // prints verdadero
 
-// this will print falso
-mayor_de_edad(10);   
+var resultado = mayor_de_edad(10);   
+escribir(resultado); // prints falso
 
-
-// this will print verdadero
 var edad = 30;
-mayor_de_edad(edad); 
+var resultado = mayor_de_edad(edad); 
+escribir(resultado); // prints verdadero
 ```
+
+you can see more examples in the examples folder.
 
 ## Usage
 first copy the repository and change to the directory created:
@@ -60,9 +60,14 @@ check that tests pass:
 ```
 $ go test -v ./...
 ```
-and then execute the app and play with the repl:
+then you can create a file or play with the repl to play with the repl just run:
 ```
-$ go run main.go
+$ go run main.go rpl
+```
+
+to use a file you can create a file with the .lpp extension and run:
+```
+$ go run main.go file -path <path to your file>
 ```
 
 
