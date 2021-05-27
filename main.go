@@ -16,7 +16,7 @@ func (cli *CommandLine) Repl() {
 
 func (cli *CommandLine) PrintUsage() {
 	fmt.Println("Usage: ")
-	fmt.Println("	file -path <path to your file> execute the given file")
+	fmt.Println("	file -path <path to your file> - will execute the given file")
 	fmt.Println("	rpl - start the programing lenguage repl")
 }
 
@@ -30,7 +30,8 @@ func (cli *CommandLine) ValidateArgs() {
 func (cli *CommandLine) ReadFile(path string) {
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
-		fmt.Println("Error: unable to read the give file")
+		cli.PrintUsage()
+		os.Exit(0)
 	}
 
 	if len(content) == 0 {

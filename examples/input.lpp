@@ -7,6 +7,5 @@ var es_mayor = funcion(edad) {
 }
 
 var edad = recibir_entero("ingresa tu edad: ");
-
 var resultado = es_mayor(edad);
 escribir(resultado);
