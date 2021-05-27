@@ -1,13 +1,25 @@
-var edad = 19;
-
-var es_mayor = funcion(edad) {
-    si (edad >= 18) {
-        regresa "es mayor de edad";
+var fib = funcion(numero) {
+    si (numero <= 2) {
+        regresa 1;
     } si_no {
-        regresa "no es mayor de edad";
+        regresa fib(numero - 2) + fib(n - 1);
     }
 }
 
-var resultado = es_mayor(edad);
+var resultado = fib(10);
+escribir(resultado);
+
+var es_par = funcion(numero) {
+    si (numero % 2 == 0) {
+        regresa verdadero;
+    } si_no {
+        regresa falso;
+    }
+}
+
+var resultado = es_par(3);
+escribir(resultado);
+
+var resultado = es_par(4);
 escribir(resultado);
 
