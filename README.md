@@ -47,6 +47,23 @@ var edad = 30;
 mayor_de_edad(edad); 
 ```
 
+## Usage
+first copy the repository and change to the directory created:
+```
+$ git clone https://github.com/Haizza1/lpp && cd lpp
+```
+download the dependencies:
+```
+$ go mod download
+```
+check that tests pass:
+```
+$ go test -v ./...
+```
+and then execute the app and play with the repl:
+```
+$ go run main.go
+```
 
 
 ## Contributions
