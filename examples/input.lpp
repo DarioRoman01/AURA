@@ -1,0 +1,12 @@
+var es_mayor = funcion(edad) {
+    si (edad >= 18) {
+        regresa "eres mayor de edad";
+    } si_no {
+        regresa "no eres mayor de edad";
+    }
+}
+
+var edad = recibir_entero("ingresa tu edad: ");
+
+var resultado = es_mayor(edad);
+escribir(resultado);
