@@ -1,0 +1,13 @@
+var edad = 19;
+
+var es_mayor = funcion(edad) {
+    si (edad >= 18) {
+        regresa "es mayor de edad";
+    } si_no {
+        regresa "no es mayor de edad";
+    }
+}
+
+var resultado = es_mayor(edad);
+escribir(resultado);
+

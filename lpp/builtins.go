@@ -12,12 +12,8 @@ func wrongNumberofArgs(found, actual int) string {
 	return fmt.Sprintf("numero incorrecto de argumentos para longitud, se recibieron %d, se requieren %d", found, actual)
 }
 
-func unsoportedArgumentType(objType string) string {
-	return fmt.Sprintf("argumento para longitud no valido, se recibio %s", objType)
-}
-
-func noRequiredArgs(funcName string, actual int) string {
-	return fmt.Sprintf("La funcion %s no recibe arguments pero se recibieron %d", funcName, actual)
+func unsoportedArgumentType(funcname, objType string) string {
+	return fmt.Sprintf("argumento para %s no valido, se recibio %s", funcname, objType)
 }
 
 func Longitud(args ...Object) Object {
@@ -29,7 +25,7 @@ func Longitud(args ...Object) Object {
 		return &Number{Value: utf8.RuneCountInString(arg.Value)}
 	}
 
-	return &Error{Message: unsoportedArgumentType(types[args[0].Type()])}
+	return &Error{Message: unsoportedArgumentType("longitud", types[args[0].Type()])}
 }
 
 func Escribir(args ...Object) Object {
@@ -40,8 +36,7 @@ func Escribir(args ...Object) Object {
 	switch node := args[0].(type) {
 
 	case *String:
-		str := fmt.Sprintf("%s\n", node.Inspect())
-		fmt.Println(str)
+		fmt.Println(node.Inspect())
 
 	case *Number:
 		fmt.Println(node.Inspect())
@@ -50,39 +45,53 @@ func Escribir(args ...Object) Object {
 		fmt.Println(node.Inspect())
 
 	default:
-		return &Error{Message: unsoportedArgumentType(types[node.Type()])}
+		return &Error{Message: unsoportedArgumentType("escribir", types[node.Type()])}
 	}
 
 	return nil
 }
 
 func Recibir(args ...Object) Object {
-	if len(args) > 0 {
-		return &Error{Message: noRequiredArgs("recibir", len(args))}
+	if len(args) > 1 {
+		return &Error{Message: wrongNumberofArgs(len(args), 1)}
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	str := scanner.Text()
+	if arg, isString := args[0].(*String); isString {
+		fmt.Print(arg.Inspect())
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		str := scanner.Text()
 
-	return &String{Value: str}
+		return &String{Value: str}
+	}
+
+	return &Error{Message: unsoportedArgumentType("recibir", types[args[0].Type()])}
 }
 
 func RecibirEntero(args ...Object) Object {
-	if len(args) > 0 {
-		return &Error{Message: noRequiredArgs("recibir", len(args))}
+	if len(args) > 1 {
+		return &Error{Message: wrongNumberofArgs(len(args), 1)}
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	strInt := scanner.Text()
+	if arg, isString := args[0].(*String); isString {
+		fmt.Print(arg.Inspect())
 
-	number, err := strconv.Atoi(strInt)
-	if err != nil {
-		return &Error{Message: "No se puede parsear como entero"}
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		strInt := scanner.Text()
+
+		number, err := strconv.Atoi(strInt)
+		if err != nil {
+			return &Error{Message: "No se puede parsear como entero"}
+		}
+
+		return &Number{Value: number}
 	}
 
-	return &Number{Value: number}
+	return &Error{
+		Message: unsoportedArgumentType("recbir_entero", types[args[0].Type()]),
+	}
+
 }
 
 var BUILTINS = map[string]*Builtin{
