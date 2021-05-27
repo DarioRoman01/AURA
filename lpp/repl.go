@@ -45,6 +45,10 @@ func StartRpl() {
 		}
 
 		evaluated := Evaluate(program, env)
+		if strings.Contains(scanned[len(scanned)-1], "escribir") {
+			scanned = scanned[:len(scanned)-1] // avoid to print the previus print
+		}
+
 		if evaluated != nil {
 			fmt.Println(evaluated.Inspect())
 
