@@ -60,14 +60,19 @@ check that tests pass:
 ```
 $ go test -v ./...
 ```
+compile the package:
+```
+$ go build -o ppl
+```
+
 then you can create a file or play with the repl to play with the repl just run:
 ```
-$ go run main.go rpl
+$ ./ppl rpl
 ```
 
 to use a file you can create a file with the .lpp extension and run:
 ```
-$ go run main.go file -path <path to your file>
+$ ./ppl file -path <path to your file>
 ```
 
 
