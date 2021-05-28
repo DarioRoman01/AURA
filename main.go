@@ -47,6 +47,8 @@ func (cli *CommandLine) ReadFile(path string) {
 		for _, err := range parser.Errors() {
 			fmt.Println(err)
 		}
+
+		os.Exit(0)
 	}
 
 	evaluated := lpp.Evaluate(program, env)
