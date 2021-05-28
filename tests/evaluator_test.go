@@ -218,6 +218,9 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: "tipo(1);", expected: "INTEGERS"},
 		{source: "tipo(verdadero)", expected: "BOOLEAN"},
 		{source: `tipo("hello world")`, expected: "STRING"},
+		{source: `entero("1")`, expected: 1},
+		{source: `entero("hola")`, expected: "No se puede parsear como entero hola"},
+		{source: "texto(12)", expected: "12"},
 	}
 
 	for _, test := range tests {
