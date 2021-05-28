@@ -20,14 +20,14 @@ const (
 )
 
 var types = [...]string{
-	BOOLEAN:    "BOOLEAN",
+	BOOLEAN:    "BOOLEANO",
 	BUILTIN:    "BUILTIN",
-	DEF:        "DEF",
+	DEF:        "FUNCION",
 	ERROR:      "ERROR",
-	INTEGERS:   "INTEGERS",
-	NULL:       "NULL",
-	RETURNTYPE: "RETURN",
-	STRINGTYPE: "STRING",
+	INTEGERS:   "ENTERO",
+	NULL:       "NULO",
+	RETURNTYPE: "REGRESA",
+	STRINGTYPE: "TEXTO",
 }
 
 type Object interface {

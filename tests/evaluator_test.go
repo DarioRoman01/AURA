@@ -155,17 +155,17 @@ func (e *EvaluatorTests) TestErrorhandling() {
 		source   string
 		expected string
 	}{
-		{source: "5 + verdadero;", expected: "Discrepancia de tipos: INTEGERS + BOOLEAN"},
-		{source: "5 + verdadero; 9;", expected: "Discrepancia de tipos: INTEGERS + BOOLEAN"},
-		{source: "-verdadero", expected: "Operador desconocido: -BOOLEAN"},
-		{source: "verdadero + falso", expected: "Operador desconocido: BOOLEAN + BOOLEAN"},
-		{source: "5; verdadero - falso; 10;", expected: "Operador desconocido: BOOLEAN - BOOLEAN"},
+		{source: "5 + verdadero;", expected: "Discrepancia de tipos: ENTERO + BOOLEANO"},
+		{source: "5 + verdadero; 9;", expected: "Discrepancia de tipos: ENTERO + BOOLEANO"},
+		{source: "-verdadero", expected: "Operador desconocido: -BOOLEANO"},
+		{source: "verdadero + falso", expected: "Operador desconocido: BOOLEANO + BOOLEANO"},
+		{source: "5; verdadero - falso; 10;", expected: "Operador desconocido: BOOLEANO - BOOLEANO"},
 		{source: `
 			si (10 > 7) {
 				regresa verdadero + falso;
 			}
 		`,
-			expected: "Operador desconocido: BOOLEAN + BOOLEAN",
+			expected: "Operador desconocido: BOOLEANO + BOOLEANO",
 		},
 		{source: `
 			si (5 < 2) {
@@ -174,10 +174,10 @@ func (e *EvaluatorTests) TestErrorhandling() {
 				regresa verdadero / falso;
 			}
 		`,
-			expected: "Operador desconocido: BOOLEAN / BOOLEAN",
+			expected: "Operador desconocido: BOOLEANO / BOOLEANO",
 		},
 		{source: "foobar;", expected: "Identificador no encontrado: foobar"},
-		{source: `"foo" - "bar";`, expected: "Operador desconocido: STRING - STRING"},
+		{source: `"foo" - "bar";`, expected: "Operador desconocido: TEXTO - TEXTO"},
 	}
 
 	for _, test := range tests {
@@ -210,14 +210,14 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `longitud("");`, expected: 0},
 		{source: `longitud("cuatro");`, expected: 6},
 		{source: `longitud("hola mundo");`, expected: 10},
-		{source: "longitud(1);", expected: "argumento para longitud no valido, se recibio INTEGERS"},
+		{source: "longitud(1);", expected: "argumento para longitud no valido, se recibio ENTERO"},
 		{
 			source:   `longitud("uno", "dos");`,
 			expected: "numero incorrecto de argumentos para longitud, se recibieron 2, se requieren 1",
 		},
-		{source: "tipo(1);", expected: "INTEGERS"},
-		{source: "tipo(verdadero)", expected: "BOOLEAN"},
-		{source: `tipo("hello world")`, expected: "STRING"},
+		{source: "tipo(1);", expected: "ENTERO"},
+		{source: "tipo(verdadero)", expected: "BOOLEANO"},
+		{source: `tipo("hello world")`, expected: "TEXTO"},
 		{source: `entero("1")`, expected: 1},
 		{source: `entero("hola")`, expected: "No se puede parsear como entero hola"},
 		{source: "texto(12)", expected: "12"},
