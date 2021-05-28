@@ -70,16 +70,28 @@ func (e *EvaluatorTests) TestBooleanEvaluation() {
 		{"1 < 1", false},
 		{"1 > 1", false},
 		{"1 == 1", true},
+		{"1 >= 1", true},
+		{"1 <= 1", true},
+		{"1 <= 2", true},
+		{"1 >= 2", false},
 		{"1 == 2", false},
 		{"1 != 2", true},
 		{"verdadero == verdadero", true},
 		{"verdadero == falso", false},
 		{"verdadero != falso", true},
+		{"verdadero || falso", true},
+		{"verdadero && falso", false},
+		{"verdadero && verdadero", true},
+		{"verdadero || verdadero", true},
+		{"falso || falso", false},
+		{"falso && falso", false},
 		{"falso == falso", true},
 		{"(1 < 2) == verdadero", true},
 		{"(1 < 2) == falso", false},
 		{"(1 > 2) == verdadero", false},
 		{"(1 > 2) == falso", true},
+		{"(1 >= 2) == falso", true},
+		{"(1 <= 2) == verdadero", true},
 	}
 
 	for _, test := range tests {
@@ -100,6 +112,7 @@ func (e *EvaluatorTests) TestIfElseEvaluation() {
 		{"si (1 > 2) { 10 }", nil},
 		{"si (1 < 2) { 10 } si_no { 20 }", 10},
 		{"si (1 > 2) { 10 } si_no { 20 }", 20},
+		{"si (4 % 2 == 0) { 10 } si_no { 20 }", 10},
 	}
 
 	for _, test := range tests {

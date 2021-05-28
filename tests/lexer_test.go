@@ -21,13 +21,15 @@ func loadTokens(rangee int, source string) []lpp.Token {
 }
 
 func TestIllegalToken(t *testing.T) {
-	source := "¡¿@"
+	source := "¡¿@|&"
 	tokens := loadTokens(utf8.RuneCountInString(source), source)
 
 	expectedTokens := []lpp.Token{
 		{Token_type: lpp.ILLEGAL, Literal: "¡"},
 		{Token_type: lpp.ILLEGAL, Literal: "¿"},
 		{Token_type: lpp.ILLEGAL, Literal: "@"},
+		{Token_type: lpp.ILLEGAL, Literal: "|"},
+		{Token_type: lpp.ILLEGAL, Literal: "&"},
 	}
 
 	if !reflect.DeepEqual(tokens, expectedTokens) {
@@ -39,7 +41,7 @@ func TestIllegalToken(t *testing.T) {
 }
 
 func TestOneCharacterOperator(t *testing.T) {
-	source := "+=-/*<>!"
+	source := "+=-/*<>!%"
 	tokens := loadTokens(utf8.RuneCountInString(source), source)
 
 	expectedTokens := []lpp.Token{
@@ -51,6 +53,7 @@ func TestOneCharacterOperator(t *testing.T) {
 		{Token_type: lpp.LT, Literal: "<"},
 		{Token_type: lpp.GT, Literal: ">"},
 		{Token_type: lpp.NOT, Literal: "!"},
+		{Token_type: lpp.MOD, Literal: "%"},
 	}
 
 	if !reflect.DeepEqual(tokens, expectedTokens) {
@@ -225,9 +228,11 @@ func TestTwoCharacterOperator(t *testing.T) {
 		10 != 9;
 		10 >= 9;
 		10 <= 9;
+		10 || 9;
+		10 && 9;
 	`
 
-	tokens := loadTokens(16, source)
+	tokens := loadTokens(24, source)
 
 	expectedTokens := []lpp.Token{
 		{Token_type: lpp.INT, Literal: "10"},
@@ -244,6 +249,14 @@ func TestTwoCharacterOperator(t *testing.T) {
 		{Token_type: lpp.SEMICOLON, Literal: ";"},
 		{Token_type: lpp.INT, Literal: "10"},
 		{Token_type: lpp.LTOREQ, Literal: "<="},
+		{Token_type: lpp.INT, Literal: "9"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+		{Token_type: lpp.INT, Literal: "10"},
+		{Token_type: lpp.OR, Literal: "||"},
+		{Token_type: lpp.INT, Literal: "9"},
+		{Token_type: lpp.SEMICOLON, Literal: ";"},
+		{Token_type: lpp.INT, Literal: "10"},
+		{Token_type: lpp.AND, Literal: "&&"},
 		{Token_type: lpp.INT, Literal: "9"},
 		{Token_type: lpp.SEMICOLON, Literal: ";"},
 	}
