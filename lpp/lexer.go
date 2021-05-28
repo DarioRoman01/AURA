@@ -79,6 +79,20 @@ func (l *Lexer) NextToken() Token {
 			token = Token{Token_type: GT, Literal: l.character}
 		}
 
+	} else if equal, _ := regexp.MatchString(`^\|$`, l.character); equal {
+		if l.peekCharacter() == "|" {
+			token = l.makeTwoCharacterToken(OR)
+		} else {
+			token = Token{Token_type: ILLEGAL, Literal: l.character}
+		}
+
+	} else if equal, _ := regexp.MatchString(`^\&$`, l.character); equal {
+		if l.peekCharacter() == "&" {
+			token = l.makeTwoCharacterToken(AND)
+		} else {
+			token = Token{Token_type: ILLEGAL, Literal: l.character}
+		}
+
 	} else if equal, _ := regexp.MatchString(`^\-$`, l.character); equal {
 		token = Token{Token_type: MINUS, Literal: l.character}
 

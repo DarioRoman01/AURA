@@ -6,6 +6,7 @@ type TokenType int
 
 const (
 	Head TokenType = iota
+	AND
 	ASSING
 	COMMA
 	DIVISION
@@ -29,6 +30,7 @@ const (
 	NOT    // !
 	NOT_EQ
 	MOD
+	OR
 	PLUS
 	RBRACE
 	RETURN
@@ -40,6 +42,7 @@ const (
 )
 
 var tokens = [...]string{
+	AND:       "AND",
 	ASSING:    "ASSING",
 	COMMA:     "COMMA",
 	DIVISION:  "DIVISION",
@@ -61,6 +64,7 @@ var tokens = [...]string{
 	NOT:       "NOT",
 	NOT_EQ:    "NOT_EQ",
 	MOD:       "MOD",
+	OR:        "OR",
 	PLUS:      "PLUS",
 	RBRACE:    "RBRACE",
 	RETURN:    "RETURN",

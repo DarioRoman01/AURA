@@ -246,6 +246,9 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 	case left.Type() == STRINGTYPE && right.Type() == STRINGTYPE:
 		return evaluateStringInfixExpression(operator, left, right)
 
+	case left.Type() == BOOLEAN && right.Type() == BOOLEAN:
+		return evaluateBoolInfixExpression(operator, left.(*Bool), right.(*Bool))
+
 	case operator == "==":
 		return toBooleanObject(left == right)
 
@@ -267,6 +270,30 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 		))
 	}
 
+}
+
+func evaluateBoolInfixExpression(operator string, left *Bool, rigth *Bool) Object {
+	switch operator {
+
+	case "||":
+		return toBooleanObject(left.Value || rigth.Value)
+
+	case "&&":
+		return toBooleanObject(left.Value && rigth.Value)
+
+	case "==":
+		return toBooleanObject(left == rigth)
+
+	case "!=":
+		return toBooleanObject(left != rigth)
+
+	default:
+		return newError(unknownInfixOperator(
+			types[left.Type()],
+			operator,
+			types[rigth.Type()],
+		))
+	}
 }
 
 func evaluateStringInfixExpression(operator string, left Object, rigth Object) Object {
@@ -317,6 +344,7 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 		return toBooleanObject(leftVal >= rigthVal)
 	case "<=":
 		return toBooleanObject(leftVal <= rigthVal)
+
 	default:
 		return newError(unknownInfixOperator(
 			types[left.Type()],

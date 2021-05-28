@@ -16,15 +16,17 @@ type Precedence int
 const (
 	HeadPrecendence Precedence = iota
 	LOWEST                     = 1
-	EQUEAL                     = 2
-	LESSGRATER                 = 3
-	SUM                        = 4
-	PRODUCT                    = 5
-	PREFIX                     = 6
-	CALL                       = 7
+	ANDOR                      = 2
+	EQUEAL                     = 3
+	LESSGRATER                 = 4
+	SUM                        = 5
+	PRODUCT                    = 6
+	PREFIX                     = 7
+	CALL                       = 8
 )
 
 var PRECEDENCES = map[TokenType]Precedence{
+	AND:      ANDOR,
 	EQ:       EQUEAL,
 	NOT_EQ:   EQUEAL,
 	LT:       LESSGRATER,
@@ -37,6 +39,7 @@ var PRECEDENCES = map[TokenType]Precedence{
 	TIMES:    PRODUCT,
 	MOD:      PRODUCT,
 	LPAREN:   CALL,
+	OR:       ANDOR,
 }
 
 // parser handle the parsing of the program staments and syntax of the program
@@ -472,6 +475,8 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
 	inFixFns[MOD] = p.parseInfixExpression
+	inFixFns[AND] = p.parseInfixExpression
+	inFixFns[OR] = p.parseInfixExpression
 	return inFixFns
 }
 
