@@ -215,6 +215,9 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 			source:   `longitud("uno", "dos");`,
 			expected: "numero incorrecto de argumentos para longitud, se recibieron 2, se requieren 1",
 		},
+		{source: "tipo(1);", expected: "INTEGERS"},
+		{source: "tipo(verdadero)", expected: "BOOLEAN"},
+		{source: `tipo("hello world")`, expected: "STRING"},
 	}
 
 	for _, test := range tests {
@@ -223,7 +226,12 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 			e.testIntegerObject(evaluated, val)
 		} else {
 			expected := test.expected.(string)
-			e.testErrorObject(evaluated, expected)
+
+			if str, isStr := evaluated.(*lpp.String); isStr {
+				e.testStringObject(str, expected)
+			} else {
+				e.testErrorObject(evaluated, expected)
+			}
 		}
 	}
 }
