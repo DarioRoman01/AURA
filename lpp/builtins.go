@@ -94,9 +94,18 @@ func RecibirEntero(args ...Object) Object {
 
 }
 
+func Tipo(args ...Object) Object {
+	if len(args) > 1 || len(args) < 1 {
+		return &Error{Message: wrongNumberofArgs(len(args), 1)}
+	}
+
+	return &String{Value: types[args[0].Type()]}
+}
+
 var BUILTINS = map[string]*Builtin{
 	"longitud":       NewBuiltin(Longitud),
 	"escribir":       NewBuiltin(Escribir),
 	"recibir":        NewBuiltin(Recibir),
 	"recibir_entero": NewBuiltin(RecibirEntero),
+	"tipo":           NewBuiltin(Tipo),
 }

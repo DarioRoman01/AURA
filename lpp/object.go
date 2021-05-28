@@ -21,6 +21,8 @@ const (
 
 var types = [...]string{
 	BOOLEAN:    "BOOLEAN",
+	BUILTIN:    "BUILTIN",
+	DEF:        "DEF",
 	ERROR:      "ERROR",
 	INTEGERS:   "INTEGERS",
 	NULL:       "NULL",

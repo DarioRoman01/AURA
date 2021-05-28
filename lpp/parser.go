@@ -92,7 +92,7 @@ func (p *Parser) checkPeekTokenIsNotNil() {
 
 func (p *Parser) handlePeekTokenPanic() {
 	if r := recover(); r != nil {
-		fmt.Println("Syntax error")
+		fmt.Println("Syntax error: ", r)
 	}
 }
 
@@ -127,7 +127,8 @@ func (p *Parser) ParseProgam() Program {
 	return program
 }
 
-// check that the type of the peek is the correct type based on the parameter
+// expectedToken will check if the peek token is the correct type
+// based on the parameter
 func (p *Parser) expepectedToken(tokenType TokenType) bool {
 	if p.peekToken.Token_type == tokenType {
 		p.advanceTokens()
@@ -138,7 +139,7 @@ func (p *Parser) expepectedToken(tokenType TokenType) bool {
 	return false
 }
 
-// add a error to errors list if there is a unexpected token error
+// add a error to errors list if there is any unexpected token error
 func (p *Parser) expectedTokenError(tokenType TokenType) {
 	p.checkCurrentTokenIsNotNil()
 	err := fmt.Sprintf(
