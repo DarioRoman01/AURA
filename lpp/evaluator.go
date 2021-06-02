@@ -44,6 +44,9 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	case *Block:
 		return evaluateBLockStaments(node, env)
 
+	case *While:
+		return evaluateWhileExpression(node, env)
+
 	case *If:
 		return evaluateIfExpression(node, env)
 
@@ -134,7 +137,7 @@ func evaluateBLockStaments(block *Block, env *Enviroment) Object {
 	var result Object = nil
 	for _, statement := range block.Staments {
 		result = Evaluate(statement, env)
-		if result != nil && result.Type() == RETURNTYPE || result.Type() == ERROR {
+		if (result != nil && result.Type() == RETURNTYPE) || result.Type() == ERROR {
 			return result
 		}
 	}
@@ -201,6 +204,19 @@ func evaluateBangOperatorExpression(rigth Object) Object {
 	default:
 		return singletonFALSE
 	}
+}
+
+func evaluateWhileExpression(whileExpression *While, env *Enviroment) Object {
+	CheckIsNotNil(whileExpression.Condition)
+	condition := Evaluate(whileExpression.Condition, env)
+
+	CheckIsNotNil(condition)
+	if !isTruthy(condition) {
+		return SingletonNUll
+	}
+
+	Evaluate(whileExpression.Body, env)
+	return Evaluate(whileExpression, env)
 }
 
 func evaluateIfExpression(ifExpression *If, env *Enviroment) Object {

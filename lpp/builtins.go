@@ -48,7 +48,7 @@ func Escribir(args ...Object) Object {
 		return &Error{Message: unsoportedArgumentType("escribir", types[node.Type()])}
 	}
 
-	return nil
+	return SingletonNUll
 }
 
 func Recibir(args ...Object) Object {

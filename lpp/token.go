@@ -14,6 +14,7 @@ const (
 	EOF
 	EQ
 	FALSE
+	FOR
 	FUNCTION
 	GT     // grather than
 	GTOREQ // grater than or equeal
@@ -39,6 +40,7 @@ const (
 	TIMES // *
 	STRING
 	TRUE
+	WHILE
 )
 
 var tokens = [...]string{
@@ -73,6 +75,7 @@ var tokens = [...]string{
 	TIMES:     "TIMES",
 	STRING:    "STRING",
 	TRUE:      "TRUE",
+	WHILE:     "MIENTRAS",
 }
 
 type Token struct {
@@ -94,6 +97,8 @@ func LookUpTokenType(literal string) TokenType {
 		"si_no":     ELSE,
 		"var":       LET,
 		"verdadero": TRUE,
+		"mientras":  WHILE,
+		"para":      FOR,
 	}
 
 	TokenType, exists := keywords[literal]

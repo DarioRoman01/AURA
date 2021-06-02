@@ -337,6 +337,47 @@ func (p *Parser) parseInfixExpression(left Expression) Expression {
 	return infix
 }
 
+func (p *Parser) parseFor() Expression {
+	p.checkCurrentTokenIsNotNil()
+	forExpression := NewFor(*p.currentToken, nil, nil)
+	if !p.expepectedToken(LPAREN) {
+		return nil
+	}
+
+	p.advanceTokens()
+	forExpression.Condition = p.parseExpression(LOWEST)
+	if !p.expepectedToken(RPAREN) {
+		return nil
+	}
+	if !p.expepectedToken(LBRACE) {
+		return nil
+	}
+
+	forExpression.Body = p.parseBlock()
+	return forExpression
+}
+
+func (p *Parser) parseWhile() Expression {
+	p.checkCurrentTokenIsNotNil()
+	whileExpression := NewWhile(*p.currentToken, nil, nil)
+	if !p.expepectedToken(LPAREN) {
+		return nil
+	}
+
+	p.advanceTokens()
+	whileExpression.Condition = p.parseExpression(LOWEST)
+	if !p.expepectedToken(RPAREN) {
+		return nil
+	}
+
+	if !p.expepectedToken(LBRACE) {
+		return nil
+	}
+
+	whileExpression.Body = p.parseBlock()
+	return whileExpression
+}
+
 // parse if expressions, check sintax and if there is an else in the expression
 func (p *Parser) parseIf() Expression {
 	p.checkCurrentTokenIsNotNil()
@@ -485,7 +526,9 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
 	prefixFns[FALSE] = p.parseBoolean
+	prefixFns[FOR] = p.parseFor
 	prefixFns[FUNCTION] = p.parseFunction
+	prefixFns[WHILE] = p.parseWhile
 	prefixFns[IDENT] = p.parseIdentifier
 	prefixFns[IF] = p.parseIf
 	prefixFns[INT] = p.parseInteger

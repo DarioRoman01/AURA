@@ -1,0 +1,9 @@
+var hola = funcion() {
+    var a = 1;
+    mientras(a <= 3) {
+        escribir("hola");
+        var a = a + 1;
+    }
+}
+
+hola();
