@@ -129,7 +129,7 @@ func (r ReturnStament) stmtNode() {}
 
 // return a string representation of the return stament node
 func (r ReturnStament) Str() string {
-	return fmt.Sprintf("%s %s", r.TokenLiteral(), r.ReturnValue.Str())
+	return fmt.Sprintf("%s %s;", r.TokenLiteral(), r.ReturnValue.Str())
 }
 
 // handle expressions statements
