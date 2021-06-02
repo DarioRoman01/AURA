@@ -412,3 +412,43 @@ func (s StringLiteral) expressNode() {}
 func (s StringLiteral) Str() string {
 	return s.Value
 }
+
+type For struct {
+	Token     Token
+	Condition Expression
+	Body      *Block
+}
+
+func NewFor(token Token, condition Expression, body *Block) *For {
+	return &For{Token: token, Condition: condition, Body: body}
+}
+
+func (f *For) TokenLiteral() string {
+	return f.Token.Literal
+}
+
+func (f *For) expressNode() {}
+
+func (f *For) Str() string {
+	return fmt.Sprintf("%s %s { %s }", f.TokenLiteral(), f.Condition.Str(), f.Body.Str())
+}
+
+type While struct {
+	Token     Token
+	Condition Expression
+	Body      *Block
+}
+
+func NewWhile(token Token, cond Expression, body *Block) *While {
+	return &While{Token: token, Condition: cond, Body: body}
+}
+
+func (w *While) TokenLiteral() string {
+	return w.Token.Literal
+}
+
+func (w *While) expressNode() {}
+
+func (w *While) Str() string {
+	return fmt.Sprintf("%s %s { %s }", w.TokenLiteral(), w.Condition.Str(), w.Body.Str())
+}
