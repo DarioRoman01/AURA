@@ -61,7 +61,7 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		value := Evaluate(node.Value, env)
 		CheckIsNotNil(node.Name)
 		env.SetItem(node.Name.value, value)
-		return nil
+		return SingletonNUll
 
 	case *Identifier:
 		return evaluateIdentifier(node, env)
@@ -137,7 +137,7 @@ func evaluateBLockStaments(block *Block, env *Enviroment) Object {
 	var result Object = nil
 	for _, statement := range block.Staments {
 		result = Evaluate(statement, env)
-		if (result != nil && result.Type() == RETURNTYPE) || result.Type() == ERROR {
+		if result != nil && result.Type() == RETURNTYPE || result.Type() == ERROR {
 			return result
 		}
 	}
@@ -214,7 +214,6 @@ func evaluateWhileExpression(whileExpression *While, env *Enviroment) Object {
 	if !isTruthy(condition) {
 		return SingletonNUll
 	}
-
 	Evaluate(whileExpression.Body, env)
 	return Evaluate(whileExpression, env)
 }

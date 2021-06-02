@@ -57,7 +57,7 @@ func (b *Bool) Inspect() string {
 type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL }
-func (n *Null) Inspect() string  { return "nulo" }
+func (n *Null) Inspect() string  { return "" }
 
 // return object type
 type Return struct {
