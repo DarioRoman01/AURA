@@ -1,0 +1,2 @@
+var mi_lista = lista[2, 3, 5];
+escribir(mi_lista);

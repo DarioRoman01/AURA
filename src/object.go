@@ -155,14 +155,14 @@ func (e *Enviroment) DelItem(key string) {
 }
 
 type List struct {
-	values []Object
+	Values []Object
 }
 
 func (l *List) Type() ObjectType { return LIST }
 func (l *List) Inspect() string {
 	var buff []string
 
-	for _, val := range l.values {
+	for _, val := range l.Values {
 		buff = append(buff, val.Inspect())
 	}
 

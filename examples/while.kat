@@ -1,5 +1,5 @@
 var hola_n_veces = funcion(n) {
-    var i = 1
+    var i = 1;
     mientras(i <= n) {
         escribir("hola");
         var i = i + 1;

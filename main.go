@@ -17,7 +17,7 @@ func (cli *CommandLine) Repl() {
 func (cli *CommandLine) PrintUsage() {
 	fmt.Println("Usage: ")
 	fmt.Println("	file -path <path to your file> - will execute the given file")
-	fmt.Println("	rpl - start the programing lenguage repl")
+	fmt.Println("	rpl - Starts the repl")
 }
 
 func (cli *CommandLine) ValidateArgs() {
@@ -28,17 +28,17 @@ func (cli *CommandLine) ValidateArgs() {
 }
 
 func (cli *CommandLine) ReadFile(path string) {
-	content, err := ioutil.ReadFile(path)
+	source, err := ioutil.ReadFile(path)
 	if err != nil {
 		cli.PrintUsage()
 		os.Exit(0)
 	}
 
-	if len(content) == 0 {
+	if len(source) == 0 {
 		return
 	}
 
-	lexer := src.NewLexer(string(content))
+	lexer := src.NewLexer(string(source))
 	parser := src.NewParser(lexer)
 	env := src.NewEnviroment(nil)
 	program := parser.ParseProgam()
@@ -63,7 +63,7 @@ func (cli *CommandLine) Start() {
 	fileCmd := flag.NewFlagSet("file", flag.ExitOnError)
 	rplCmd := flag.NewFlagSet("rpl", flag.ExitOnError)
 
-	filePath := fileCmd.String("path", "", "the path you want to execute")
+	filePath := fileCmd.String("path", "", "the path to your file")
 
 	switch os.Args[1] {
 	case "file":

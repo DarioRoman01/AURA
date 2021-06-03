@@ -39,6 +39,27 @@ func (e *EvaluatorTests) TestIntegerEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestArrayEvaluation() {
+	tests := []struct {
+		source   string
+		expected []int
+	}{
+		{
+			source:   "lista[2,4,5];",
+			expected: []int{2, 4, 5},
+		},
+		{
+			source:   "lista[45,65,34,7];",
+			expected: []int{45, 65, 34, 7},
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntArrayObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestBangOperator() {
 	tests := []struct {
 		source   string
@@ -385,6 +406,18 @@ func (e *EvaluatorTests) testBooleanObject(object src.Object, expected bool) {
 	e.Assert().IsType(&src.Bool{}, object.(*src.Bool))
 	evaluated := object.(*src.Bool)
 	e.Assert().Equal(expected, evaluated.Value)
+}
+
+func (e *EvaluatorTests) testIntArrayObject(obj src.Object, expected []int) {
+	e.Assert().IsType(&src.List{}, obj.(*src.List))
+	evaluated := obj.(*src.List)
+	e.Assert().Equal(len(expected), len(evaluated.Values))
+
+	objList := evaluated.Values
+	for i := 0; i < len(expected); i++ {
+		e.Assert().IsType(&src.Number{}, objList[i].(*src.Number))
+		e.Assert().Equal(expected[i], objList[i].(*src.Number).Value)
+	}
 }
 
 func (e *EvaluatorTests) testIntegerObject(evaluated src.Object, expected int) {

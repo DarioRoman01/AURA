@@ -167,7 +167,7 @@ func evaluateArray(arr *Array, env *Enviroment) Object {
 	var list List
 
 	for _, val := range arr.Values {
-		list.values = append(list.values, Evaluate(val, env))
+		list.Values = append(list.Values, Evaluate(val, env))
 	}
 
 	return &list
