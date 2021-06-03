@@ -2,27 +2,30 @@ package test_test
 
 import (
 	"katan/src"
-	"reflect"
 	"testing"
 	"unicode/utf8"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func loadTokens(rangee int, source string) []src.Token {
+type LexerTests struct {
+	suite.Suite
+}
+
+func (l *LexerTests) loadTokens(length int, source string) []src.Token {
 	lexer := src.NewLexer(source)
 	var tokens []src.Token
 
-	for i := 0; i < rangee; i++ {
+	for i := 0; i < length; i++ {
 		tokens = append(tokens, lexer.NextToken())
 	}
 
 	return tokens
 }
 
-func TestIllegalToken(t *testing.T) {
+func (l *LexerTests) TestIllegalToken() {
 	source := "¡¿@|&"
-	tokens := loadTokens(utf8.RuneCountInString(source), source)
+	tokens := l.loadTokens(utf8.RuneCountInString(source), source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.ILLEGAL, Literal: "¡"},
@@ -32,17 +35,12 @@ func TestIllegalToken(t *testing.T) {
 		{Token_type: src.ILLEGAL, Literal: "&"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in illegal tokens")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestOneCharacterOperator(t *testing.T) {
+func (l *LexerTests) TestOneCharacterOperator() {
 	source := "+=-/*<>!%"
-	tokens := loadTokens(utf8.RuneCountInString(source), source)
+	tokens := l.loadTokens(utf8.RuneCountInString(source), source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.PLUS, Literal: "+"},
@@ -56,34 +54,24 @@ func TestOneCharacterOperator(t *testing.T) {
 		{Token_type: src.MOD, Literal: "%"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal on character operator")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestEOF(t *testing.T) {
+func (l *LexerTests) TestEOF() {
 	source := "+"
-	tokens := loadTokens(utf8.RuneCountInString(source)+1, source)
+	tokens := l.loadTokens(utf8.RuneCountInString(source)+1, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.PLUS, Literal: "+"},
 		{Token_type: src.EOF, Literal: ""},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in EOF")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestDilimiters(t *testing.T) {
+func (l *LexerTests) TestDilimiters() {
 	source := "(){},;"
-	tokens := loadTokens(len(source), source)
+	tokens := l.loadTokens(len(source), source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.LPAREN, Literal: "("},
@@ -94,17 +82,12 @@ func TestDilimiters(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in Dilimiters")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestAssingments(t *testing.T) {
+func (l *LexerTests) TestAssingments() {
 	source := "var cinco =  5;"
-	tokens := loadTokens(5, source)
+	tokens := l.loadTokens(5, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.LET, Literal: "var"},
@@ -114,22 +97,17 @@ func TestAssingments(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in assingment")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestFunctionDeclaration(t *testing.T) {
+func (l *LexerTests) TestFunctionDeclaration() {
 	source := `
 		var suma = funcion(x, y) {
 			x + y;
 		};
 	`
 
-	tokens := loadTokens(16, source)
+	tokens := l.loadTokens(16, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.LET, Literal: "var"},
@@ -150,17 +128,12 @@ func TestFunctionDeclaration(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in function declarion")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestFunctionCall(t *testing.T) {
+func (l *LexerTests) TestFunctionCall() {
 	source := "var resultado = suma(dos, tres);"
-	tokens := loadTokens(10, source)
+	tokens := l.loadTokens(10, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.LET, Literal: "var"},
@@ -175,15 +148,10 @@ func TestFunctionCall(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in function call")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestControllStatement(t *testing.T) {
+func (l *LexerTests) TestControllStatement() {
 	source := `
 		si (5 < 10) {
 			regresa verdadero;
@@ -192,7 +160,7 @@ func TestControllStatement(t *testing.T) {
 		}
 	`
 
-	tokens := loadTokens(17, source)
+	tokens := l.loadTokens(17, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.IF, Literal: "si"},
@@ -214,15 +182,10 @@ func TestControllStatement(t *testing.T) {
 		{Token_type: src.RBRACE, Literal: "}"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in controll statement")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestTwoCharacterOperator(t *testing.T) {
+func (l *LexerTests) TestTwoCharacterOperator() {
 	source := `
 		10 == 10;
 		10 != 9;
@@ -232,7 +195,7 @@ func TestTwoCharacterOperator(t *testing.T) {
 		10 && 9;
 	`
 
-	tokens := loadTokens(24, source)
+	tokens := l.loadTokens(24, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.INT, Literal: "10"},
@@ -261,18 +224,13 @@ func TestTwoCharacterOperator(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in two character operator")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestUnderscoreVar(t *testing.T) {
+func (l *LexerTests) TestUnderscoreVar() {
 	source := "var num_12 = 5;"
 
-	tokens := loadTokens(5, source)
+	tokens := l.loadTokens(5, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.LET, Literal: "var"},
@@ -282,21 +240,16 @@ func TestUnderscoreVar(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Log("tokens and expected tokens are not equal in underscore variable")
-		t.Log("expected: ", expectedTokens)
-		t.Log("found: ", tokens)
-		t.Fail()
-	}
+	l.Assert().Equal(expectedTokens, tokens)
 }
 
-func TestString(t *testing.T) {
+func (l *LexerTests) TestString() {
 	source := `
 		"foo";
 		"src is a great programing lenguage";
 	`
 
-	tokens := loadTokens(4, source)
+	tokens := l.loadTokens(4, source)
 	expectedTokens := []src.Token{
 		{Token_type: src.STRING, Literal: "foo"},
 		{Token_type: src.SEMICOLON, Literal: ";"},
@@ -304,5 +257,9 @@ func TestString(t *testing.T) {
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 
-	assert.Equal(t, expectedTokens, tokens)
+	l.Assert().Equal(expectedTokens, tokens)
+}
+
+func TestLexerSuite(t *testing.T) {
+	suite.Run(t, new(LexerTests))
 }
