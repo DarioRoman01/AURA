@@ -184,7 +184,6 @@ func (l *Lexer) readNumber() string {
 	for l.isNumber(l.character) {
 		l.readCharacter()
 	}
-	fmt.Println("the number is: ", string(l.source[initialPosition:l.position]))
 	return string(l.source[initialPosition:l.position])
 }
 

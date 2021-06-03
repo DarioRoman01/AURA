@@ -186,7 +186,6 @@ func (p *Parser) parseBlock() *Block {
 func (p *Parser) parseCall(function Expression) Expression {
 	p.checkCurrentTokenIsNotNil()
 	call := NewCall(*p.currentToken, function)
-	fmt.Println("HOLLLAAAAAA")
 	call.Arguments = p.parseCallArguments()
 	return call
 }
@@ -458,7 +457,6 @@ func (p *Parser) parseInteger() Expression {
 
 	val, err := strconv.Atoi(p.currentToken.Literal)
 	if err != nil {
-		fmt.Println("NO SE PARSEO: ", integer.Token.PrintToken())
 		message := fmt.Sprintf("no se pudo parsear %s como entero", p.currentToken.Literal)
 		p.errors = append(p.errors, message)
 		return nil
