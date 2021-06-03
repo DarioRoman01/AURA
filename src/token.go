@@ -9,6 +9,7 @@ const (
 	AND
 	ASSING
 	COMMA
+	DATASTRCUT
 	DIVISION
 	ELSE
 	EOF
@@ -23,6 +24,7 @@ const (
 	ILLEGAL
 	INT
 	LBRACE
+	LBRACKET
 	LET
 	LPAREN
 	LT     // less than
@@ -34,6 +36,7 @@ const (
 	OR
 	PLUS
 	RBRACE
+	RBRACKET
 	RETURN
 	RPAREN
 	SEMICOLON
@@ -99,6 +102,7 @@ func LookUpTokenType(literal string) TokenType {
 		"verdadero": TRUE,
 		"mientras":  WHILE,
 		"para":      FOR,
+		"lista":     DATASTRCUT,
 	}
 
 	TokenType, exists := keywords[literal]
