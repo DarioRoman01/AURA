@@ -190,6 +190,45 @@ func (p *Parser) parseCall(function Expression) Expression {
 	return call
 }
 
+func (p *Parser) ParseArray() Expression {
+	p.checkCurrentTokenIsNotNil()
+	arr := NewArray(*p.currentToken, nil)
+	if !p.expepectedToken(LBRACKET) {
+		return nil
+	}
+
+	arr.Values = p.ParseArrayValues()
+	return arr
+}
+
+func (p *Parser) ParseArrayValues() []Expression {
+	p.checkCurrentTokenIsNotNil()
+	var values []Expression
+	if p.peekToken.Token_type == RBRACKET {
+		p.advanceTokens()
+		return values
+	}
+
+	p.advanceTokens()
+	if expression := p.parseExpression(LOWEST); expression != nil {
+		values = append(values, expression)
+	}
+
+	for p.peekToken.Token_type == COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		if expression := p.parseExpression(LOWEST); expression != nil {
+			values = append(values, expression)
+		}
+	}
+
+	if !p.expepectedToken(RBRACKET) {
+		return nil
+	}
+
+	return values
+}
+
 // parse args in function calls
 func (p *Parser) parseCallArguments() []Expression {
 	var args []Expression
@@ -537,5 +576,6 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[NOT] = p.parsePrefixExpression
 	prefixFns[TRUE] = p.parseBoolean
 	prefixFns[STRING] = p.parseStringLiteral
+	prefixFns[DATASTRCUT] = p.ParseArray
 	return prefixFns
 }

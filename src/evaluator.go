@@ -3,9 +3,11 @@ package src
 import "fmt"
 
 // use singleton patern with true false and null
-var singletonTRUE = &Bool{Value: true}
-var singletonFALSE = &Bool{Value: false}
-var SingletonNUll = &Null{}
+var (
+	singletonTRUE  = &Bool{Value: true}
+	singletonFALSE = &Bool{Value: false}
+	SingletonNUll  = &Null{}
+)
 
 // evlauate given nodes of an ast
 func Evaluate(baseNode ASTNode, env *Enviroment) Object {
@@ -17,6 +19,9 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	case *ExpressionStament:
 		CheckIsNotNil(node.Expression)
 		return Evaluate(node.Expression, env)
+
+	case *Array:
+		return evaluateArray(node, env)
 
 	case *Integer:
 		CheckIsNotNil(node.Value)
@@ -156,6 +161,16 @@ func evaluateExpression(expressions []Expression, env *Enviroment) []Object {
 	}
 
 	return result
+}
+
+func evaluateArray(arr *Array, env *Enviroment) Object {
+	var list List
+
+	for _, val := range arr.Values {
+		list.values = append(list.values, Evaluate(val, env))
+	}
+
+	return &list
 }
 
 // check if given identifier exists in the enviroment

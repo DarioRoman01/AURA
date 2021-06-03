@@ -41,6 +41,9 @@ func Escribir(args ...Object) Object {
 	case *Number:
 		fmt.Println(node.Inspect())
 
+	case *List:
+		fmt.Println(node.Inspect())
+
 	case *Bool:
 		fmt.Println(node.Inspect())
 
