@@ -5,4 +5,5 @@ __pycache__
 node_modules/
 /public/build/
 .DS_Store
-ppl
+.metals
+katan

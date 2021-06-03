@@ -1,25 +1,25 @@
 package test_test
 
 import (
-	"lpp/lpp"
+	"katan/src"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLetStatement(t *testing.T) {
-	program := lpp.NewProgram([]lpp.Stmt{
-		lpp.LetStatement{
-			Token: lpp.Token{
-				Token_type: lpp.LET,
+	program := src.NewProgram([]src.Stmt{
+		src.LetStatement{
+			Token: src.Token{
+				Token_type: src.LET,
 				Literal:    "var",
 			},
-			Name: lpp.NewIdentifier(lpp.Token{
-				Token_type: lpp.IDENT,
+			Name: src.NewIdentifier(src.Token{
+				Token_type: src.IDENT,
 				Literal:    "mi_var",
 			}, "mi_var"),
-			Value: lpp.NewIdentifier(lpp.Token{
-				Token_type: lpp.IDENT,
+			Value: src.NewIdentifier(src.Token{
+				Token_type: src.IDENT,
 				Literal:    "otra_var",
 			}, "otra_var"),
 		},
@@ -29,29 +29,29 @@ func TestLetStatement(t *testing.T) {
 }
 
 func TestReturnStatements(t *testing.T) {
-	program := lpp.NewProgram([]lpp.Stmt{
-		lpp.LetStatement{
-			Token: lpp.Token{
-				Token_type: lpp.LET,
+	program := src.NewProgram([]src.Stmt{
+		src.LetStatement{
+			Token: src.Token{
+				Token_type: src.LET,
 				Literal:    "var",
 			},
-			Name: lpp.NewIdentifier(lpp.Token{
-				Token_type: lpp.IDENT,
+			Name: src.NewIdentifier(src.Token{
+				Token_type: src.IDENT,
 				Literal:    "x",
 			}, "x"),
-			Value: lpp.NewIdentifier(lpp.Token{
-				Token_type: lpp.INT,
+			Value: src.NewIdentifier(src.Token{
+				Token_type: src.INT,
 				Literal:    "5",
 			}, "5"),
 		},
-		lpp.ReturnStament{
-			Token: lpp.Token{
-				Token_type: lpp.RETURN,
+		src.ReturnStament{
+			Token: src.Token{
+				Token_type: src.RETURN,
 				Literal:    "regresa",
 			},
-			ReturnValue: lpp.NewIdentifier(
-				lpp.Token{
-					Token_type: lpp.IDENT,
+			ReturnValue: src.NewIdentifier(
+				src.Token{
+					Token_type: src.IDENT,
 					Literal:    "x",
 				}, "x"),
 		},
@@ -62,18 +62,18 @@ func TestReturnStatements(t *testing.T) {
 
 func TestIntegerExpression(t *testing.T) {
 	value := 5
-	program := lpp.NewProgram([]lpp.Stmt{
-		lpp.LetStatement{
-			Token: lpp.Token{
-				Token_type: lpp.LET,
+	program := src.NewProgram([]src.Stmt{
+		src.LetStatement{
+			Token: src.Token{
+				Token_type: src.LET,
 				Literal:    "var",
 			},
-			Name: lpp.NewIdentifier(lpp.Token{
-				Token_type: lpp.IDENT,
+			Name: src.NewIdentifier(src.Token{
+				Token_type: src.IDENT,
 				Literal:    "x",
 			}, "x"),
-			Value: lpp.NewInteger(lpp.Token{
-				Token_type: lpp.INT,
+			Value: src.NewInteger(src.Token{
+				Token_type: src.INT,
 				Literal:    "5",
 			}, &value),
 		},

@@ -1,9 +1,9 @@
-# lpp programing lenguage
+# The Katan programing lenguage
 
 ## What is this?
 This is a very basic programming lenguage inspired in javascript, the goal is to create a programming lenguage in spanish
-that helps people that are begining in software development or computer science, probiding a high lever programming lenguage
-in spanish
+that helps people that are begining in software development or computer science, probiding a high level programming lenguage
+in spanish that is very simple to use
 
 ## Syntax example
 
@@ -50,7 +50,7 @@ you can see more examples in the examples folder.
 ## Usage
 first copy the repository and change to the directory created:
 ```
-$ git clone https://github.com/Haizza1/lpp && cd lpp
+$ git clone https://github.com/Haizza1/Katan && cd Katan
 ```
 download the dependencies:
 ```
@@ -62,17 +62,17 @@ $ go test -v ./...
 ```
 compile the package:
 ```
-$ go build -o ppl
+$ go build -o katan
 ```
 
 then you can create a file or play with the repl to play with the repl just run:
 ```
-$ ./ppl rpl
+$ ./katan rpl
 ```
 
 to use a file you can create a file with the .lpp extension and run:
 ```
-$ ./ppl file -path <path to your file>
+$ ./katan file -path <path to your file>
 ```
 
 

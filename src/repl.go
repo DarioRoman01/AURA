@@ -1,4 +1,4 @@
-package lpp
+package src
 
 import (
 	"bufio"

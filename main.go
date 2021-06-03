@@ -4,14 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"lpp/lpp"
+	"katan/src"
 	"os"
 )
 
 type CommandLine struct{}
 
 func (cli *CommandLine) Repl() {
-	lpp.StartRpl()
+	src.StartRpl()
 }
 
 func (cli *CommandLine) PrintUsage() {
@@ -38,9 +38,9 @@ func (cli *CommandLine) ReadFile(path string) {
 		return
 	}
 
-	lexer := lpp.NewLexer(string(content))
-	parser := lpp.NewParser(lexer)
-	env := lpp.NewEnviroment(nil)
+	lexer := src.NewLexer(string(content))
+	parser := src.NewParser(lexer)
+	env := src.NewEnviroment(nil)
 	program := parser.ParseProgam()
 
 	if len(parser.Errors()) > 0 {
@@ -51,7 +51,7 @@ func (cli *CommandLine) ReadFile(path string) {
 		os.Exit(0)
 	}
 
-	evaluated := lpp.Evaluate(program, env)
+	evaluated := src.Evaluate(program, env)
 	if evaluated != nil {
 		fmt.Println(evaluated.Inspect())
 	}

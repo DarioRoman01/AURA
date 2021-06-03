@@ -1,4 +1,4 @@
-module lpp
+module katan
 
 go 1.16
 

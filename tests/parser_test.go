@@ -2,7 +2,7 @@ package test_test
 
 import (
 	"fmt"
-	"lpp/lpp"
+	"katan/src"
 	"reflect"
 	"testing"
 
@@ -20,9 +20,9 @@ type InfixTuple struct {
 	Rigth    interface{}
 }
 
-func InitParserTests(source string) (*lpp.Parser, *lpp.Program) {
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
+func InitParserTests(source string) (*src.Parser, *src.Program) {
+	lexer := src.NewLexer(source)
+	parser := src.NewParser(lexer)
 	program := parser.ParseProgam()
 
 	return parser, &program
@@ -38,12 +38,12 @@ func TestParseProgram(t *testing.T) {
 		t.Fail()
 	}
 
-	if !assert.IsType(&lpp.Program{}, program) {
+	if !assert.IsType(&src.Program{}, program) {
 		t.Log("program type is not Program!")
 		t.Fail()
 	}
 
-	if !assert.Implements((*lpp.ASTNode)(nil), program) {
+	if !assert.Implements((*src.ASTNode)(nil), program) {
 		t.Log("program type does not implement ast node interface")
 		t.Fail()
 	}
@@ -72,9 +72,9 @@ func TestLetStatements(t *testing.T) {
 
 	for i, statement := range program.Staments {
 		assert.Equal("var", statement.TokenLiteral())
-		assert.IsType(&lpp.LetStatement{}, statement.(*lpp.LetStatement))
+		assert.IsType(&src.LetStatement{}, statement.(*src.LetStatement))
 
-		letStatement := statement.(*lpp.LetStatement)
+		letStatement := statement.(*src.LetStatement)
 		assert.NotNil(letStatement.Name)
 		testIdentifier(t, letStatement.Name, expected[i].Operator)
 
@@ -95,12 +95,12 @@ func TestNamesInLetStatements(t *testing.T) {
 
 	var names []string
 	for _, stament := range program.Staments {
-		stament := stament.(*lpp.LetStatement)
+		stament := stament.(*src.LetStatement)
 		if !assert.NotNil(stament.Name) {
 			t.Fail()
 		}
 
-		if !assert.Implements((*lpp.Stmt)(nil), stament) {
+		if !assert.Implements((*src.Stmt)(nil), stament) {
 			t.Fail()
 		}
 
@@ -147,9 +147,9 @@ func TestReturnStatement(t *testing.T) {
 
 	for i, statement := range program.Staments {
 		assert.Equal("regresa", statement.TokenLiteral())
-		assert.IsType(&lpp.ReturnStament{}, statement.(*lpp.ReturnStament))
+		assert.IsType(&src.ReturnStament{}, statement.(*src.ReturnStament))
 
-		returnStament := statement.(*lpp.ReturnStament)
+		returnStament := statement.(*src.ReturnStament)
 		assert.NotNil(returnStament.ReturnValue)
 		testLiteralExpression(t, returnStament.ReturnValue, expected[i].Value)
 	}
@@ -161,7 +161,7 @@ func TestIdentifierExpression(t *testing.T) {
 
 	testProgramStatements(t, parser, program, 1)
 
-	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
+	expressionStament := program.Staments[0].(*src.ExpressionStament)
 	if !assert.NotNil(t, expressionStament.Expression) {
 		t.Fail()
 	}
@@ -174,7 +174,7 @@ func TestIntegerExpressions(t *testing.T) {
 	parser, program := InitParserTests(source)
 
 	testProgramStatements(t, parser, program, 1)
-	expressionStament := program.Staments[0].(*lpp.ExpressionStament)
+	expressionStament := program.Staments[0].(*src.ExpressionStament)
 	assert.NotNil(t, expressionStament.Expression)
 	testLiteralExpression(t, expressionStament.Expression, 5)
 }
@@ -193,10 +193,10 @@ func TestPrefixExpressions(t *testing.T) {
 
 	if len(program.Staments) == len(expectedExpressions) {
 		for i, stament := range program.Staments {
-			stament := stament.(*lpp.ExpressionStament)
-			assert.IsType(t, &lpp.Prefix{}, stament.Expression.(*lpp.Prefix))
+			stament := stament.(*src.ExpressionStament)
+			assert.IsType(t, &src.Prefix{}, stament.Expression.(*src.Prefix))
 
-			prefix := stament.Expression.(*lpp.Prefix)
+			prefix := stament.Expression.(*src.Prefix)
 			assert.Equal(t, prefix.Operator, expectedExpressions[i].Operator)
 
 			assert.NotNil(t, prefix.Rigth)
@@ -214,8 +214,8 @@ func TestCallExpression(t *testing.T) {
 	parser, program := InitParserTests(source)
 	testProgramStatements(t, parser, program, 1)
 
-	call := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.Call)
-	assert.IsType(&lpp.Call{}, call)
+	call := (program.Staments[0].(*src.ExpressionStament)).Expression.(*src.Call)
+	assert.IsType(&src.Call{}, call)
 	testIdentifier(t, call.Function, "suma")
 	assert.NotNil(call.Arguments)
 
@@ -231,8 +231,8 @@ func TestFunctionLiteral(t *testing.T) {
 	parser, program := InitParserTests(source)
 	testProgramStatements(t, parser, program, 1)
 
-	functionLiteral := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.Function)
-	assert.IsType(&lpp.Function{}, functionLiteral)
+	functionLiteral := (program.Staments[0].(*src.ExpressionStament)).Expression.(*src.Function)
+	assert.IsType(&src.Function{}, functionLiteral)
 	assert.Equal(2, len(functionLiteral.Parameters))
 
 	testLiteralExpression(t, functionLiteral.Parameters[0], "x")
@@ -240,7 +240,7 @@ func TestFunctionLiteral(t *testing.T) {
 	assert.NotNil(functionLiteral.Body)
 
 	assert.Equal(1, len(functionLiteral.Body.Staments))
-	body := functionLiteral.Body.Staments[0].(*lpp.ExpressionStament)
+	body := functionLiteral.Body.Staments[0].(*src.ExpressionStament)
 	assert.NotNil(body.Expression)
 	testInfixExpression(t, body.Expression, "x", "+", "y")
 }
@@ -264,7 +264,7 @@ func TestFunctionParameter(t *testing.T) {
 
 	for _, test := range tests {
 		_, program := InitParserTests(test["input"].(string))
-		function := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.Function)
+		function := (program.Staments[0].(*src.ExpressionStament)).Expression.(*src.Function)
 		assert.Equal(len(test["expected"].([]string)), len(function.Parameters))
 
 		for idx, param := range test["expected"].([]string) {
@@ -308,9 +308,9 @@ func TestInfixExpressions(t *testing.T) {
 	}
 
 	for i, stamment := range program.Staments {
-		stament := stamment.(*lpp.ExpressionStament)
+		stament := stamment.(*src.ExpressionStament)
 		assert.NotNil(t, stament.Expression)
-		assert.IsType(t, &lpp.Infix{}, stament.Expression.(*lpp.Infix))
+		assert.IsType(t, &src.Infix{}, stament.Expression.(*src.Infix))
 		testInfixExpression(t,
 			stament.Expression,
 			expectedOperators[i].Left,
@@ -326,24 +326,24 @@ func TestIfExpression(t *testing.T) {
 	parser, program := InitParserTests(source)
 	testProgramStatements(t, parser, program, 1)
 
-	ifExpression := (program.Staments[0].(*lpp.ExpressionStament)).Expression.(*lpp.If)
-	assert.IsType(&lpp.If{}, ifExpression)
+	ifExpression := (program.Staments[0].(*src.ExpressionStament)).Expression.(*src.If)
+	assert.IsType(&src.If{}, ifExpression)
 	assert.NotNil(ifExpression.Condition)
 
 	testInfixExpression(t, ifExpression.Condition, "x", ">", "y")
 	assert.NotNil(ifExpression.Consequence)
-	assert.IsType(&lpp.Block{}, ifExpression.Consequence)
+	assert.IsType(&src.Block{}, ifExpression.Consequence)
 	assert.Equal(1, len(ifExpression.Consequence.Staments))
 
-	consequenceStament := ifExpression.Consequence.Staments[0].(*lpp.ExpressionStament)
+	consequenceStament := ifExpression.Consequence.Staments[0].(*src.ExpressionStament)
 	assert.NotNil(consequenceStament.Expression)
 	testIdentifier(t, consequenceStament.Expression, "z")
 
 	assert.NotNil(ifExpression.Alternative)
-	assert.IsType(&lpp.Block{}, ifExpression.Alternative)
+	assert.IsType(&src.Block{}, ifExpression.Alternative)
 	assert.Equal(1, len(ifExpression.Alternative.Staments))
 
-	alternativeStament := ifExpression.Alternative.Staments[0].(*lpp.ExpressionStament)
+	alternativeStament := ifExpression.Alternative.Staments[0].(*src.ExpressionStament)
 	assert.NotNil(alternativeStament.Expression)
 	testIdentifier(t, alternativeStament.Expression, "w")
 }
@@ -356,7 +356,7 @@ func TestBooleanExpressions(t *testing.T) {
 	expectedValues := []bool{true, false}
 
 	for i, stament := range program.Staments {
-		expressionStament := stament.(*lpp.ExpressionStament)
+		expressionStament := stament.(*src.ExpressionStament)
 		assert.NotNil(t, expressionStament.Expression)
 		testLiteralExpression(t, expressionStament.Expression, expectedValues[i])
 	}
@@ -400,15 +400,15 @@ func TestStringLiteral(t *testing.T) {
 	source := `"hello world!";`
 
 	_, program := InitParserTests(source)
-	expressionStatement := program.Staments[0].(*lpp.ExpressionStament)
-	stringLiteral := expressionStatement.Expression.(*lpp.StringLiteral)
+	expressionStatement := program.Staments[0].(*src.ExpressionStament)
+	stringLiteral := expressionStatement.Expression.(*src.StringLiteral)
 
-	assert.IsType(t, &lpp.StringLiteral{}, stringLiteral)
+	assert.IsType(t, &src.StringLiteral{}, stringLiteral)
 	assert.Equal(t, "hello world!", stringLiteral.Value)
 }
 
-func testBoolean(t *testing.T, expression lpp.Expression, expectedValue bool) {
-	boolean := expression.(*lpp.Boolean)
+func testBoolean(t *testing.T, expression src.Expression, expectedValue bool) {
+	boolean := expression.(*src.Boolean)
 	assert.Equal(t, *boolean.Value, expectedValue)
 	if expectedValue {
 		assert.Equal(t, "verdadero", boolean.Token.Literal)
@@ -417,8 +417,8 @@ func testBoolean(t *testing.T, expression lpp.Expression, expectedValue bool) {
 	}
 }
 
-func testInfixExpression(t *testing.T, ex lpp.Expression, expectedLeft interface{}, operator string, expectedRigth interface{}) {
-	infix := ex.(*lpp.Infix)
+func testInfixExpression(t *testing.T, ex src.Expression, expectedLeft interface{}, operator string, expectedRigth interface{}) {
+	infix := ex.(*src.Infix)
 	assert.NotNil(t, infix.Left)
 	testLiteralExpression(t, infix.Left, expectedLeft)
 	assert.Equal(t, operator, infix.Operator)
@@ -426,14 +426,14 @@ func testInfixExpression(t *testing.T, ex lpp.Expression, expectedLeft interface
 	testLiteralExpression(t, infix.Rigth, expectedRigth)
 }
 
-func testProgramStatements(t *testing.T, parser *lpp.Parser, program *lpp.Program, expectedStamenetCount int) {
+func testProgramStatements(t *testing.T, parser *src.Parser, program *src.Program, expectedStamenetCount int) {
 	assert := assert.New(t)
 	assert.Equal(0, len(parser.Errors()))
 	assert.Equal(expectedStamenetCount, len(program.Staments))
-	assert.IsType(&lpp.ExpressionStament{}, program.Staments[0].(*lpp.ExpressionStament))
+	assert.IsType(&src.ExpressionStament{}, program.Staments[0].(*src.ExpressionStament))
 }
 
-func testLiteralExpression(t *testing.T, expression lpp.Expression, expectedValue interface{}) {
+func testLiteralExpression(t *testing.T, expression src.Expression, expectedValue interface{}) {
 	switch expectedValue := expectedValue.(type) {
 	case string:
 		testIdentifier(t, expression, expectedValue)
@@ -447,18 +447,18 @@ func testLiteralExpression(t *testing.T, expression lpp.Expression, expectedValu
 	}
 }
 
-func testIdentifier(t *testing.T, expression lpp.Expression, expectedValue string) {
+func testIdentifier(t *testing.T, expression src.Expression, expectedValue string) {
 	assert := assert.New((t))
-	assert.IsType(&lpp.Identifier{}, expression.(*lpp.Identifier))
+	assert.IsType(&src.Identifier{}, expression.(*src.Identifier))
 
-	identifier := expression.(*lpp.Identifier)
+	identifier := expression.(*src.Identifier)
 	assert.Equal(expectedValue, identifier.Str())
 	assert.Equal(expectedValue, identifier.TokenLiteral())
 }
 
-func testInteger(t *testing.T, expression lpp.Expression, expectedValue int) {
-	assert.IsType(t, &lpp.Integer{}, expression.(*lpp.Integer))
-	integer := expression.(*lpp.Integer)
+func testInteger(t *testing.T, expression src.Expression, expectedValue int) {
+	assert.IsType(t, &src.Integer{}, expression.(*src.Integer))
+	integer := expression.(*src.Integer)
 	assert.Equal(t, expectedValue, *integer.Value)
 	assert.Equal(t, fmt.Sprint(expectedValue), integer.Token.Literal)
 }

@@ -1,7 +1,7 @@
 package test_test
 
 import (
-	"lpp/lpp"
+	"katan/src"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -182,8 +182,8 @@ func (e *EvaluatorTests) TestErrorhandling() {
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		e.Assert().IsType(&lpp.Error{}, evaluated.(*lpp.Error))
-		evaluatedError := evaluated.(*lpp.Error)
+		e.Assert().IsType(&src.Error{}, evaluated.(*src.Error))
+		evaluatedError := evaluated.(*src.Error)
 		e.Assert().Equal(test.expected, evaluatedError.Message)
 	}
 }
@@ -230,7 +230,7 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		} else {
 			expected := test.expected.(string)
 
-			if str, isStr := evaluated.(*lpp.String); isStr {
+			if str, isStr := evaluated.(*src.String); isStr {
 				e.testStringObject(str, expected)
 			} else {
 				e.testErrorObject(evaluated, expected)
@@ -239,18 +239,18 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 	}
 }
 
-func (e *EvaluatorTests) testErrorObject(evlauated lpp.Object, expected string) {
-	e.IsType(&lpp.Error{}, evlauated.(*lpp.Error))
-	err := evlauated.(*lpp.Error)
+func (e *EvaluatorTests) testErrorObject(evlauated src.Object, expected string) {
+	e.IsType(&src.Error{}, evlauated.(*src.Error))
+	err := evlauated.(*src.Error)
 	e.Equal(expected, err.Message)
 }
 
 func (e *EvaluatorTests) TestFunctionEvaluation() {
 	source := "funcion(x) { x + 2; };"
 	evaluated := e.evaluateTests(source)
-	e.IsType(&lpp.Def{}, evaluated.(*lpp.Def))
+	e.IsType(&src.Def{}, evaluated.(*src.Def))
 
-	function := evaluated.(*lpp.Def)
+	function := evaluated.(*src.Def)
 	e.Equal(1, len(function.Parameters))
 	e.Equal("x", function.Parameters[0].Str())
 	e.Equal("(x + 2)", function.Body.Str())
@@ -307,15 +307,15 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 	}{
 		{source: `"hello world!"`, expected: "hello world!"},
 		{
-			source:   `funcion() { regresa "lpp is awesome"; }()`,
-			expected: "lpp is awesome",
+			source:   `funcion() { regresa "src is awesome"; }()`,
+			expected: "src is awesome",
 		},
 	}
 
 	for _, test := range tests {
 		evluated := e.evaluateTests(test.source)
-		e.IsType(&lpp.String{}, evluated.(*lpp.String))
-		stringObj := evluated.(*lpp.String)
+		e.IsType(&src.String{}, evluated.(*src.String))
+		stringObj := evluated.(*src.String)
 		e.Equal(test.expected, stringObj.Value)
 	}
 }
@@ -344,9 +344,9 @@ func (e *EvaluatorTests) TestStringConcatenation() {
 	}
 }
 
-func (e *EvaluatorTests) testStringObject(evaluated lpp.Object, expected string) {
-	e.IsType(&lpp.String{}, evaluated.(*lpp.String))
-	str := evaluated.(*lpp.String)
+func (e *EvaluatorTests) testStringObject(evaluated src.Object, expected string) {
+	e.IsType(&src.String{}, evaluated.(*src.String))
+	str := evaluated.(*src.String)
 	e.Equal(expected, str.Value)
 }
 
@@ -367,29 +367,29 @@ func (e *EvaluatorTests) TestStringComparison() {
 	}
 }
 
-func (e *EvaluatorTests) testNullObject(eval lpp.Object) {
-	e.Assert().Equal(lpp.SingletonNUll, eval.(*lpp.Null))
+func (e *EvaluatorTests) testNullObject(eval src.Object) {
+	e.Assert().Equal(src.SingletonNUll, eval.(*src.Null))
 }
 
-func (e *EvaluatorTests) evaluateTests(source string) lpp.Object {
-	lexer := lpp.NewLexer(source)
-	parser := lpp.NewParser(lexer)
+func (e *EvaluatorTests) evaluateTests(source string) src.Object {
+	lexer := src.NewLexer(source)
+	parser := src.NewParser(lexer)
 	program := parser.ParseProgam()
-	env := lpp.NewEnviroment(nil)
-	evaluated := lpp.Evaluate(program, env)
+	env := src.NewEnviroment(nil)
+	evaluated := src.Evaluate(program, env)
 	e.Assert().NotNil(evaluated)
 	return evaluated
 }
 
-func (e *EvaluatorTests) testBooleanObject(object lpp.Object, expected bool) {
-	e.Assert().IsType(&lpp.Bool{}, object.(*lpp.Bool))
-	evaluated := object.(*lpp.Bool)
+func (e *EvaluatorTests) testBooleanObject(object src.Object, expected bool) {
+	e.Assert().IsType(&src.Bool{}, object.(*src.Bool))
+	evaluated := object.(*src.Bool)
 	e.Assert().Equal(expected, evaluated.Value)
 }
 
-func (e *EvaluatorTests) testIntegerObject(evaluated lpp.Object, expected int) {
-	e.Assert().IsType(&lpp.Number{}, evaluated.(*lpp.Number))
-	eval := evaluated.(*lpp.Number)
+func (e *EvaluatorTests) testIntegerObject(evaluated src.Object, expected int) {
+	e.Assert().IsType(&src.Number{}, evaluated.(*src.Number))
+	eval := evaluated.(*src.Number)
 	e.Assert().Equal(expected, eval.Value)
 }
 
