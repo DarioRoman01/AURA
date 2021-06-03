@@ -452,3 +452,27 @@ func (w *While) expressNode() {}
 func (w *While) Str() string {
 	return fmt.Sprintf("%s %s { %s }", w.TokenLiteral(), w.Condition.Str(), w.Body.Str())
 }
+
+type Array struct {
+	Token  Token
+	Values []Expression
+}
+
+func NewArray(token Token, values ...Expression) *Array {
+	return &Array{Token: token, Values: values}
+}
+
+func (a *Array) TokenLiteral() string {
+	return a.Token.Literal
+}
+
+func (a *Array) expressNode() {}
+
+func (a *Array) Str() string {
+	var out []string
+	for _, val := range a.Values {
+		out = append(out, val.Str())
+	}
+
+	return strings.Join(out, ", ")
+}

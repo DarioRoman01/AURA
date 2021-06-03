@@ -17,6 +17,7 @@ const (
 	NULL
 	RETURNTYPE
 	STRINGTYPE
+	LIST
 )
 
 var types = [...]string{
@@ -28,6 +29,7 @@ var types = [...]string{
 	NULL:       "NULO",
 	RETURNTYPE: "REGRESA",
 	STRINGTYPE: "TEXTO",
+	LIST:       "LISTA",
 }
 
 type Object interface {
@@ -150,4 +152,19 @@ func (e *Enviroment) SetItem(key string, val Object) {
 
 func (e *Enviroment) DelItem(key string) {
 	delete(e.store, key)
+}
+
+type List struct {
+	values []Object
+}
+
+func (l *List) Type() ObjectType { return LIST }
+func (l *List) Inspect() string {
+	var buff []string
+
+	for _, val := range l.values {
+		buff = append(buff, val.Inspect())
+	}
+
+	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
 }
