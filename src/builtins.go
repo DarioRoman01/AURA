@@ -165,5 +165,5 @@ var BUILTINS = map[string]*Builtin{
 	"tipo":           NewBuiltin(Tipo),
 	"entero":         NewBuiltin(castInt),
 	"texto":          NewBuiltin(castString),
-	"añandir":        NewBuiltin(AddToList),
+	"insertar":       NewBuiltin(AddToList),
 }

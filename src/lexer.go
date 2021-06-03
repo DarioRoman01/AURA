@@ -175,7 +175,7 @@ func (l *Lexer) readIdentifier() string {
 		l.readCharacter()
 	}
 
-	return string(l.source[initialPosition:l.position])
+	return l.source[initialPosition:l.position]
 }
 
 // read number sequence of characters
@@ -184,7 +184,7 @@ func (l *Lexer) readNumber() string {
 	for l.isNumber(l.character) {
 		l.readCharacter()
 	}
-	return string(l.source[initialPosition:l.position])
+	return l.source[initialPosition:l.position]
 }
 
 func (l *Lexer) readString() string {
@@ -195,7 +195,7 @@ func (l *Lexer) readString() string {
 		l.readCharacter()
 	}
 
-	str := string(l.source[initialPosition:l.position])
+	str := l.source[initialPosition:l.position]
 	return str
 }
 
