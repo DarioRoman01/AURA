@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -36,28 +37,29 @@ func Longitud(args ...Object) Object {
 }
 
 func Escribir(args ...Object) Object {
-	if len(args) != 1 {
-		return &Error{Message: wrongNumberofArgs(len(args), 1)}
+	var buff strings.Builder
+
+	for _, arg := range args {
+		switch node := arg.(type) {
+
+		case *String:
+			buff.WriteString(node.Inspect())
+
+		case *Number:
+			buff.WriteString(node.Inspect())
+
+		case *List:
+			buff.WriteString(node.Inspect())
+
+		case *Bool:
+			buff.WriteString(node.Inspect())
+
+		default:
+			return &Error{Message: unsoportedArgumentType("escribir", types[node.Type()])}
+		}
 	}
 
-	switch node := args[0].(type) {
-
-	case *String:
-		fmt.Println(node.Inspect())
-
-	case *Number:
-		fmt.Println(node.Inspect())
-
-	case *List:
-		fmt.Println(node.Inspect())
-
-	case *Bool:
-		fmt.Println(node.Inspect())
-
-	default:
-		return &Error{Message: unsoportedArgumentType("escribir", types[node.Type()])}
-	}
-
+	fmt.Println(buff.String())
 	return SingletonNUll
 }
 
@@ -66,12 +68,14 @@ func Recibir(args ...Object) Object {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
 	}
 
+	if len(args) == 0 {
+		str := input()
+		return &String{Value: str}
+	}
+
 	if arg, isString := args[0].(*String); isString {
 		fmt.Print(arg.Inspect())
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		str := scanner.Text()
-
+		str := input()
 		return &String{Value: str}
 	}
 
@@ -84,12 +88,7 @@ func castInt(args ...Object) Object {
 	}
 
 	if arg, isString := args[0].(*String); isString {
-		number, err := strconv.Atoi(arg.Value)
-		if err != nil {
-			return &Error{Message: fmt.Sprintf("No se puede parsear como entero %s", arg.Value)}
-		}
-
-		return &Number{Value: number}
+		return toInt(arg.Value)
 	}
 
 	return &Error{Message: unsoportedArgumentType("recibir", types[args[0].Type()])}
@@ -113,19 +112,15 @@ func RecibirEntero(args ...Object) Object {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
 	}
 
+	if len(args) == 0 {
+		strInt := input()
+		return toInt(strInt)
+	}
+
 	if arg, isString := args[0].(*String); isString {
 		fmt.Print(arg.Inspect())
-
-		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
-		strInt := scanner.Text()
-
-		number, err := strconv.Atoi(strInt)
-		if err != nil {
-			return &Error{Message: "No se puede parsear como entero"}
-		}
-
-		return &Number{Value: number}
+		strInt := input()
+		return toInt(strInt)
 	}
 
 	return &Error{
@@ -155,6 +150,22 @@ func Tipo(args ...Object) Object {
 	}
 
 	return &String{Value: types[args[0].Type()]}
+}
+
+func input() string {
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	str := scanner.Text()
+	return str
+}
+
+func toInt(str string) Object {
+	number, err := strconv.Atoi(str)
+	if err != nil {
+		return &Error{Message: fmt.Sprintf("No se puede parsear como entero %s", str)}
+	}
+
+	return &Number{Value: number}
 }
 
 var BUILTINS = map[string]*Builtin{

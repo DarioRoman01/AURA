@@ -2,5 +2,5 @@ var mi_lista = lista[2, 3, 5];
 escribir(mi_lista);
 
 var mi_lista = insertar(mi_lista, 4);
-escribir(mi_lista);
-escribir(longitud(mi_lista));
+escribir("mi lista es: ", mi_lista);
+escribir("el largo de mi lista es: ", longitud(mi_lista));
