@@ -1,2 +1,4 @@
 var mi_lista = lista[2, 3, 5];
 escribir(mi_lista);
+var mi_lista = añandir(mi_lista, 4);
+escribir(mi_lista);

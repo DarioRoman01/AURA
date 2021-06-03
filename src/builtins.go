@@ -21,11 +21,18 @@ func Longitud(args ...Object) Object {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
 	}
 
-	if arg, isString := args[0].(*String); isString {
-		return &Number{Value: utf8.RuneCountInString(arg.Value)}
-	}
+	switch arg := args[0].(type) {
 
-	return &Error{Message: unsoportedArgumentType("longitud", types[args[0].Type()])}
+	case *String:
+		return &Number{Value: utf8.RuneCountInString(arg.Value)}
+
+	case *List:
+		return &Number{Value: len(arg.Values)}
+
+	default:
+		return &Error{Message: unsoportedArgumentType("longitud", types[args[0].Type()])}
+
+	}
 }
 
 func Escribir(args ...Object) Object {
@@ -127,6 +134,21 @@ func RecibirEntero(args ...Object) Object {
 
 }
 
+func AddToList(args ...Object) Object {
+	if len(args) < 2 || len(args) > 2 {
+		return &Error{Message: wrongNumberofArgs(len(args), 1)}
+	}
+
+	if arr, isArray := args[0].(*List); isArray {
+		arr.Values = append(arr.Values, args[1])
+		return arr
+	}
+
+	return &Error{
+		Message: unsoportedArgumentType("añandir", types[args[0].Type()]),
+	}
+}
+
 func Tipo(args ...Object) Object {
 	if len(args) > 1 || len(args) < 1 {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
@@ -143,4 +165,5 @@ var BUILTINS = map[string]*Builtin{
 	"tipo":           NewBuiltin(Tipo),
 	"entero":         NewBuiltin(castInt),
 	"texto":          NewBuiltin(castString),
+	"añandir":        NewBuiltin(AddToList),
 }
