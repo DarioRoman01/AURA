@@ -14,6 +14,7 @@ const (
 	DEF
 	ERROR
 	INTEGERS
+	ITER
 	NULL
 	RETURNTYPE
 	STRINGTYPE
@@ -26,6 +27,7 @@ var types = [...]string{
 	DEF:        "FUNCION",
 	ERROR:      "ERROR",
 	INTEGERS:   "ENTERO",
+	ITER:       "ITERADOR",
 	NULL:       "NULO",
 	RETURNTYPE: "REGRESA",
 	STRINGTYPE: "TEXTO",
@@ -163,6 +165,41 @@ func (l *List) Inspect() string {
 	var buff []string
 
 	for _, val := range l.Values {
+		buff = append(buff, val.Inspect())
+	}
+
+	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
+}
+
+type Iterator struct {
+	current Object
+	list    []Object
+}
+
+func (l *List) Iter() *Iterator {
+	if len(l.Values) == 0 {
+		return nil
+	}
+
+	return &Iterator{current: l.Values[0], list: l.Values}
+}
+
+func (i *Iterator) Next() Object {
+	if len(i.list) == 0 {
+		return nil
+	}
+
+	val := i.current
+	i.list = i.list[1:]
+	i.current = i.list[0]
+	return val
+}
+
+func (i *Iterator) Type() ObjectType { return ITER }
+func (i *Iterator) Inspect() string {
+	var buff []string
+
+	for _, val := range i.list {
 		buff = append(buff, val.Inspect())
 	}
 

@@ -22,6 +22,7 @@ const (
 	IDENT
 	IF
 	ILLEGAL
+	IN
 	INT
 	LBRACE
 	LBRACKET
@@ -60,6 +61,7 @@ var tokens = [...]string{
 	IDENT:     "IDENT",
 	IF:        "IF",
 	ILLEGAL:   "ILLEGAL",
+	IN:        "EN",
 	INT:       "INT",
 	LBRACE:    "LBRACE",
 	LET:       "LET",
@@ -100,8 +102,9 @@ func LookUpTokenType(literal string) TokenType {
 		"si_no":     ELSE,
 		"var":       LET,
 		"verdadero": TRUE,
+		"en":        IN,
 		"mientras":  WHILE,
-		"para":      FOR,
+		"por":       FOR,
 		"lista":     DATASTRCUT,
 	}
 
