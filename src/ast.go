@@ -476,27 +476,3 @@ func (a *Array) Str() string {
 
 	return strings.Join(out, ", ")
 }
-
-type RangeExpression struct {
-	Token Token
-	let   *Identifier
-	rang  *Call
-}
-
-func NewRange(token Token, let *Identifier, rang *Call) *RangeExpression {
-	return &RangeExpression{
-		Token: token,
-		let:   let,
-		rang:  rang,
-	}
-}
-
-func (r *RangeExpression) TokenLiteral() string {
-	return r.Token.Literal
-}
-
-func (r *RangeExpression) expressNode() {}
-
-func (r *RangeExpression) Str() string {
-	return fmt.Sprintf("%s %s", r.let.value, r.rang.Str())
-}

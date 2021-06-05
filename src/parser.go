@@ -553,6 +553,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[GTOREQ] = p.parseInfixExpression
 	inFixFns[LTOREQ] = p.parseInfixExpression
 	inFixFns[LT] = p.parseInfixExpression
+	inFixFns[IN] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
 	inFixFns[MOD] = p.parseInfixExpression
