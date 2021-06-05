@@ -7,7 +7,7 @@ in spanish that is very simple to use
 
 ## Syntax example
 
-```
+```dart
 var a = 5;
 var b = 5;
 var c = a + b;
@@ -15,7 +15,7 @@ var c = a + b;
 escribir(c); // prints 10
 ```
 
-```
+```dart
 var suma = funcion(x, y) {
     regresa x + y;
 };
@@ -25,7 +25,7 @@ var resultado = suma(5, 4);
 escribir(resultado); 
 ```
 
-```
+```dart
 var mayor_de_edad = funcion(edad) {
     si (edad >= 18) {
         regresa verdadero;
