@@ -61,6 +61,9 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		CheckIsNotNil(value)
 		return &Return{Value: value}
 
+	case *CallList:
+		return evaluateCallList(node, env)
+
 	case *LetStatement:
 		CheckIsNotNil(node.Value)
 		value := Evaluate(node.Value, env)
@@ -231,6 +234,24 @@ func evaluateWhileExpression(whileExpression *While, env *Enviroment) Object {
 	}
 	Evaluate(whileExpression.Body, env)
 	return Evaluate(whileExpression, env)
+}
+
+func evaluateCallList(call *CallList, env *Enviroment) Object {
+	if list, isList := call.ListIdent.(*Array); isList {
+		evaluated := Evaluate(call.Index, env)
+		num, isNumber := evaluated.(*Number)
+		if !isNumber {
+			return &Error{Message: "El indice debe ser un entero"}
+		}
+
+		if num.Value >= len(list.Values) {
+			return &Error{Message: "Indice fuera de rango"}
+		}
+
+		return Evaluate(list.Values[num.Value], env)
+	}
+
+	return &Error{Message: "No es una lista"}
 }
 
 func evaluateIfExpression(ifExpression *If, env *Enviroment) Object {

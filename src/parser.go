@@ -148,7 +148,6 @@ func (p *Parser) expectedTokenError(tokenType TokenType) {
 		tokens[tokenType],
 		tokens[p.peekToken.Token_type],
 	)
-
 	p.errors = append(p.errors, err)
 }
 
@@ -400,35 +399,15 @@ func (p *Parser) parseFor() Expression {
 func (p *Parser) parseCallList(valueList Expression) Expression {
 	p.checkCurrentTokenIsNotNil()
 	callList := NewCallList(*p.currentToken, valueList, nil)
-	callList.Range = p.parseCallListArgs()
+	if !p.expepectedToken(LBRACKET) {
+		return nil
+	}
+	callList.Index = p.parseExpression(LOWEST)
+	if !p.expepectedToken(RBRACKET) {
+		return nil
+	}
+
 	return callList
-}
-
-func (p *Parser) parseCallListArgs() []Expression {
-	var ranges []Expression
-	p.checkPeekTokenIsNotNil()
-	if !p.expepectedToken(RBRACKET) {
-		return nil
-	}
-
-	p.advanceTokens()
-	if expression := p.parseExpression(LOWEST); expression != nil {
-		ranges = append(ranges, expression)
-	}
-
-	for p.peekToken.Token_type == COMMA {
-		p.advanceTokens()
-		p.advanceTokens()
-		if expression := p.parseExpression(LOWEST); expression != nil {
-			ranges = append(ranges, expression)
-		}
-	}
-
-	if !p.expepectedToken(RBRACKET) {
-		return nil
-	}
-
-	return ranges
 }
 
 func (p *Parser) parseWhile() Expression {

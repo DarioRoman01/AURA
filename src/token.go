@@ -76,6 +76,8 @@ var tokens = [...]string{
 	RBRACE:    "RBRACE",
 	RETURN:    "RETURN",
 	RPAREN:    "RPAREN",
+	RBRACKET:  "RBRACKET",
+	LBRACKET:  "LBRACKET",
 	SEMICOLON: "SEMICOLON",
 	TIMES:     "TIMES",
 	STRING:    "STRING",

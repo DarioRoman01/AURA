@@ -480,14 +480,14 @@ func (a *Array) Str() string {
 type CallList struct {
 	Token     Token
 	ListIdent Expression
-	Range     []Expression
+	Index     Expression
 }
 
-func NewCallList(token Token, listIdent Expression, Range []Expression) *CallList {
+func NewCallList(token Token, listIdent Expression, index Expression) *CallList {
 	return &CallList{
 		Token:     token,
 		ListIdent: listIdent,
-		Range:     Range,
+		Index:     index,
 	}
 }
 
@@ -497,10 +497,5 @@ func (c *CallList) TokenLiteral() string {
 
 func (c *CallList) expressNode() {}
 func (c *CallList) Str() string {
-	var out []string
-	for _, val := range c.Range {
-		out = append(out, val.Str())
-	}
-
-	return fmt.Sprintf("%s[%s]", c.ListIdent.Str(), strings.Join(out, ", "))
+	return fmt.Sprintf("%s[%s]", c.ListIdent.Str(), c.Index.Str())
 }
