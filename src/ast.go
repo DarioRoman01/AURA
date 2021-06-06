@@ -476,3 +476,31 @@ func (a *Array) Str() string {
 
 	return strings.Join(out, ", ")
 }
+
+type CallList struct {
+	Token     Token
+	ListIdent Expression
+	Range     []Expression
+}
+
+func NewCallList(token Token, listIdent Expression, Range []Expression) *CallList {
+	return &CallList{
+		Token:     token,
+		ListIdent: listIdent,
+		Range:     Range,
+	}
+}
+
+func (c *CallList) TokenLiteral() string {
+	return c.Token.Literal
+}
+
+func (c *CallList) expressNode() {}
+func (c *CallList) Str() string {
+	var out []string
+	for _, val := range c.Range {
+		out = append(out, val.Str())
+	}
+
+	return fmt.Sprintf("%s[%s]", c.ListIdent.Str(), strings.Join(out, ", "))
+}

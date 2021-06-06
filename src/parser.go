@@ -39,6 +39,7 @@ var PRECEDENCES = map[TokenType]Precedence{
 	TIMES:    PRODUCT,
 	MOD:      PRODUCT,
 	LPAREN:   CALL,
+	LBRACKET: CALL,
 	OR:       ANDOR,
 }
 
@@ -396,6 +397,40 @@ func (p *Parser) parseFor() Expression {
 	return forExpression
 }
 
+func (p *Parser) parseCallList(valueList Expression) Expression {
+	p.checkCurrentTokenIsNotNil()
+	callList := NewCallList(*p.currentToken, valueList, nil)
+	callList.Range = p.parseCallListArgs()
+	return callList
+}
+
+func (p *Parser) parseCallListArgs() []Expression {
+	var ranges []Expression
+	p.checkPeekTokenIsNotNil()
+	if !p.expepectedToken(RBRACKET) {
+		return nil
+	}
+
+	p.advanceTokens()
+	if expression := p.parseExpression(LOWEST); expression != nil {
+		ranges = append(ranges, expression)
+	}
+
+	for p.peekToken.Token_type == COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		if expression := p.parseExpression(LOWEST); expression != nil {
+			ranges = append(ranges, expression)
+		}
+	}
+
+	if !p.expepectedToken(RBRACKET) {
+		return nil
+	}
+
+	return ranges
+}
+
 func (p *Parser) parseWhile() Expression {
 	p.checkCurrentTokenIsNotNil()
 	whileExpression := NewWhile(*p.currentToken, nil, nil)
@@ -556,6 +591,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[IN] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
+	inFixFns[LBRACKET] = p.parseCallList
 	inFixFns[MOD] = p.parseInfixExpression
 	inFixFns[AND] = p.parseInfixExpression
 	inFixFns[OR] = p.parseInfixExpression
