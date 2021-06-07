@@ -196,6 +196,20 @@ func (p *ParserTests) TestPrefixExpressions() {
 	}
 }
 
+func (p *ParserTests) TestLIstExpression() {
+	source := "lista[1,2,3]"
+	parser, program := p.InitParserTests(source)
+	p.testProgramStatements(parser, program, 1)
+
+	list := (program.Staments[0].(*src.ExpressionStament)).Expression.(*src.Array)
+	p.Assert().IsType(&src.Array{}, list)
+	p.Assert().NotNil(list.Values)
+	p.Assert().Equal(3, len(list.Values))
+	p.testInteger(list.Values[0], 1)
+	p.testInteger(list.Values[1], 2)
+	p.testInteger(list.Values[2], 3)
+}
+
 func (p *ParserTests) TestCallExpression() {
 	source := "suma(1, 2 * 3, 4 + 5);"
 	parser, program := p.InitParserTests(source)
