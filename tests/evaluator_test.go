@@ -223,6 +223,28 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestCallList() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[1];", 23},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[0];", 1},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[2];", 4},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[3];", 5},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[100];", "Indice fuera de rango"},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if expected, isNum := test.expected.(int); isNum {
+			e.testIntegerObject(evaluated, expected)
+		} else {
+			e.testErrorObject(evaluated, test.expected.(string))
+		}
+	}
+}
+
 func (e *EvaluatorTests) TestBuiltinFunctions() {
 	tests := []struct {
 		source   string
