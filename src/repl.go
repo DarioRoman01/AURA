@@ -49,7 +49,7 @@ func StartRpl() {
 			scanned = scanned[:len(scanned)-1] // avoid to print the previus print
 		}
 
-		if evaluated != nil {
+		if evaluated != nil && evaluated != SingletonNUll {
 			fmt.Println(evaluated.Inspect())
 
 			if _, isError := evaluated.(*Error); isError {

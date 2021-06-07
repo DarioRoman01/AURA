@@ -4,3 +4,4 @@ escribir(mi_lista);
 var mi_lista = insertar(mi_lista, 4);
 escribir("mi lista es: ", mi_lista);
 escribir("el largo de mi lista es: ", longitud(mi_lista));
+escribir("el primer valor de mi lista es ", mi_lista[0])

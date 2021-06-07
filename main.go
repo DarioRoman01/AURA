@@ -52,7 +52,7 @@ func (cli *CommandLine) ReadFile(path string) {
 	}
 
 	evaluated := src.Evaluate(program, env)
-	if evaluated != nil {
+	if evaluated != nil && evaluated != src.SingletonNUll {
 		fmt.Println(evaluated.Inspect())
 	}
 }
