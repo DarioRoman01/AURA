@@ -237,7 +237,8 @@ func evaluateWhileExpression(whileExpression *While, env *Enviroment) Object {
 }
 
 func evaluateCallList(call *CallList, env *Enviroment) Object {
-	if list, isList := call.ListIdent.(*Array); isList {
+	evaluated := Evaluate(call.ListIdent, env)
+	if list, isList := evaluated.(*List); isList {
 		evaluated := Evaluate(call.Index, env)
 		num, isNumber := evaluated.(*Number)
 		if !isNumber {
@@ -248,10 +249,10 @@ func evaluateCallList(call *CallList, env *Enviroment) Object {
 			return &Error{Message: "Indice fuera de rango"}
 		}
 
-		return Evaluate(list.Values[num.Value], env)
+		return list.Values[num.Value]
 	}
 
-	return &Error{Message: "No es una lista"}
+	return &Error{Message: notAList(types[evaluated.Type()])}
 }
 
 func evaluateIfExpression(ifExpression *If, env *Enviroment) Object {
@@ -461,4 +462,8 @@ func unknownIdentifier(identifier string) string {
 
 func notAFunction(identifier string) string {
 	return fmt.Sprintf("No es una funcion: %s", identifier)
+}
+
+func notAList(identifier string) string {
+	return fmt.Sprintf("No es una lista: %s", identifier)
 }

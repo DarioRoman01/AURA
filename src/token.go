@@ -110,8 +110,7 @@ func LookUpTokenType(literal string) TokenType {
 		"lista":     DATASTRCUT,
 	}
 
-	TokenType, exists := keywords[literal]
-	if exists {
+	if TokenType, exists := keywords[literal]; exists {
 		return TokenType
 	}
 

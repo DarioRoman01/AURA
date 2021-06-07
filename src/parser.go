@@ -399,9 +399,7 @@ func (p *Parser) parseFor() Expression {
 func (p *Parser) parseCallList(valueList Expression) Expression {
 	p.checkCurrentTokenIsNotNil()
 	callList := NewCallList(*p.currentToken, valueList, nil)
-	if !p.expepectedToken(LBRACKET) {
-		return nil
-	}
+	p.advanceTokens()
 	callList.Index = p.parseExpression(LOWEST)
 	if !p.expepectedToken(RBRACKET) {
 		return nil
