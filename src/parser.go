@@ -41,6 +41,7 @@ var PRECEDENCES = map[TokenType]Precedence{
 	LPAREN:   CALL,
 	LBRACKET: CALL,
 	OR:       ANDOR,
+	ASSING:   ANDOR,
 }
 
 // parser handle the parsing of the program staments and syntax of the program
@@ -316,6 +317,14 @@ func (p *Parser) parseGroupExpression() Expression {
 	return expression
 }
 
+func (p *Parser) parseReassigment(ident Expression) Expression {
+	p.checkCurrentTokenIsNotNil()
+	reassignment := NewReassignment(*p.currentToken, ident, nil)
+	p.advanceTokens()
+	reassignment.NewVal = p.parseExpression(LOWEST)
+	return reassignment
+}
+
 // parse a function declaration
 func (p *Parser) parseFunction() Expression {
 	p.checkCurrentTokenIsNotNil()
@@ -568,6 +577,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[IN] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
+	inFixFns[ASSING] = p.parseReassigment
 	inFixFns[LBRACKET] = p.parseCallList
 	inFixFns[MOD] = p.parseInfixExpression
 	inFixFns[AND] = p.parseInfixExpression

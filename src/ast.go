@@ -499,3 +499,27 @@ func (c *CallList) expressNode() {}
 func (c *CallList) Str() string {
 	return fmt.Sprintf("%s[%s]", c.ListIdent.Str(), c.Index.Str())
 }
+
+type Reassignment struct {
+	Token      Token
+	Identifier Expression
+	NewVal     Expression
+}
+
+func NewReassignment(token Token, ident Expression, newVal Expression) *Reassignment {
+	return &Reassignment{
+		Token:      token,
+		Identifier: ident,
+		NewVal:     newVal,
+	}
+}
+
+func (r *Reassignment) TokenLiteral() string {
+	return r.Token.Literal
+}
+
+func (r *Reassignment) expressNode() {}
+
+func (r *Reassignment) Str() string {
+	return fmt.Sprintf("%s = %s", r.Identifier.Str(), r.NewVal.Str())
+}

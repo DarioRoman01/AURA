@@ -64,6 +64,9 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	case *CallList:
 		return evaluateCallList(node, env)
 
+	case *Reassignment:
+		return evaluateReassigment(node, env)
+
 	case *LetStatement:
 		CheckIsNotNil(node.Value)
 		value := Evaluate(node.Value, env)
@@ -124,6 +127,21 @@ func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
 	}
 
 	return env
+}
+
+func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
+	if variable, isVar := reassigment.Identifier.(*Identifier); isVar {
+
+		_, exists := env.GetItem(variable.value)
+		if !exists {
+			return newError(unknownIdentifier(variable.value))
+		}
+
+		env.store[variable.value] = Evaluate(reassigment.NewVal, env)
+		return SingletonNUll
+	}
+
+	return newError(unknownIdentifier(reassigment.Identifier.Str()))
 }
 
 // check that the given value is not nil
