@@ -223,6 +223,36 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestWhileLoop() {
+	tests := []tuple{
+		{`var i = 0; mientras(i <= 10) { i = i + 1; }; i;`, 11},
+		{`var i = 0; mientras(i <= 3) { i = i + 1; }; i;`, 4},
+		{`var i = 0; mientras(i <= 5) { i = i + 1; }; i;`, 6},
+		{`var i = 0; mientras(i <= 4) { i = i + 1; }; i;`, 5},
+		{`var i = 0; mientras(i <= 1) { i = i + 1; }; i;`, 2},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
+func (e *EvaluatorTests) TestReassigment() {
+	tests := []tuple{
+		{"var a = 5; a = 2; a;", 2},
+		{`var a = 20; a = 10; a;`, 10},
+		{"var a = 12; a = 23; a = 25; a;", 25},
+		{"var a = 32; a = 34; a = 5; a;", 5},
+		{"var a = 32; a = 34; a = 6; a;", 6},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestCallList() {
 	tests := []struct {
 		source   string

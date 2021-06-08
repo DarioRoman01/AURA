@@ -2,16 +2,8 @@ var hola_n_veces = funcion(n) {
     var i = 1;
     mientras(i <= n) {
         escribir("hola");
-        var i = i + 1;
+        i = i + 1;
     }
 }
 
 hola_n_veces(4);
-
-var hola_con_por = funcion(n) {
-    por(n en rango(10)) {
-        escribir("hola mundo", n);
-    }
-}
-
-hola_con_por(4);
