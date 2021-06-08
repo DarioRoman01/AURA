@@ -42,6 +42,7 @@ var PRECEDENCES = map[TokenType]Precedence{
 	LBRACKET: CALL,
 	OR:       ANDOR,
 	ASSING:   ANDOR,
+	COLON:    CALL,
 }
 
 // parser handle the parsing of the program staments and syntax of the program
@@ -486,6 +487,17 @@ func (p *Parser) parseIf() Expression {
 	return ifExpression
 }
 
+func (p *Parser) parseMethod(left Expression) Expression {
+	p.checkCurrentTokenIsNotNil()
+	method := NewMethodExpression(*p.currentToken, left, nil)
+	if !p.expepectedToken(IDENT) {
+		return nil
+	}
+
+	method.Method = p.parseExpression(LOWEST)
+	return method
+}
+
 // parse integer expressions
 func (p *Parser) parseInteger() Expression {
 	p.checkCurrentTokenIsNotNil()
@@ -582,6 +594,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns := make(InfixParseFns)
 	inFixFns[PLUS] = p.parseInfixExpression
 	inFixFns[MINUS] = p.parseInfixExpression
+	inFixFns[COLON] = p.parseMethod
 	inFixFns[DIVISION] = p.parseInfixExpression
 	inFixFns[TIMES] = p.parseInfixExpression
 	inFixFns[EQ] = p.parseInfixExpression

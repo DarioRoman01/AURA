@@ -1,6 +1,8 @@
 package src
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // use singleton patern with true false and null
 var (
@@ -65,6 +67,11 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		CheckIsNotNil(node.Condition)
 		CheckIsNotNil(node.Body)
 		return evaluateFor(node, env)
+
+	case *MethodExpression:
+		CheckIsNotNil(node.Method)
+		CheckIsNotNil(node.Obj)
+		return evaluateMethod(node, env)
 
 	case *RangeExpression:
 		CheckIsNotNil(node.Range)
@@ -154,6 +161,27 @@ func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
 	}
 
 	return notAVariable(reassigment.Identifier.TokenLiteral())
+}
+
+func evaluateMethod(method *MethodExpression, env *Enviroment) Object {
+	list, isList := Evaluate(method.Obj, env).(*List)
+	if isList {
+		listMethod := Evaluate(method.Method, env).(*Method)
+		switch listMethod.MethodType {
+		case POP:
+			return list.Pop()
+
+		case APPEND:
+			list.Add(listMethod.Value)
+			return SingletonNUll
+
+		case REMOVE:
+			index := listMethod.Value.(*Number)
+			return list.RemoveAt(index.Value)
+		}
+	}
+
+	return &Error{fmt.Sprintf("%s no tiene metodos", types[list.Type()])}
 }
 
 func evaluateFor(forLoop *For, env *Enviroment) Object {

@@ -9,10 +9,19 @@ import (
 	"unicode/utf8"
 )
 
+type MethodsTypes int
+
+const (
+	Lhead MethodsTypes = iota
+	POP
+	APPEND
+	REMOVE
+)
+
 var scanner = bufio.NewScanner(os.Stdin)
 
 func wrongNumberofArgs(found, actual int) string {
-	return fmt.Sprintf("numero incorrecto de argumentos para longitud, se recibieron %d, se requieren %d", found, actual)
+	return fmt.Sprintf("numero incorrecto de argumentos para largo, se recibieron %d, se requieren %d", found, actual)
 }
 
 func unsoportedArgumentType(funcname, objType string) string {
@@ -33,7 +42,7 @@ func Longitud(args ...Object) Object {
 		return &Number{Value: len(arg.Values)}
 
 	default:
-		return &Error{Message: unsoportedArgumentType("longitud", types[args[0].Type()])}
+		return &Error{Message: unsoportedArgumentType("largo", types[args[0].Type()])}
 
 	}
 }
@@ -131,19 +140,36 @@ func RecibirEntero(args ...Object) Object {
 
 }
 
-func AddToList(args ...Object) Object {
-	if len(args) < 2 || len(args) > 2 {
+func add(args ...Object) Object {
+	if len(args) > 1 || len(args) == 0 {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
 	}
 
-	if arr, isArray := args[0].(*List); isArray {
-		arr.Values = append(arr.Values, args[1])
-		return arr
+	if num, isNumber := args[0].(*Number); isNumber {
+		return NewMethod(num, APPEND)
 	}
 
-	return &Error{
-		Message: unsoportedArgumentType("añandir", types[args[0].Type()]),
+	return &Error{Message: unsoportedArgumentType("add", types[args[0].Type()])}
+}
+
+func remove(args ...Object) Object {
+	if len(args) > 1 || len(args) == 0 {
+		return &Error{wrongNumberofArgs(len(args), 1)}
 	}
+
+	if num, isNumber := args[0].(*Number); isNumber {
+		return NewMethod(num, REMOVE)
+	}
+
+	return &Error{Message: unsoportedArgumentType("add", types[args[0].Type()])}
+}
+
+func pop(args ...Object) Object {
+	if len(args) > 0 {
+		return &Error{wrongNumberofArgs(len(args), 1)}
+	}
+
+	return NewMethod(SingletonNUll, POP)
 }
 
 func rango(args ...Object) Object {
@@ -190,13 +216,15 @@ func toInt(str string) Object {
 }
 
 var BUILTINS = map[string]*Builtin{
-	"longitud":       NewBuiltin(Longitud),
+	"largo":          NewBuiltin(Longitud),
 	"escribir":       NewBuiltin(Escribir),
 	"recibir":        NewBuiltin(Recibir),
 	"recibir_entero": NewBuiltin(RecibirEntero),
 	"tipo":           NewBuiltin(Tipo),
 	"entero":         NewBuiltin(castInt),
 	"texto":          NewBuiltin(castString),
-	"insertar":       NewBuiltin(AddToList),
 	"rango":          NewBuiltin(rango),
+	"agregar":        NewBuiltin(add),
+	"pop":            NewBuiltin(pop),
+	"popIndice":      NewBuiltin(remove),
 }
