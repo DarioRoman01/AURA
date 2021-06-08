@@ -61,10 +61,22 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		CheckIsNotNil(value)
 		return &Return{Value: value}
 
+	case *For:
+		CheckIsNotNil(node.Condition)
+		CheckIsNotNil(node.Body)
+		return evaluateFor(node, env)
+
+	case *RangeExpression:
+		CheckIsNotNil(node.Range)
+		CheckIsNotNil(node.Variable)
+		return evaluateRange(node, env)
+
 	case *CallList:
 		return evaluateCallList(node, env)
 
 	case *Reassignment:
+		CheckIsNotNil(node.Identifier)
+		CheckIsNotNil(node.NewVal)
 		return evaluateReassigment(node, env)
 
 	case *LetStatement:
@@ -141,7 +153,39 @@ func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
 		return SingletonNUll
 	}
 
-	return newError(unknownIdentifier(reassigment.Identifier.Str()))
+	return newError(notAVariable(reassigment.Identifier.TokenLiteral()))
+}
+
+func evaluateFor(forLoop *For, env *Enviroment) Object {
+	evaluated := Evaluate(forLoop.Condition, env)
+	if iter, isIter := evaluated.(*Iterator); isIter {
+		val := forLoop.Condition.(*RangeExpression).Variable.(*Identifier).value
+		for iter.Next() != nil {
+			Evaluate(forLoop.Body, env)
+			env.store[val] = iter.current
+		}
+		return SingletonNUll
+	}
+
+	if err, isError := evaluated.(*Error); isError {
+		return err
+	}
+
+	return newError("syntax error")
+}
+
+func evaluateRange(rangeExpress *RangeExpression, env *Enviroment) Object {
+	if list, isList := Evaluate(rangeExpress.Range, env).(*List); isList {
+		val, isVar := rangeExpress.Variable.(*Identifier)
+		if !isVar {
+			return newError("no es una variable")
+		}
+		iter := NewIterator(list.Values[0], list.Values)
+		env.SetItem(val.value, iter.list[0])
+		return iter
+	}
+
+	return newError("Rango invalido")
 }
 
 // check that the given value is not nil
@@ -484,4 +528,8 @@ func notAFunction(identifier string) string {
 
 func notAList(identifier string) string {
 	return fmt.Sprintf("No es una lista: %s", identifier)
+}
+
+func notAVariable(identifier string) string {
+	return fmt.Sprintf("No es una variable: %s", identifier)
 }

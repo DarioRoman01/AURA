@@ -385,6 +385,22 @@ func (p *Parser) parseInfixExpression(left Expression) Expression {
 	return infix
 }
 
+func (p *Parser) parseRangeExpression() Expression {
+	rangeExpress := NewRange(*p.currentToken, nil, nil)
+	if !p.expepectedToken(IDENT) {
+		return nil
+	}
+
+	rangeExpress.Variable = p.parseIdentifier()
+	if !p.expepectedToken(IN) {
+		return nil
+	}
+
+	p.advanceTokens()
+	rangeExpress.Range = p.parseExpression(LOWEST)
+	return rangeExpress
+}
+
 func (p *Parser) parseFor() Expression {
 	p.checkCurrentTokenIsNotNil()
 	forExpression := NewFor(*p.currentToken, nil, nil)
@@ -392,8 +408,7 @@ func (p *Parser) parseFor() Expression {
 		return nil
 	}
 
-	p.advanceTokens()
-	forExpression.Condition = p.parseExpression(LOWEST)
+	forExpression.Condition = p.parseRangeExpression()
 	if !p.expepectedToken(RPAREN) {
 		return nil
 	}
