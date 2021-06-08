@@ -238,6 +238,23 @@ func (e *EvaluatorTests) TestWhileLoop() {
 	}
 }
 
+func (e *EvaluatorTests) TestListMethods() {
+	tests := []tuple{
+		{"var a = lista[2,3]; a:agregar(4); a:pop();", 4},
+		{"var a = lista[2,3,4,2,12]; a:agregar(17); a:pop();", 17},
+		{"var a = lista[2,3,4,2,12]; a:agregar(4); a:popIndice(1);", 3},
+		{"var a = lista[2,3,4,2,12]; a:agregar(4); a:popIndice(0);", 2},
+		{"var a = lista[2,3]; a:agregar(4); largo(a);", 3},
+		{"var a = lista[2,3]; largo(a);", 2},
+		{"var a = lista[2,3,4,2,12]; a:popIndice(0); largo(a);", 4},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestForLoop() {
 	tests := []tuple{
 		{`var i = 0; por(n en rango(10)) { i = i + 1; }; i;`, 10},
@@ -294,13 +311,13 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		source   string
 		expected interface{}
 	}{
-		{source: `longitud("");`, expected: 0},
-		{source: `longitud("cuatro");`, expected: 6},
-		{source: `longitud("hola mundo");`, expected: 10},
-		{source: "longitud(1);", expected: "argumento para longitud no valido, se recibio ENTERO"},
+		{source: `largo("");`, expected: 0},
+		{source: `largo("cuatro");`, expected: 6},
+		{source: `largo("hola mundo");`, expected: 10},
+		{source: "largo(1);", expected: "argumento para largo no valido, se recibio ENTERO"},
 		{
-			source:   `longitud("uno", "dos");`,
-			expected: "numero incorrecto de argumentos para longitud, se recibieron 2, se requieren 1",
+			source:   `largo("uno", "dos");`,
+			expected: "numero incorrecto de argumentos para largo, se recibieron 2, se requieren 1",
 		},
 		{source: "tipo(1);", expected: "ENTERO"},
 		{source: "tipo(verdadero)", expected: "BOOLEANO"},
