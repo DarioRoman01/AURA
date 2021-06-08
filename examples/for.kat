@@ -1,0 +1,7 @@
+var hola = funcion() {
+    por(n en rango(10)) {
+        escribir("n es: ", n);
+    }
+}
+
+hola();

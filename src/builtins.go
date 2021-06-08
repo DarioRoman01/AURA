@@ -9,6 +9,8 @@ import (
 	"unicode/utf8"
 )
 
+var scanner = bufio.NewScanner(os.Stdin)
+
 func wrongNumberofArgs(found, actual int) string {
 	return fmt.Sprintf("numero incorrecto de argumentos para longitud, se recibieron %d, se requieren %d", found, actual)
 }
@@ -69,13 +71,13 @@ func Recibir(args ...Object) Object {
 	}
 
 	if len(args) == 0 {
-		str := input()
+		str := input(scanner)
 		return &String{Value: str}
 	}
 
 	if arg, isString := args[0].(*String); isString {
 		fmt.Print(arg.Inspect())
-		str := input()
+		str := input(scanner)
 		return &String{Value: str}
 	}
 
@@ -113,13 +115,13 @@ func RecibirEntero(args ...Object) Object {
 	}
 
 	if len(args) == 0 {
-		strInt := input()
+		strInt := input(scanner)
 		return toInt(strInt)
 	}
 
 	if arg, isString := args[0].(*String); isString {
 		fmt.Print(arg.Inspect())
-		strInt := input()
+		strInt := input(scanner)
 		return toInt(strInt)
 	}
 
@@ -144,6 +146,26 @@ func AddToList(args ...Object) Object {
 	}
 }
 
+func rango(args ...Object) Object {
+	if len(args) > 1 || len(args) == 0 {
+		return &Error{Message: wrongNumberofArgs(len(args), 1)}
+	}
+
+	if num, isNum := args[0].(*Number); isNum {
+		if num.Value == 0 {
+			return &Error{Message: "el rango debe mayor a 0"}
+		}
+
+		list := &List{Values: []Object{}}
+		for i := 0; i <= num.Value; i++ {
+			list.Values = append(list.Values, &Number{i})
+		}
+		return list
+	}
+
+	return &Error{Message: unsoportedArgumentType("rango", types[args[0].Type()])}
+}
+
 func Tipo(args ...Object) Object {
 	if len(args) > 1 || len(args) < 1 {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
@@ -152,10 +174,9 @@ func Tipo(args ...Object) Object {
 	return &String{Value: types[args[0].Type()]}
 }
 
-func input() string {
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	str := scanner.Text()
+func input(scan *bufio.Scanner) string {
+	scan.Scan()
+	str := scan.Text()
 	return str
 }
 
@@ -177,4 +198,5 @@ var BUILTINS = map[string]*Builtin{
 	"entero":         NewBuiltin(castInt),
 	"texto":          NewBuiltin(castString),
 	"insertar":       NewBuiltin(AddToList),
+	"rango":          NewBuiltin(rango),
 }
