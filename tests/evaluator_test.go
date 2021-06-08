@@ -240,10 +240,10 @@ func (e *EvaluatorTests) TestWhileLoop() {
 
 func (e *EvaluatorTests) TestForLoop() {
 	tests := []tuple{
-		{`var i = 0; por(n en rango(10)) { i = i + 1; }; i;`, 11},
-		{`var i = 0; por(n en rango(3)) { i = i + 1; }; i;`, 4},
-		{`var i = 0; por(n en rango(5)) { i = i + 1; }; i;`, 6},
-		{`var i = 0; por(n en rango(4)) { i = i + 1; }; i;`, 5},
+		{`var i = 0; por(n en rango(10)) { i = i + 1; }; i;`, 10},
+		{`var i = 0; por(n en rango(3)) { i = i + 1; }; i;`, 3},
+		{`var i = 0; por(n en rango(5)) { i = i + 1; }; i;`, 5},
+		{`var i = 0; por(n en rango(4)) { i = i + 1; }; i;`, 4},
 	}
 
 	for _, test := range tests {

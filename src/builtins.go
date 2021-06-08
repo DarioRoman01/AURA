@@ -157,7 +157,7 @@ func rango(args ...Object) Object {
 		}
 
 		list := &List{Values: []Object{}}
-		for i := 0; i <= num.Value; i++ {
+		for i := 0; i < num.Value; i++ {
 			list.Values = append(list.Values, &Number{i})
 		}
 		return list
