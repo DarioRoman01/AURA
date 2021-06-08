@@ -120,7 +120,7 @@ func applyFunction(fn Object, args []Object) Object {
 		return builtin.Fn(args...)
 	}
 
-	return newError(notAFunction(types[fn.Type()]))
+	return notAFunction(types[fn.Type()])
 }
 
 // unwrap the return value of a function
@@ -146,14 +146,14 @@ func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
 
 		_, exists := env.GetItem(variable.value)
 		if !exists {
-			return newError(unknownIdentifier(variable.value))
+			return unknownIdentifier(variable.value)
 		}
 
 		env.store[variable.value] = Evaluate(reassigment.NewVal, env)
 		return SingletonNUll
 	}
 
-	return newError(notAVariable(reassigment.Identifier.TokenLiteral()))
+	return notAVariable(reassigment.Identifier.TokenLiteral())
 }
 
 func evaluateFor(forLoop *For, env *Enviroment) Object {
@@ -244,7 +244,7 @@ func evaluateIdentifier(node *Identifier, env *Enviroment) Object {
 	if !exists {
 		builtint, exists := BUILTINS[node.value]
 		if !exists {
-			return newError(unknownIdentifier(node.value))
+			return unknownIdentifier(node.value)
 		}
 
 		return builtint
@@ -314,7 +314,7 @@ func evaluateCallList(call *CallList, env *Enviroment) Object {
 		return list.Values[num.Value]
 	}
 
-	return &Error{Message: notAList(types[evaluated.Type()])}
+	return notAList(types[evaluated.Type()])
 }
 
 func evaluateIfExpression(ifExpression *If, env *Enviroment) Object {
@@ -370,18 +370,18 @@ func evaluateInfixExpression(operator string, left Object, right Object) Object 
 		return toBooleanObject(left != right)
 
 	case left.Type() != right.Type():
-		return newError(typeMismatchError(
+		return typeMismatchError(
 			types[left.Type()],
 			operator,
 			types[right.Type()],
-		))
+		)
 
 	default:
-		return newError(unknownInfixOperator(
+		return unknownInfixOperator(
 			types[left.Type()],
 			operator,
 			types[right.Type()],
-		))
+		)
 	}
 
 }
@@ -402,11 +402,11 @@ func evaluateBoolInfixExpression(operator string, left *Bool, rigth *Bool) Objec
 		return toBooleanObject(left != rigth)
 
 	default:
-		return newError(unknownInfixOperator(
+		return unknownInfixOperator(
 			types[left.Type()],
 			operator,
 			types[rigth.Type()],
-		))
+		)
 	}
 }
 
@@ -422,11 +422,11 @@ func evaluateStringInfixExpression(operator string, left Object, rigth Object) O
 	case "!=":
 		return toBooleanObject(leftVal != rigthVal)
 	default:
-		return newError(unknownInfixOperator(
+		return unknownInfixOperator(
 			types[left.Type()],
 			operator,
 			types[rigth.Type()],
-		))
+		)
 	}
 }
 
@@ -460,11 +460,11 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 		return toBooleanObject(leftVal <= rigthVal)
 
 	default:
-		return newError(unknownInfixOperator(
+		return unknownInfixOperator(
 			types[left.Type()],
 			operator,
 			types[rigth.Type()],
-		))
+		)
 	}
 }
 
@@ -475,7 +475,7 @@ func evaluateMinusOperatorExpression(rigth Object) Object {
 		return right
 	}
 
-	return newError(unknownPrefixOperator("-", types[rigth.Type()]))
+	return unknownPrefixOperator("-", types[rigth.Type()])
 }
 
 // evaluate prefix expressions
@@ -488,7 +488,7 @@ func evaluatePrefixExpression(operator string, rigth Object) Object {
 		return evaluateMinusOperatorExpression(rigth)
 
 	default:
-		return newError(unknownPrefixOperator(operator, types[rigth.Type()]))
+		return unknownPrefixOperator(operator, types[rigth.Type()])
 	}
 }
 
@@ -506,30 +506,44 @@ func toBooleanObject(val bool) Object {
 }
 
 // utils functions to return errors
-func typeMismatchError(left, operator, rigth string) string {
-	return fmt.Sprintf("Discrepancia de tipos: %s %s %s", left, operator, rigth)
+func typeMismatchError(left, operator, rigth string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("Discrepancia de tipos: %s %s %s", left, operator, rigth),
+	}
 }
 
-func unknownPrefixOperator(operator, rigth string) string {
-	return fmt.Sprintf("Operador desconocido: %s%s", operator, rigth)
+func unknownPrefixOperator(operator, rigth string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("Operador desconocido: %s%s", operator, rigth),
+	}
 }
 
-func unknownInfixOperator(left, operator, rigth string) string {
-	return fmt.Sprintf("Operador desconocido: %s %s %s", left, operator, rigth)
+func unknownInfixOperator(left, operator, rigth string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("Operador desconocido: %s %s %s", left, operator, rigth),
+	}
 }
 
-func unknownIdentifier(identifier string) string {
-	return fmt.Sprintf("Identificador no encontrado: %s", identifier)
+func unknownIdentifier(identifier string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("Identificador no encontrado: %s", identifier),
+	}
 }
 
-func notAFunction(identifier string) string {
-	return fmt.Sprintf("No es una funcion: %s", identifier)
+func notAFunction(identifier string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("No es una funcion: %s", identifier),
+	}
 }
 
-func notAList(identifier string) string {
-	return fmt.Sprintf("No es una lista: %s", identifier)
+func notAList(identifier string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("No es una lista: %s", identifier),
+	}
 }
 
-func notAVariable(identifier string) string {
-	return fmt.Sprintf("No es una variable: %s", identifier)
+func notAVariable(identifier string) *Error {
+	return &Error{
+		Message: fmt.Sprintf("No es una variable: %s", identifier),
+	}
 }
