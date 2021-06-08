@@ -181,13 +181,17 @@ func NewIterator(current Object, values []Object) *Iterator {
 }
 
 func (i *Iterator) Next() Object {
-	if len(i.list) == 1 {
+	if len(i.list) == 0 {
 		return nil
 	}
 
 	val := i.current
 	i.list = i.list[1:]
-	i.current = i.list[0]
+
+	if len(i.list) != 0 {
+		i.current = i.list[0]
+	}
+
 	return val
 }
 

@@ -1,6 +1,7 @@
 var hola = funcion() {
-    por(n en rango(10)) {
-        escribir("n es: ", n);
+    var mi_lista = lista[2,4,5,6,7]
+    por(n en rango(longitud(mi_lista))) {
+        escribir("n es: ", mi_lista[n]);
     }
 }
 
