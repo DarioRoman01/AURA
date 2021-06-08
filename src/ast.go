@@ -547,3 +547,27 @@ func (r *RangeExpression) expressNode() {}
 func (r *RangeExpression) Str() string {
 	return fmt.Sprintf("%s en %s", r.Variable.Str(), r.Range.Str())
 }
+
+type MethodExpression struct {
+	Token  Token
+	Obj    Expression
+	Method Expression
+}
+
+func NewMethodExpression(token Token, obj Expression, method Expression) *MethodExpression {
+	return &MethodExpression{
+		Token:  token,
+		Obj:    obj,
+		Method: method,
+	}
+}
+
+func (m *MethodExpression) TokenLiteral() string {
+	return m.Token.Literal
+}
+
+func (m *MethodExpression) expressNode() {}
+
+func (m *MethodExpression) Str() string {
+	return fmt.Sprintf("%s:%s", m.Obj.Str(), m.Method.Str())
+}

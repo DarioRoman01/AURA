@@ -19,6 +19,7 @@ const (
 	RETURNTYPE
 	STRINGTYPE
 	LIST
+	METHOD
 )
 
 var types = [...]string{
@@ -32,6 +33,7 @@ var types = [...]string{
 	RETURNTYPE: "REGRESA",
 	STRINGTYPE: "TEXTO",
 	LIST:       "LISTA",
+	METHOD:     "METODO",
 }
 
 type Object interface {
@@ -171,6 +173,30 @@ func (l *List) Inspect() string {
 	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
 }
 
+func (l *List) Add(obj Object) {
+	l.Values = append(l.Values, obj)
+}
+
+func (l *List) Pop() Object {
+	if len(l.Values) == 0 {
+		return &Error{"La lista esta vacia"}
+	}
+
+	obj := l.Values[len(l.Values)-1]
+	l.Values = l.Values[:len(l.Values)-1]
+	return obj
+}
+
+func (l *List) RemoveAt(index int) Object {
+	if index >= len(l.Values) || len(l.Values) == 0 {
+		return &Error{"Indice fuera de rango"}
+	}
+
+	val := l.Values[index]
+	l.Values = append(l.Values[:index], l.Values[index+1:]...)
+	return val
+}
+
 type Iterator struct {
 	current Object
 	list    []Object
@@ -204,4 +230,18 @@ func (i *Iterator) Inspect() string {
 	}
 
 	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
+}
+
+type Method struct {
+	Value      Object
+	MethodType MethodsTypes
+}
+
+func NewMethod(val Object, methodType MethodsTypes) *Method {
+	return &Method{Value: val, MethodType: methodType}
+}
+
+func (m *Method) Type() ObjectType { return METHOD }
+func (m *Method) Inspect() string {
+	return fmt.Sprintf(":%d(%s)", m.MethodType, m.Value.Inspect())
 }
