@@ -56,6 +56,9 @@ func (l *Lexer) NextToken() Token {
 	} else if equal, _ := regexp.MatchString(`^\}$`, l.character); equal {
 		token = Token{Token_type: RBRACE, Literal: l.character}
 
+	} else if equal, _ := regexp.MatchString(`^\:$`, l.character); equal {
+		token = Token{Token_type: COLON, Literal: l.character}
+
 	} else if equal, _ := regexp.MatchString(`^,$`, l.character); equal {
 		token = Token{Token_type: COMMA, Literal: l.character}
 

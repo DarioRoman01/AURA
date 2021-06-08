@@ -8,6 +8,7 @@ const (
 	Head TokenType = iota
 	AND
 	ASSING
+	COLON
 	COMMA
 	DATASTRCUT
 	DIVISION
@@ -50,6 +51,7 @@ const (
 var tokens = [...]string{
 	AND:       "AND",
 	ASSING:    "ASSING",
+	COLON:     "PUNTOS",
 	COMMA:     "COMMA",
 	DIVISION:  "DIVISION",
 	ELSE:      "ELSE",
