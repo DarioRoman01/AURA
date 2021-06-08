@@ -1,21 +1,20 @@
 var hola = funcion() {
     var mi_lista = lista[2,4,5,6,7]
-    por(n en rango(longitud(mi_lista))) {
+    por(n en rango(largo(mi_lista))) {
         escribir("n es: ", mi_lista[n]);
     }
 }
 
 hola();
 
-var func = funcion() {
+var insertar = funcion(array) {
     por(n en rango(10)) {
-        si(n == 5) {
-            regresa 5;
-        }
+        array:agregar(n)
     }
-
-    regresa -1;
 }
 
-var resulado = func();
-escribir(resulado);
+var mi_lista = lista[2,2,3];
+escribir(mi_lista);
+insertar(mi_lista);
+escribir(mi_lista);
+
