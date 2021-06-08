@@ -7,7 +7,8 @@ in spanish that is very simple to use
 
 ## Syntax example
 
-```dart
+## Variables
+```ts
 var a = 5;
 var b = 5;
 var c = a + b;
@@ -15,7 +16,9 @@ var c = a + b;
 escribir(c); // prints 10
 ```
 
-```dart
+## Functions
+
+```ts
 var suma = funcion(x, y) {
     regresa x + y;
 };
@@ -25,7 +28,7 @@ var resultado = suma(5, 4);
 escribir(resultado); 
 ```
 
-```dart
+```ts 
 var mayor_de_edad = funcion(edad) {
     si (edad >= 18) {
         regresa verdadero;
@@ -37,41 +40,64 @@ var mayor_de_edad = funcion(edad) {
 var resultado = mayor_de_edad(18);
 escribir(resultado); // prints verdadero
 
-var resultado = mayor_de_edad(10);   
+resultado = mayor_de_edad(10);   
 escribir(resultado); // prints falso
 
-var edad = 30;
-var resultado = mayor_de_edad(edad); 
-escribir(resultado); // prints verdadero
+var edad = recibir_entero();
+resultado = mayor_de_edad(edad); 
+escribir(resultado);
 ```
+
+## Lists
+```ts
+var mi_lista = lista[2,3,4];
+mi_lista:agregar(4);
+mi_lista:pop();
+```
+
+## Loops
+```ts
+var i = 0;
+mientras(i <= 5) {
+    escribir("hola mundo");
+    i = i + 1;
+}
+```
+
+```ts
+por(i en rango(5)) {
+    escribir("hola mundo");
+}
+```
+
 
 you can see more examples in the examples folder.
 
 ## Usage
 first copy the repository and change to the directory created:
-```
+```shell
 $ git clone https://github.com/Haizza1/Katan && cd Katan
 ```
 download the dependencies:
-```
+```shell
 $ go mod download
 ```
 check that tests pass:
-```
+```shell
 $ go test -v ./...
 ```
 compile the package:
-```
+```shell
 $ go build -o katan
 ```
 
 then you can create a file or play with the repl to play with the repl just run:
-```
+```shell
 $ ./katan rpl
 ```
 
 to use a file you can create a file with the .lpp extension and run:
-```
+```shell
 $ ./katan file -path <path to your file>
 ```
 
