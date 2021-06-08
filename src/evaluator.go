@@ -161,7 +161,11 @@ func evaluateFor(forLoop *For, env *Enviroment) Object {
 	if iter, isIter := evaluated.(*Iterator); isIter {
 		val := forLoop.Condition.(*RangeExpression).Variable.(*Identifier).value
 		for iter.Next() != nil {
-			Evaluate(forLoop.Body, env)
+			evaluated = Evaluate(forLoop.Body, env)
+			if returnVal, isReturn := evaluated.(*Return); isReturn {
+				return returnVal
+			}
+
 			env.store[val] = iter.current
 		}
 		return SingletonNUll

@@ -238,6 +238,20 @@ func (e *EvaluatorTests) TestWhileLoop() {
 	}
 }
 
+func (e *EvaluatorTests) TestForLoop() {
+	tests := []tuple{
+		{`var i = 0; por(n en rango(10)) { i = i + 1; }; i;`, 11},
+		{`var i = 0; por(n en rango(3)) { i = i + 1; }; i;`, 4},
+		{`var i = 0; por(n en rango(5)) { i = i + 1; }; i;`, 6},
+		{`var i = 0; por(n en rango(4)) { i = i + 1; }; i;`, 5},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestReassigment() {
 	tests := []tuple{
 		{"var a = 5; a = 2; a;", 2},

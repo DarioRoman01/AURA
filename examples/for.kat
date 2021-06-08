@@ -6,3 +6,16 @@ var hola = funcion() {
 }
 
 hola();
+
+var func = funcion() {
+    por(n en rango(10)) {
+        si(n == 5) {
+            regresa 5;
+        }
+    }
+
+    regresa -1;
+}
+
+var resulado = func();
+escribir(resulado);
