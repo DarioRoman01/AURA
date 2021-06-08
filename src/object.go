@@ -176,16 +176,12 @@ type Iterator struct {
 	list    []Object
 }
 
-func (l *List) Iter() *Iterator {
-	if len(l.Values) == 0 {
-		return nil
-	}
-
-	return &Iterator{current: l.Values[0], list: l.Values}
+func NewIterator(current Object, values []Object) *Iterator {
+	return &Iterator{current: current, list: values}
 }
 
 func (i *Iterator) Next() Object {
-	if len(i.list) == 0 {
+	if len(i.list) == 1 {
 		return nil
 	}
 

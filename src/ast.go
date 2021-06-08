@@ -523,3 +523,27 @@ func (r *Reassignment) expressNode() {}
 func (r *Reassignment) Str() string {
 	return fmt.Sprintf("%s = %s", r.Identifier.Str(), r.NewVal.Str())
 }
+
+type RangeExpression struct {
+	Token    Token
+	Variable Expression
+	Range    Expression
+}
+
+func NewRange(token Token, variable Expression, Range Expression) *RangeExpression {
+	return &RangeExpression{
+		Token:    token,
+		Variable: variable,
+		Range:    Range,
+	}
+}
+
+func (r *RangeExpression) TokenLiteral() string {
+	return r.Token.Literal
+}
+
+func (r *RangeExpression) expressNode() {}
+
+func (r *RangeExpression) Str() string {
+	return fmt.Sprintf("%s en %s", r.Variable.Str(), r.Range.Str())
+}
