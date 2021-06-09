@@ -20,6 +20,7 @@ const (
 	STRINGTYPE
 	LIST
 	METHOD
+	DICT
 )
 
 var types = [...]string{
@@ -34,6 +35,7 @@ var types = [...]string{
 	STRINGTYPE: "TEXTO",
 	LIST:       "LISTA",
 	METHOD:     "METODO",
+	DICT:       "MAPA",
 }
 
 type Object interface {
@@ -244,4 +246,20 @@ func NewMethod(val Object, methodType MethodsTypes) *Method {
 func (m *Method) Type() ObjectType { return METHOD }
 func (m *Method) Inspect() string {
 	return fmt.Sprintf(":%d(%s)", m.MethodType, m.Value.Inspect())
+}
+
+type Map struct {
+	store map[Object]Object
+}
+
+func (m *Map) Type() ObjectType { return DICT }
+func (m *Map) Inspect() string {
+	var buff []string
+
+	for key, val := range m.store {
+		str := fmt.Sprintf("%s => %s", key.Inspect(), val.Inspect())
+		buff = append(buff, str)
+	}
+
+	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
 }

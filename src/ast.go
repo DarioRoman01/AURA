@@ -589,3 +589,51 @@ func (n *NullExpression) expressNode() {}
 func (n *NullExpression) Str() string {
 	return "nulo"
 }
+
+type MapExpression struct {
+	Token Token
+	Body  []*KeyValue
+}
+
+func NewMapExpression(token Token, body []*KeyValue) *MapExpression {
+	return &MapExpression{token, body}
+}
+
+func (m *MapExpression) TokenLiteral() string {
+	return m.Token.Literal
+}
+
+func (m *MapExpression) expressNode() {}
+
+func (m *MapExpression) Str() string {
+	var buff []string
+	for _, keyVal := range m.Body {
+		buff = append(buff, keyVal.Str())
+	}
+
+	return fmt.Sprintf("mapa{%s}", strings.Join(buff, ", "))
+}
+
+type KeyValue struct {
+	Token Token
+	Key   Expression
+	Value Expression
+}
+
+func NewKeyVal(token Token, key, value Expression) *KeyValue {
+	return &KeyValue{
+		Token: token,
+		Key:   key,
+		Value: value,
+	}
+}
+
+func (k *KeyValue) TokenLiteral() string {
+	return k.Token.Literal
+}
+
+func (k *KeyValue) expressNode() {}
+
+func (k *KeyValue) Str() string {
+	return fmt.Sprintf("%s => %s", k.Key.Str(), k.Value.Str())
+}
