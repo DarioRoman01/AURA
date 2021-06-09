@@ -55,6 +55,15 @@ mi_lista:agregar(4);
 mi_lista:pop();
 ```
 
+## HashMaps
+```dart
+var mi_mapa = mapa{
+    "a" => 1,
+    "b" => 2,
+    "c" => 3,
+}
+```
+
 ## Loops
 ```ts
 var i = 0;
