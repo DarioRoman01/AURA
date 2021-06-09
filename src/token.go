@@ -8,6 +8,7 @@ const (
 	Head TokenType = iota
 	AND
 	ASSING
+	ARROW
 	COLON
 	COMMA
 	DATASTRCUT
@@ -47,6 +48,7 @@ const (
 	TRUE
 	WHILE
 	NULLT
+	MAP
 )
 
 var tokens = [...]string{
@@ -87,6 +89,7 @@ var tokens = [...]string{
 	TRUE:      "TRUE",
 	WHILE:     "MIENTRAS",
 	NULLT:     "NULO",
+	MAP:       "MAPA",
 }
 
 type Token struct {
@@ -113,6 +116,7 @@ func LookUpTokenType(literal string) TokenType {
 		"por":       FOR,
 		"lista":     DATASTRCUT,
 		"nulo":      NULLT,
+		"mapa":      MAP,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {

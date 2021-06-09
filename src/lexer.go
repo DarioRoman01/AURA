@@ -34,6 +34,8 @@ func (l *Lexer) NextToken() Token {
 	if equal, _ := regexp.MatchString(`^=$`, l.character); equal {
 		if l.peekCharacter() == "=" {
 			token = l.makeTwoCharacterToken(EQ)
+		} else if l.peekCharacter() == ">" {
+			token = l.makeTwoCharacterToken(ARROW)
 		} else {
 			token = Token{Token_type: ASSING, Literal: l.character}
 		}
