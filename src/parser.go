@@ -514,6 +514,11 @@ func (p *Parser) parseInteger() Expression {
 	return integer
 }
 
+func (p *Parser) ParseNull() Expression {
+	p.checkCurrentTokenIsNotNil()
+	return NewNull(*p.currentToken)
+}
+
 // parse given let stament and check sintax
 func (p *Parser) parseLetSatement() Stmt {
 	p.checkCurrentTokenIsNotNil()
@@ -629,5 +634,6 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[TRUE] = p.parseBoolean
 	prefixFns[STRING] = p.parseStringLiteral
 	prefixFns[DATASTRCUT] = p.ParseArray
+	prefixFns[NULLT] = p.ParseNull
 	return prefixFns
 }

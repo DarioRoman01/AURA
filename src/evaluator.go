@@ -86,6 +86,9 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		CheckIsNotNil(node.NewVal)
 		return evaluateReassigment(node, env)
 
+	case *NullExpression:
+		return SingletonNUll
+
 	case *LetStatement:
 		CheckIsNotNil(node.Value)
 		value := Evaluate(node.Value, env)

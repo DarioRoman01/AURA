@@ -571,3 +571,21 @@ func (m *MethodExpression) expressNode() {}
 func (m *MethodExpression) Str() string {
 	return fmt.Sprintf("%s:%s", m.Obj.Str(), m.Method.Str())
 }
+
+type NullExpression struct {
+	Token Token
+}
+
+func NewNull(token Token) *NullExpression {
+	return &NullExpression{Token: token}
+}
+
+func (n *NullExpression) TokenLiteral() string {
+	return n.Token.Literal
+}
+
+func (n *NullExpression) expressNode() {}
+
+func (n *NullExpression) Str() string {
+	return "nulo"
+}

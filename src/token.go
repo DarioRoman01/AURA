@@ -46,6 +46,7 @@ const (
 	STRING
 	TRUE
 	WHILE
+	NULLT
 )
 
 var tokens = [...]string{
@@ -85,6 +86,7 @@ var tokens = [...]string{
 	STRING:    "STRING",
 	TRUE:      "TRUE",
 	WHILE:     "MIENTRAS",
+	NULLT:     "NULO",
 }
 
 type Token struct {
@@ -110,6 +112,7 @@ func LookUpTokenType(literal string) TokenType {
 		"mientras":  WHILE,
 		"por":       FOR,
 		"lista":     DATASTRCUT,
+		"nulo":      NULLT,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {
