@@ -514,6 +514,47 @@ func (p *Parser) parseInteger() Expression {
 	return integer
 }
 
+func (p *Parser) parseKeyValues() *KeyValue {
+	p.checkCurrentTokenIsNotNil()
+	keyVal := NewKeyVal(*p.currentToken, nil, nil)
+	keyVal.Key = p.parseExpression(LOWEST)
+	if !p.expepectedToken(ARROW) {
+		return nil
+	}
+
+	p.advanceTokens()
+	keyVal.Value = p.parseExpression(LOWEST)
+	return keyVal
+}
+
+func (p *Parser) parseMap() Expression {
+	p.checkCurrentTokenIsNotNil()
+	mapExpress := NewMapExpression(*p.currentToken, []*KeyValue{})
+	if !p.expepectedToken(LBRACE) {
+		return nil
+	}
+
+	p.advanceTokens()
+	keyVal := p.parseKeyValues()
+	if keyVal == nil {
+		return nil
+	}
+
+	mapExpress.Body = append(mapExpress.Body, keyVal)
+	for p.peekToken.Token_type == COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		keyVal := p.parseKeyValues()
+		if keyVal == nil {
+			return nil
+		}
+
+		mapExpress.Body = append(mapExpress.Body, keyVal)
+	}
+	p.advanceTokens()
+	return mapExpress
+}
+
 func (p *Parser) ParseNull() Expression {
 	p.checkCurrentTokenIsNotNil()
 	return NewNull(*p.currentToken)
@@ -635,5 +676,6 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[STRING] = p.parseStringLiteral
 	prefixFns[DATASTRCUT] = p.ParseArray
 	prefixFns[NULLT] = p.ParseNull
+	prefixFns[MAP] = p.parseMap
 	return prefixFns
 }

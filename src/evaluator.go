@@ -8,7 +8,8 @@ import (
 var (
 	singletonTRUE  = &Bool{Value: true}
 	singletonFALSE = &Bool{Value: false}
-	SingletonNUll  = &Null{}
+	SingletonNUll  = &Null{} //  this null is for functions that dont return anything
+	NullVAlue      = &Null{} // this null is the null value
 )
 
 // evlauate given nodes of an ast
@@ -87,7 +88,11 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 		return evaluateReassigment(node, env)
 
 	case *NullExpression:
-		return SingletonNUll
+		return NullVAlue
+
+	case *MapExpression:
+		CheckIsNotNil(node.Body)
+		return evaluateMap(node, env)
 
 	case *LetStatement:
 		CheckIsNotNil(node.Value)
@@ -207,6 +212,17 @@ func evaluateFor(forLoop *For, env *Enviroment) Object {
 	}
 
 	return newError("syntax error")
+}
+
+func evaluateMap(mapa *MapExpression, env *Enviroment) Object {
+	mapObj := &Map{map[Object]Object{}}
+	for _, keyVal := range mapa.Body {
+		key := Evaluate(keyVal.Key, env)
+		val := Evaluate(keyVal.Value, env)
+		mapObj.store[key] = val
+	}
+
+	return mapObj
 }
 
 func evaluateRange(rangeExpress *RangeExpression, env *Enviroment) Object {
