@@ -1,6 +1,8 @@
 package src
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"strings"
 )
@@ -249,7 +251,7 @@ func (m *Method) Inspect() string {
 }
 
 type Map struct {
-	store map[Object]Object
+	store map[string]Object
 }
 
 func (m *Map) Type() ObjectType { return DICT }
@@ -257,9 +259,37 @@ func (m *Map) Inspect() string {
 	var buff []string
 
 	for key, val := range m.store {
-		str := fmt.Sprintf("%s => %s", key.Inspect(), val.Inspect())
+		str := fmt.Sprintf("%s => %s", m.Deserialize([]byte(key)).Inspect(), val.Inspect())
 		buff = append(buff, str)
 	}
 
 	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
+}
+
+func (m *Map) Get(key string) Object {
+	obj, exists := m.store[key]
+	if !exists {
+		return NullVAlue
+	}
+
+	return obj
+}
+
+func (m *Map) Serialize(obj Object) []byte {
+	var buff bytes.Buffer
+	encoder := gob.NewEncoder(&buff)
+	encoder.Encode(obj)
+	return buff.Bytes()
+}
+
+func (m *Map) Deserialize(data []byte) Object {
+	var obj Object
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	decoder.Decode(obj)
+	return obj
+}
+
+func (m *Map) SetValues(key Object, value Object) {
+	hashedKey := m.Serialize(key)
+	m.store[string(hashedKey)] = value
 }

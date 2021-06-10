@@ -215,11 +215,11 @@ func evaluateFor(forLoop *For, env *Enviroment) Object {
 }
 
 func evaluateMap(mapa *MapExpression, env *Enviroment) Object {
-	mapObj := &Map{map[Object]Object{}}
+	mapObj := &Map{map[string]Object{}}
 	for _, keyVal := range mapa.Body {
 		key := Evaluate(keyVal.Key, env)
 		val := Evaluate(keyVal.Value, env)
-		mapObj.store[key] = val
+		mapObj.SetValues(key, val)
 	}
 
 	return mapObj
@@ -363,6 +363,11 @@ func evaluateCallList(call *CallList, env *Enviroment) Object {
 		}
 
 		return list.Values[num.Value]
+	}
+
+	if hashMap, isMap := evaluated.(*Map); isMap {
+		evaluated := Evaluate(call.Index, env)
+		return hashMap.Get(string(hashMap.Serialize(evaluated)))
 	}
 
 	return notAList(types[evaluated.Type()])
