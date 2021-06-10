@@ -16,6 +16,7 @@ const (
 	POP
 	APPEND
 	REMOVE
+	CONTAIS
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
@@ -46,7 +47,6 @@ func Longitud(args ...Object) Object {
 
 	default:
 		return &Error{Message: unsoportedArgumentType("largo", types[args[0].Type()])}
-
 	}
 }
 
@@ -178,6 +178,14 @@ func pop(args ...Object) Object {
 	return NewMethod(SingletonNUll, POP)
 }
 
+func contains(args ...Object) Object {
+	if len(args) > 1 || len(args) < 1 {
+		return &Error{wrongNumberofArgs(len(args), 1)}
+	}
+
+	return NewMethod(args[0], CONTAIS)
+}
+
 func rango(args ...Object) Object {
 	if len(args) > 1 || len(args) == 0 {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
@@ -233,4 +241,5 @@ var BUILTINS = map[string]*Builtin{
 	"agregar":        NewBuiltin(add),
 	"pop":            NewBuiltin(pop),
 	"popIndice":      NewBuiltin(remove),
+	"contiene":       NewBuiltin(contains),
 }

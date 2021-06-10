@@ -156,46 +156,58 @@ func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
 	return env
 }
 
-func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
-	// variable reassigment
-	if variable, isVar := reassigment.Identifier.(*Identifier); isVar {
+func evaluateVarReassigment(variable *Identifier, newVal Expression, env *Enviroment) Object {
+	_, exists := env.GetItem(variable.value)
+	if !exists {
+		return unknownIdentifier(variable.value)
+	}
 
-		_, exists := env.GetItem(variable.value)
-		if !exists {
-			return unknownIdentifier(variable.value)
-		}
+	env.store[variable.value] = Evaluate(newVal, env)
+	return SingletonNUll
+}
 
-		env.store[variable.value] = Evaluate(reassigment.NewVal, env)
+func evaluateListReassigment(call *CallList, list *List, newVal Expression, env *Enviroment) Object {
+	index := Evaluate(call.Index, env)
+	num, isNum := index.(*Number)
+	if !isNum {
+		return &Error{"El indice debe ser un numero"}
+	}
+	if num.Value >= len(list.Values) {
+		return &Error{"Indice fuera de rango"}
+	}
+
+	list.Values[num.Value] = Evaluate(newVal, env)
+	return SingletonNUll
+}
+
+func evaluateMapReassigment(hashMap *Map, key Object, value Object) Object {
+	if err := hashMap.Get(string(hashMap.Serialize(key))); err != nil {
+		hashMap.SetValues(key, value)
 		return SingletonNUll
 	}
 
-	// lisit reassigment
+	hashMap.UpdateKey(key, value)
+	return SingletonNUll
+}
+
+func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
+	// variable reassigment
+	if variable, isVar := reassigment.Identifier.(*Identifier); isVar {
+		return evaluateVarReassigment(variable, reassigment.NewVal, env)
+	}
+
 	if callList, isCall := reassigment.Identifier.(*CallList); isCall {
 		evaluated := Evaluate(callList.ListIdent, env)
+		// list reassigment
 		if list, isList := evaluated.(*List); isList {
-			index := Evaluate(callList.Index, env)
-
-			num, isNum := index.(*Number)
-			if !isNum {
-				return &Error{"El indice debe ser un numero"}
-			}
-			if num.Value >= len(list.Values) {
-				return &Error{"Indice fuera de rango"}
-			}
-
-			list.Values[num.Value] = Evaluate(reassigment.NewVal, env)
-			return SingletonNUll
+			return evaluateListReassigment(callList, list, reassigment.NewVal, env)
 		}
 
+		// map reassigment
 		if hashMap, isMap := evaluated.(*Map); isMap {
 			key := Evaluate(callList.Index, env)
 			newVal := Evaluate(reassigment.NewVal, env)
-			err := hashMap.UpdateKey(key, newVal)
-			if err != nil {
-				return &Error{err.Error()}
-			}
-
-			return SingletonNUll
+			return evaluateMapReassigment(hashMap, key, newVal)
 		}
 
 		return notAList(evaluated.Inspect())
@@ -204,25 +216,55 @@ func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
 	return notAVariable(reassigment.Identifier.TokenLiteral())
 }
 
+func evaluateListMethods(list *List, method *Method) Object {
+	switch method.MethodType {
+	case POP:
+		return list.Pop()
+
+	case APPEND:
+		list.Add(method.Value)
+		return SingletonNUll
+
+	case REMOVE:
+		index := method.Value.(*Number)
+		return list.RemoveAt(index.Value)
+
+	default:
+		return noSuchMethod(method.Inspect(), "list")
+	}
+}
+
+func evaluateMapMethods(hashMap *Map, method *Method) Object {
+	switch method.MethodType {
+	case CONTAIS:
+		return &Bool{hashMap.Get(string(hashMap.Serialize(method.Value))) != NullVAlue}
+
+	default:
+		return noSuchMethod(method.Inspect(), "mapa")
+	}
+}
+
 func evaluateMethod(method *MethodExpression, env *Enviroment) Object {
-	list, isList := Evaluate(method.Obj, env).(*List)
-	if isList {
-		listMethod := Evaluate(method.Method, env).(*Method)
-		switch listMethod.MethodType {
-		case POP:
-			return list.Pop()
-
-		case APPEND:
-			list.Add(listMethod.Value)
-			return SingletonNUll
-
-		case REMOVE:
-			index := listMethod.Value.(*Number)
-			return list.RemoveAt(index.Value)
+	evaluated := Evaluate(method.Obj, env)
+	if list, isList := evaluated.(*List); isList {
+		listMethod, isMethod := Evaluate(method.Method, env).(*Method)
+		if !isMethod {
+			return &Error{"No es un metodo"}
 		}
+
+		return evaluateListMethods(list, listMethod)
 	}
 
-	return &Error{fmt.Sprintf("%s no tiene metodos", types[list.Type()])}
+	if hashMap, isMap := evaluated.(*Map); isMap {
+		mapMethod, isMethod := Evaluate(method.Method, env).(*Method)
+		if !isMethod {
+			return noSuchMethod(mapMethod.Inspect(), "mapa")
+		}
+
+		return evaluateMapMethods(hashMap, mapMethod)
+	}
+
+	return &Error{fmt.Sprintf("%s no tiene metodos", types[evaluated.Type()])}
 }
 
 func evaluateFor(forLoop *For, env *Enviroment) Object {
@@ -636,5 +678,11 @@ func notAList(identifier string) *Error {
 func notAVariable(identifier string) *Error {
 	return &Error{
 		Message: fmt.Sprintf("No es una variable: %s", identifier),
+	}
+}
+
+func noSuchMethod(method, datastruct string) *Error {
+	return &Error{
+		fmt.Sprintf("%s no tiene un metodo %s", datastruct, method),
 	}
 }

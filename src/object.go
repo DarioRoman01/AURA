@@ -276,14 +276,9 @@ func (m *Map) Get(key string) Object {
 	return obj
 }
 
-func (m *Map) UpdateKey(key, newVal Object) error {
+func (m *Map) UpdateKey(key, newVal Object) {
 	hashedKey := m.Serialize(key)
-	if _, exists := m.store[string(hashedKey)]; !exists {
-		return errors.New("llave no encontrada")
-	}
-
 	m.store[string(hashedKey)] = newVal
-	return nil
 }
 
 func (m *Map) Serialize(obj Object) []byte {
