@@ -1,0 +1,23 @@
+var mi_mapa = mapa{
+    "a" => 1, 
+    "b" => 2,
+    "c" => 3
+}
+
+escribir(mi_mapa);
+mi_mapa["a"];
+mi_mapa["a"] = 24;
+escribir(mi_mapa);
+escribir(largo(mi_mapa))
+
+var existe = funcion(llave, map) {
+    var valor = map[llave];
+    si (valor == nulo) {
+        regresa "la llave no existe";
+    } si_no {
+        regresa valor;
+    }
+}
+
+var resultado = existe("d", mi_mapa);
+escribir(resultado);

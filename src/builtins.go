@@ -41,6 +41,9 @@ func Longitud(args ...Object) Object {
 	case *List:
 		return &Number{Value: len(arg.Values)}
 
+	case *Map:
+		return &Number{Value: len(arg.store)}
+
 	default:
 		return &Error{Message: unsoportedArgumentType("largo", types[args[0].Type()])}
 
@@ -63,6 +66,9 @@ func Escribir(args ...Object) Object {
 			buff.WriteString(node.Inspect())
 
 		case *Bool:
+			buff.WriteString(node.Inspect())
+
+		case *Map:
 			buff.WriteString(node.Inspect())
 
 		default:
