@@ -238,6 +238,27 @@ func (e *EvaluatorTests) TestWhileLoop() {
 	}
 }
 
+func (e *EvaluatorTests) TestMaps() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{`var m = mapa{"a" => 1, "b" => 2}; m["a"]`, 1},
+		{`var m = mapa{"a" => 1, "b" => 2}; m["b"]`, 2},
+		{`var m = mapa{1 => "hola", 2 => "mundo"}; m[1]`, "hola"},
+		{`var m = mapa{1 => "hola", 2 => " mundo"}; m[1] + m[2]`, "hola mundo"},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if num, isInt := test.expected.(int); isInt {
+			e.testIntegerObject(evaluated, num)
+		} else {
+			e.testStringObject(evaluated, test.expected.(string))
+		}
+	}
+}
+
 func (e *EvaluatorTests) TestListMethods() {
 	tests := []tuple{
 		{"var a = lista[2,3]; a:agregar(4); a:pop();", 4},
