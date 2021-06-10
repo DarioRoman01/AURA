@@ -346,6 +346,8 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `entero("1")`, expected: 1},
 		{source: `entero("hola")`, expected: "No se puede parsear como entero hola"},
 		{source: "texto(12)", expected: "12"},
+		{source: "var a = lista[2,3,4]; largo(a);", expected: 3},
+		{source: `var b = mapa{"a" => 2}; largo(b);`, expected: 1},
 	}
 
 	for _, test := range tests {

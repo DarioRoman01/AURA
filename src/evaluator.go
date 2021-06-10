@@ -239,6 +239,13 @@ func evaluateMapMethods(hashMap *Map, method *Method) Object {
 	case CONTAIS:
 		return &Bool{hashMap.Get(string(hashMap.Serialize(method.Value))) != NullVAlue}
 
+	case VALUES:
+		list := &List{[]Object{}}
+		for _, val := range hashMap.store {
+			list.Values = append(list.Values, val)
+		}
+		return list
+
 	default:
 		return noSuchMethod(method.Inspect(), "mapa")
 	}
@@ -249,7 +256,7 @@ func evaluateMethod(method *MethodExpression, env *Enviroment) Object {
 	if list, isList := evaluated.(*List); isList {
 		listMethod, isMethod := Evaluate(method.Method, env).(*Method)
 		if !isMethod {
-			return &Error{"No es un metodo"}
+			return noSuchMethod(listMethod.Inspect(), "list")
 		}
 
 		return evaluateListMethods(list, listMethod)

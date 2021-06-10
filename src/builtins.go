@@ -17,6 +17,8 @@ const (
 	APPEND
 	REMOVE
 	CONTAIS
+	KEYS
+	VALUES
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
@@ -186,6 +188,14 @@ func contains(args ...Object) Object {
 	return NewMethod(args[0], CONTAIS)
 }
 
+func values(args ...Object) Object {
+	if len(args) > 0 {
+		return &Error{wrongNumberofArgs(len(args), 1)}
+	}
+
+	return NewMethod(SingletonNUll, VALUES)
+}
+
 func rango(args ...Object) Object {
 	if len(args) > 1 || len(args) == 0 {
 		return &Error{Message: wrongNumberofArgs(len(args), 1)}
@@ -242,4 +252,5 @@ var BUILTINS = map[string]*Builtin{
 	"pop":            NewBuiltin(pop),
 	"popIndice":      NewBuiltin(remove),
 	"contiene":       NewBuiltin(contains),
+	"valores":        NewBuiltin((values)),
 }
