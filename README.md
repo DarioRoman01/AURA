@@ -80,6 +80,11 @@ mientras(i <= 5) {
 por(i en rango(5)) {
     escribir("hola mundo");
 }
+
+var mi_lista = lista[2,3,4];
+por(i en mi_lista) {
+    escribir(i);
+}
 ```
 
 
