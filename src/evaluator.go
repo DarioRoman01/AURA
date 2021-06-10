@@ -157,6 +157,7 @@ func extendFunctionEnviroment(fn *Def, args []Object) *Enviroment {
 }
 
 func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
+	// variable reassigment
 	if variable, isVar := reassigment.Identifier.(*Identifier); isVar {
 
 		_, exists := env.GetItem(variable.value)
@@ -166,6 +167,38 @@ func evaluateReassigment(reassigment *Reassignment, env *Enviroment) Object {
 
 		env.store[variable.value] = Evaluate(reassigment.NewVal, env)
 		return SingletonNUll
+	}
+
+	// lisit reassigment
+	if callList, isCall := reassigment.Identifier.(*CallList); isCall {
+		evaluated := Evaluate(callList.ListIdent, env)
+		if list, isList := evaluated.(*List); isList {
+			index := Evaluate(callList.Index, env)
+
+			num, isNum := index.(*Number)
+			if !isNum {
+				return &Error{"El indice debe ser un numero"}
+			}
+			if num.Value >= len(list.Values) {
+				return &Error{"Indice fuera de rango"}
+			}
+
+			list.Values[num.Value] = Evaluate(reassigment.NewVal, env)
+			return SingletonNUll
+		}
+
+		if hashMap, isMap := evaluated.(*Map); isMap {
+			key := Evaluate(callList.Index, env)
+			newVal := Evaluate(reassigment.NewVal, env)
+			err := hashMap.UpdateKey(key, newVal)
+			if err != nil {
+				return &Error{err.Error()}
+			}
+
+			return SingletonNUll
+		}
+
+		return notAList(evaluated.Inspect())
 	}
 
 	return notAVariable(reassigment.Identifier.TokenLiteral())
@@ -219,7 +252,9 @@ func evaluateMap(mapa *MapExpression, env *Enviroment) Object {
 	for _, keyVal := range mapa.Body {
 		key := Evaluate(keyVal.Key, env)
 		val := Evaluate(keyVal.Value, env)
-		mapObj.SetValues(key, val)
+		if err := mapObj.SetValues(key, val); err != nil {
+			return &Error{"No se permiten llaves duplicadas"}
+		}
 	}
 
 	return mapObj

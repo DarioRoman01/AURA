@@ -51,8 +51,9 @@ escribir(resultado);
 ## Lists
 ```ts
 var mi_lista = lista[2,3,4];
-mi_lista:agregar(4);
-mi_lista:pop();
+mi_lista:agregar(4); // add 4 to the list
+mi_lista:pop(); // pop the last item
+mi_lista:popIndice(0); // remove by index
 ```
 
 ## HashMaps
@@ -62,6 +63,8 @@ var mi_mapa = mapa{
     "b" => 2,
     "c" => 3,
 }
+
+mi_mapa["a"] // return 1
 ```
 
 ## Loops

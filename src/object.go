@@ -3,6 +3,7 @@ package src
 import (
 	"bytes"
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -259,7 +260,7 @@ func (m *Map) Inspect() string {
 	var buff []string
 
 	for key, val := range m.store {
-		str := fmt.Sprintf("%s => %s", m.Deserialize([]byte(key)).Inspect(), val.Inspect())
+		str := fmt.Sprintf("%s => %s", m.Deserialize([]byte(key)), val.Inspect())
 		buff = append(buff, str)
 	}
 
@@ -275,21 +276,36 @@ func (m *Map) Get(key string) Object {
 	return obj
 }
 
+func (m *Map) UpdateKey(key, newVal Object) error {
+	hashedKey := m.Serialize(key)
+	if _, exists := m.store[string(hashedKey)]; !exists {
+		return errors.New("llave no encontrada")
+	}
+
+	m.store[string(hashedKey)] = newVal
+	return nil
+}
+
 func (m *Map) Serialize(obj Object) []byte {
 	var buff bytes.Buffer
 	encoder := gob.NewEncoder(&buff)
-	encoder.Encode(obj)
+	encoder.Encode(obj.Inspect())
 	return buff.Bytes()
 }
 
-func (m *Map) Deserialize(data []byte) Object {
-	var obj Object
+func (m *Map) Deserialize(data []byte) string {
+	var str string
 	decoder := gob.NewDecoder(bytes.NewReader(data))
-	decoder.Decode(obj)
-	return obj
+	decoder.Decode(&str)
+	return str
 }
 
-func (m *Map) SetValues(key Object, value Object) {
+func (m *Map) SetValues(key Object, value Object) error {
 	hashedKey := m.Serialize(key)
+	if _, exists := m.store[string(hashedKey)]; exists {
+		return errors.New("la llave ya existe en el mapa")
+	}
+
 	m.store[string(hashedKey)] = value
+	return nil
 }
