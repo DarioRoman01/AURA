@@ -26,23 +26,25 @@ const (
 )
 
 var PRECEDENCES = map[TokenType]Precedence{
-	AND:      ANDOR,
-	EQ:       EQUEAL,
-	NOT_EQ:   EQUEAL,
-	LT:       LESSGRATER,
-	LTOREQ:   LESSGRATER,
-	GT:       LESSGRATER,
-	GTOREQ:   LESSGRATER,
-	PLUS:     SUM,
-	MINUS:    SUM,
-	DIVISION: PRODUCT,
-	TIMES:    PRODUCT,
-	MOD:      PRODUCT,
-	LPAREN:   CALL,
-	LBRACKET: CALL,
-	OR:       ANDOR,
-	ASSING:   ANDOR,
-	COLON:    CALL,
+	AND:         ANDOR,
+	EQ:          EQUEAL,
+	NOT_EQ:      EQUEAL,
+	LT:          LESSGRATER,
+	LTOREQ:      LESSGRATER,
+	GT:          LESSGRATER,
+	GTOREQ:      LESSGRATER,
+	PLUS:        SUM,
+	MINUS:       SUM,
+	DIVISION:    PRODUCT,
+	TIMES:       PRODUCT,
+	MOD:         PRODUCT,
+	LPAREN:      CALL,
+	LBRACKET:    CALL,
+	OR:          ANDOR,
+	ASSING:      ANDOR,
+	COLON:       CALL,
+	PLUSASSING:  PRODUCT,
+	MINUSASSING: PRODUCT,
 }
 
 // parser handle the parsing of the program staments and syntax of the program
@@ -650,6 +652,8 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[LT] = p.parseInfixExpression
 	inFixFns[IN] = p.parseInfixExpression
 	inFixFns[GT] = p.parseInfixExpression
+	inFixFns[PLUSASSING] = p.parseInfixExpression
+	inFixFns[MINUSASSING] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
 	inFixFns[ASSING] = p.parseReassigment
 	inFixFns[LBRACKET] = p.parseCallList

@@ -3,22 +3,22 @@ var binary_search = funcion(elements, val) {
     var rigth = largo(elements) - 1;
     var mid = 0;
 
-   	mientras(left <= rigth) {
+	mientras(left <= rigth) {
 		mid = (left + rigth) / 2;
 		var mid_number = elements[mid];
-	
-		si(mid_number == val) {
+
+		si (mid_number == val) {
 			regresa mid;
 		}
 
-		si(mid_number < val) {
+		si (mid_number < val) {
 			left = mid + 1;
 		} si_no {
 			rigth = mid - 1;
 		}
-   }
+	}
 
-   regresa -1;
+	regresa -1
 }
 
 var numbers = lista[1,4,6,9,10,12,26];

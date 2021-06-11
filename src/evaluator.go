@@ -591,6 +591,13 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 		return &Number{Value: leftVal / rigthVal}
 	case "%":
 		return &Number{Value: leftVal % rigthVal}
+	case "+=":
+		left.(*Number).Value += rigthVal
+		return left
+
+	case "-=":
+		left.(*Number).Value -= rigthVal
+		return left
 	case ">":
 		return toBooleanObject(leftVal > rigthVal)
 	case "<":

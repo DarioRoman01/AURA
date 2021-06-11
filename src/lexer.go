@@ -41,7 +41,11 @@ func (l *Lexer) NextToken() Token {
 		}
 
 	} else if equal, _ := regexp.MatchString(`^\+$`, l.character); equal {
-		token = Token{Token_type: PLUS, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(PLUSASSING)
+		} else {
+			token = Token{Token_type: PLUS, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^$`, l.character); equal {
 		token = Token{Token_type: EOF, Literal: l.character}

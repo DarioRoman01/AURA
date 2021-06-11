@@ -13,9 +13,11 @@ const (
 	COMMA
 	DATASTRCUT
 	DIVISION
+	DIVASSING
 	ELSE
 	EOF
 	EQ
+	EXPONENT
 	FALSE
 	FOR
 	FUNCTION
@@ -33,17 +35,20 @@ const (
 	LT     // less than
 	LTOREQ // less than or equal
 	MINUS  // -
-	NOT    // !
+	MINUSASSING
+	NOT // !
 	NOT_EQ
 	MOD
 	OR
 	PLUS
+	PLUSASSING
 	RBRACE
 	RBRACKET
 	RETURN
 	RPAREN
 	SEMICOLON
 	TIMES // *
+	TIMEASSI
 	STRING
 	TRUE
 	WHILE
@@ -52,44 +57,49 @@ const (
 )
 
 var tokens = [...]string{
-	AND:       "AND",
-	ASSING:    "ASSING",
-	COLON:     "PUNTOS",
-	COMMA:     "COMMA",
-	DIVISION:  "DIVISION",
-	ELSE:      "ELSE",
-	EOF:       "EOF",
-	EQ:        "EQ",
-	FALSE:     "FALSE",
-	FUNCTION:  "FUNCTION",
-	GT:        "GT",
-	IDENT:     "IDENT",
-	IF:        "IF",
-	ILLEGAL:   "ILLEGAL",
-	IN:        "EN",
-	INT:       "INT",
-	LBRACE:    "LBRACE",
-	LET:       "LET",
-	LPAREN:    "LPAREN",
-	LT:        "LT",
-	MINUS:     "MINNUS",
-	NOT:       "NOT",
-	NOT_EQ:    "NOT_EQ",
-	MOD:       "MOD",
-	OR:        "OR",
-	PLUS:      "PLUS",
-	RBRACE:    "RBRACE",
-	RETURN:    "RETURN",
-	RPAREN:    "RPAREN",
-	RBRACKET:  "RBRACKET",
-	LBRACKET:  "LBRACKET",
-	SEMICOLON: "SEMICOLON",
-	TIMES:     "TIMES",
-	STRING:    "STRING",
-	TRUE:      "TRUE",
-	WHILE:     "MIENTRAS",
-	NULLT:     "NULO",
-	MAP:       "MAPA",
+	AND:         "&&",
+	ASSING:      "=",
+	COLON:       ":",
+	COMMA:       ",",
+	DIVISION:    "/",
+	ELSE:        "si_no",
+	EOF:         "EOF",
+	EQ:          "==",
+	FALSE:       "falso",
+	FUNCTION:    "funcion",
+	GT:          ">",
+	IDENT:       "IDENT",
+	IF:          "si",
+	ILLEGAL:     "ILLEGAL",
+	IN:          "en",
+	INT:         "INT",
+	LBRACE:      "{",
+	LET:         "var",
+	LPAREN:      "(",
+	LT:          "<",
+	MINUS:       "-",
+	NOT:         "!",
+	NOT_EQ:      "!=",
+	MOD:         "%",
+	OR:          "||",
+	PLUS:        "+",
+	RBRACE:      "}",
+	RETURN:      "regresa",
+	RPAREN:      ")",
+	RBRACKET:    "]",
+	LBRACKET:    "[",
+	SEMICOLON:   ";",
+	TIMES:       "*",
+	STRING:      `"`,
+	TRUE:        "verdaro",
+	WHILE:       "mientras",
+	NULLT:       "nulo",
+	MAP:         "mapa",
+	PLUSASSING:  "+=",
+	MINUSASSING: "-=",
+	TIMEASSI:    "*=",
+	DIVASSING:   "/=",
+	EXPONENT:    "**",
 }
 
 type Token struct {
