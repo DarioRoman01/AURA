@@ -193,9 +193,15 @@ func (l *LexerTests) TestTwoCharacterOperator() {
 		10 <= 9;
 		10 || 9;
 		10 && 9;
+		10++;
+		10 += 1;
+		10--;
+		10 -= 1;
+		10 *= 2;
+		10 /= 2;
 	`
 
-	tokens := l.loadTokens(24, source)
+	tokens := l.loadTokens(46, source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.INT, Literal: "10"},
@@ -221,6 +227,28 @@ func (l *LexerTests) TestTwoCharacterOperator() {
 		{Token_type: src.INT, Literal: "10"},
 		{Token_type: src.AND, Literal: "&&"},
 		{Token_type: src.INT, Literal: "9"},
+		{Token_type: src.SEMICOLON, Literal: ";"},
+		{Token_type: src.INT, Literal: "10"},
+		{Token_type: src.PLUS2, Literal: "++"},
+		{Token_type: src.SEMICOLON, Literal: ";"},
+		{Token_type: src.INT, Literal: "10"},
+		{Token_type: src.PLUSASSING, Literal: "+="},
+		{Token_type: src.INT, Literal: "1"},
+		{Token_type: src.SEMICOLON, Literal: ";"},
+		{Token_type: src.INT, Literal: "10"},
+		{Token_type: src.MINUS2, Literal: "--"},
+		{Token_type: src.SEMICOLON, Literal: ";"},
+		{Token_type: src.INT, Literal: "10"},
+		{Token_type: src.MINUSASSING, Literal: "-="},
+		{Token_type: src.INT, Literal: "1"},
+		{Token_type: src.SEMICOLON, Literal: ";"},
+		{Token_type: src.INT, Literal: "10"},
+		{Token_type: src.TIMEASSI, Literal: "*="},
+		{Token_type: src.INT, Literal: "2"},
+		{Token_type: src.SEMICOLON, Literal: ";"},
+		{Token_type: src.INT, Literal: "10"},
+		{Token_type: src.DIVASSING, Literal: "/="},
+		{Token_type: src.INT, Literal: "2"},
 		{Token_type: src.SEMICOLON, Literal: ";"},
 	}
 

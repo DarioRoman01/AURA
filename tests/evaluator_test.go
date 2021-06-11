@@ -327,6 +327,22 @@ func (e *EvaluatorTests) TestCallList() {
 	}
 }
 
+func (e *EvaluatorTests) TestOperators() {
+	tests := []tuple{
+		{"var a = 10; a++; a;", 11},
+		{"var a = 10; a+=1; a;", 11},
+		{"var a = 10; a--; a;", 9},
+		{"var a = 10; a-=1; a;", 9},
+		{"var a = 10; a/=2; a;", 5},
+		{"var a = 10; a*=2; a;", 20},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestBuiltinFunctions() {
 	tests := []struct {
 		source   string
