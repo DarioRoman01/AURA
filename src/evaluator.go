@@ -426,11 +426,16 @@ func evaluateWhileExpression(whileExpression *While, env *Enviroment) Object {
 	condition := Evaluate(whileExpression.Condition, env)
 
 	CheckIsNotNil(condition)
-	if !isTruthy(condition) {
-		return SingletonNUll
+	for isTruthy(condition) {
+		evaluated := Evaluate(whileExpression.Body, env)
+		if returnVal, isReturn := evaluated.(*Return); isReturn {
+			return returnVal
+		}
+
+		condition = Evaluate(whileExpression.Condition, env)
 	}
-	Evaluate(whileExpression.Body, env)
-	return Evaluate(whileExpression, env)
+
+	return SingletonNUll
 }
 
 func evaluateCallList(call *CallList, env *Enviroment) Object {
