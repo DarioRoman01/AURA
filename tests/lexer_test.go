@@ -39,12 +39,11 @@ func (l *LexerTests) TestIllegalToken() {
 }
 
 func (l *LexerTests) TestOneCharacterOperator() {
-	source := "+=-/*<>!%"
+	source := "+-/*<>!%="
 	tokens := l.loadTokens(utf8.RuneCountInString(source), source)
 
 	expectedTokens := []src.Token{
 		{Token_type: src.PLUS, Literal: "+"},
-		{Token_type: src.ASSING, Literal: "="},
 		{Token_type: src.MINUS, Literal: "-"},
 		{Token_type: src.DIVISION, Literal: "/"},
 		{Token_type: src.TIMES, Literal: "*"},
@@ -52,6 +51,7 @@ func (l *LexerTests) TestOneCharacterOperator() {
 		{Token_type: src.GT, Literal: ">"},
 		{Token_type: src.NOT, Literal: "!"},
 		{Token_type: src.MOD, Literal: "%"},
+		{Token_type: src.ASSING, Literal: "="},
 	}
 
 	l.Assert().Equal(expectedTokens, tokens)
