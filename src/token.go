@@ -35,12 +35,14 @@ const (
 	LT     // less than
 	LTOREQ // less than or equal
 	MINUS  // -
+	MINUS2
 	MINUSASSING
 	NOT // !
 	NOT_EQ
 	MOD
 	OR
 	PLUS
+	PLUS2
 	PLUSASSING
 	RBRACE
 	RBRACKET

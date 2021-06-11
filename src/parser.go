@@ -6,10 +6,12 @@ import (
 )
 
 type PrefixParsFn func() Expression
+type SuffixParseFn func(Expression) Expression
 type InfixParseFn func(Expression) Expression
 
 type PrefixParsFns map[TokenType]PrefixParsFn
 type InfixParseFns map[TokenType]InfixParseFn
+type SuffixParseFns map[TokenType]SuffixParseFn
 
 type Precedence int
 
@@ -45,16 +47,22 @@ var PRECEDENCES = map[TokenType]Precedence{
 	COLON:       CALL,
 	PLUSASSING:  PRODUCT,
 	MINUSASSING: PRODUCT,
+	DIVASSING:   PRODUCT,
+	EXPONENT:    PRODUCT,
+	TIMEASSI:    PRODUCT,
+	PLUS2:       PRODUCT,
+	MINUS2:      PRODUCT,
 }
 
 // parser handle the parsing of the program staments and syntax of the program
 type Parser struct {
-	lexer         *Lexer
-	currentToken  *Token
-	peekToken     *Token
-	errors        []string
-	prefixParsFns PrefixParsFns
-	infixParseFns InfixParseFns
+	lexer          *Lexer
+	currentToken   *Token
+	peekToken      *Token
+	errors         []string
+	prefixParsFns  PrefixParsFns
+	infixParseFns  InfixParseFns
+	suffixParseFns SuffixParseFns
 }
 
 // generates a new parser instance
@@ -67,6 +75,7 @@ func NewParser(lexer *Lexer) *Parser {
 
 	parser.prefixParsFns = parser.registerPrefixFns()
 	parser.infixParseFns = parser.registerInfixFns()
+	parser.suffixParseFns = parser.registerSuffixFns()
 	parser.advanceTokens()
 	parser.advanceTokens()
 	return parser
@@ -275,6 +284,12 @@ func (p *Parser) parseExpression(precedence Precedence) Expression {
 
 	leftExpression := prefixParseFn()
 	p.checkPeekTokenIsNotNil()
+
+	if suffixFn, exists := p.suffixParseFns[p.peekToken.Token_type]; exists {
+		p.advanceTokens()
+		leftExpression = suffixFn(leftExpression)
+		p.advanceTokens()
+	}
 
 	for !(p.peekToken.Token_type == SEMICOLON) && precedence < p.peekPrecedence() {
 		infixParseFn, exist := p.infixParseFns[p.peekToken.Token_type]
@@ -489,6 +504,10 @@ func (p *Parser) parseIf() Expression {
 	return ifExpression
 }
 
+func (p *Parser) parseSuffixFn(left Expression) Expression {
+	return NewSuffix(*p.currentToken, left, p.currentToken.Literal)
+}
+
 func (p *Parser) parseMethod(left Expression) Expression {
 	p.checkCurrentTokenIsNotNil()
 	method := NewMethodExpression(*p.currentToken, left, nil)
@@ -654,6 +673,9 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[GT] = p.parseInfixExpression
 	inFixFns[PLUSASSING] = p.parseInfixExpression
 	inFixFns[MINUSASSING] = p.parseInfixExpression
+	inFixFns[TIMEASSI] = p.parseInfixExpression
+	inFixFns[DIVASSING] = p.parseInfixExpression
+	inFixFns[EXPONENT] = p.parseInfixExpression
 	inFixFns[LPAREN] = p.parseCall
 	inFixFns[ASSING] = p.parseReassigment
 	inFixFns[LBRACKET] = p.parseCallList
@@ -682,4 +704,12 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[NULLT] = p.ParseNull
 	prefixFns[MAP] = p.parseMap
 	return prefixFns
+}
+
+func (p *Parser) registerSuffixFns() SuffixParseFns {
+	suffixFns := make(SuffixParseFns)
+	suffixFns[EXPONENT] = p.parseSuffixFn
+	suffixFns[PLUS2] = p.parseSuffixFn
+	suffixFns[MINUS2] = p.parseSuffixFn
+	return suffixFns
 }

@@ -178,6 +178,30 @@ func (i Integer) Str() string {
 	return fmt.Sprintf("%d", *i.Value)
 }
 
+type Suffix struct {
+	Token    Token
+	Left     Expression
+	Operator string
+}
+
+func NewSuffix(token Token, left Expression, operator string) *Suffix {
+	return &Suffix{
+		Token:    token,
+		Left:     left,
+		Operator: operator,
+	}
+}
+
+func (s *Suffix) TokenLiteral() string {
+	return s.Token.Literal
+}
+
+func (s *Suffix) expressNode() {}
+
+func (s *Suffix) Str() string {
+	return fmt.Sprintf("%s%s", s.Left.Str(), s.Operator)
+}
+
 // prefix handles prefix staments like regresa x;
 type Prefix struct {
 	Token    Token

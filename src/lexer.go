@@ -43,6 +43,8 @@ func (l *Lexer) NextToken() Token {
 	} else if equal, _ := regexp.MatchString(`^\+$`, l.character); equal {
 		if l.peekCharacter() == "=" {
 			token = l.makeTwoCharacterToken(PLUSASSING)
+		} else if l.peekCharacter() == "+" {
+			token = l.makeTwoCharacterToken(PLUS2)
 		} else {
 			token = Token{Token_type: PLUS, Literal: l.character}
 		}
@@ -109,13 +111,29 @@ func (l *Lexer) NextToken() Token {
 		}
 
 	} else if equal, _ := regexp.MatchString(`^\-$`, l.character); equal {
-		token = Token{Token_type: MINUS, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(MINUSASSING)
+		} else if l.peekCharacter() == "-" {
+			token = l.makeTwoCharacterToken(MINUS2)
+		} else {
+			token = Token{Token_type: MINUS, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^\/$`, l.character); equal {
-		token = Token{Token_type: DIVISION, Literal: l.character}
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(DIVASSING)
+		} else {
+			token = Token{Token_type: DIVISION, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^\*$`, l.character); equal {
-		token = Token{Token_type: TIMES, Literal: l.character}
+		if l.peekCharacter() == "*" {
+			token = l.makeTwoCharacterToken(EXPONENT)
+		} else if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(TIMEASSI)
+		} else {
+			token = Token{Token_type: TIMES, Literal: l.character}
+		}
 
 	} else if equal, _ := regexp.MatchString(`^\!$`, l.character); equal {
 		if l.peekCharacter() == "=" {

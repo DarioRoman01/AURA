@@ -72,7 +72,7 @@ mi_mapa["a"] // return 1
 var i = 0;
 mientras(i <= 5) {
     escribir("hola mundo");
-    i = i + 1;
+    i += 1;
 }
 ```
 

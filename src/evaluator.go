@@ -82,6 +82,12 @@ func Evaluate(baseNode ASTNode, env *Enviroment) Object {
 	case *CallList:
 		return evaluateCallList(node, env)
 
+	case *Suffix:
+		CheckIsNotNil(node.Left)
+		CheckIsNotNil(node.Operator)
+		left := Evaluate(node.Left, env)
+		return evaluateSuffixExpression(node.Operator, left)
+
 	case *Reassignment:
 		CheckIsNotNil(node.Identifier)
 		CheckIsNotNil(node.NewVal)
@@ -575,6 +581,28 @@ func evaluateStringInfixExpression(operator string, left Object, rigth Object) O
 	}
 }
 
+func evaluateSuffixExpression(operator string, left Object) Object {
+	if num, isNumber := left.(*Number); isNumber {
+		switch operator {
+		case "++":
+			num.Value++
+			return num
+
+		case "--":
+			num.Value--
+			return num
+
+		case "**":
+			num.Value *= num.Value
+			return num
+		default:
+			return &Error{"Operador desconocido para entero"}
+		}
+	}
+
+	return &Error{"No es un numero"}
+}
+
 // evluate infix integer operations
 func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) Object {
 	leftVal := left.(*Number).Value
@@ -598,6 +626,15 @@ func evaluateIntegerInfixExpression(operator string, left Object, rigth Object) 
 	case "-=":
 		left.(*Number).Value -= rigthVal
 		return left
+
+	case "/=":
+		left.(*Number).Value /= rigthVal
+		return left
+
+	case "*=":
+		left.(*Number).Value *= rigthVal
+		return left
+
 	case ">":
 		return toBooleanObject(leftVal > rigthVal)
 	case "<":
