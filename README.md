@@ -44,7 +44,6 @@ These are operators:
 | Greater or equal than|   >=   |
 | And                  |   &&   |
 | Or                   |  \|\|  |
-<br/>
 
 ## Functions
 For declaring a function, you need to use the next syntax:
@@ -54,35 +53,13 @@ var example = funcion(<Argmuent name>, <Argmuent name>) {
 };
 ```
 
-binary search exapmle:
-```dart
-var binary_search = funcion(elements, val) {
-    var left = 0;
-    var rigth = largo(elements) - 1;
-    var mid = 0;
-
-	mientras(left <= rigth) {
-		mid = (left + rigth) / 2;
-		var mid_number = elements[mid];
-
-		si (mid_number == val) {
-			regresa mid;
-		}
-
-		si (mid_number < val) {
-			left = mid + 1;
-		} si_no {
-			rigth = mid - 1;
-		}
-	}
-
-	regresa -1
+simple function example:
+```ts
+var add = funcion(a, b) {
+    regresa a + b;
 }
 
-var numbers = lista[1,4,6,9,10,12,26];
-var index = binary_search(numbers, 1);
-escribir("numero encontrado en el indice ", index);
-// output: 0;
+escribir(add(5,8)) // output: 13
 ```
 
 ## Lists
@@ -163,10 +140,40 @@ por(i en mi_lista) {
 }
 ```
 
+with all thys lets look a real world example with bynary search:
+```ts
+var binary_search = funcion(elements, val) {
+    var left = 0;
+    var rigth = largo(elements) - 1;
+    var mid = 0;
 
-you can see more examples in the examples folder.
+	mientras(left <= rigth) {
+		mid = (left + rigth) / 2;
+		var mid_number = elements[mid];
+
+		si (mid_number == val) {
+			regresa mid;
+		}
+
+		si (mid_number < val) {
+			left = mid + 1;
+		} si_no {
+			rigth = mid - 1;
+		}
+	}
+
+	regresa -1
+}
+
+var numbers = lista[1,4,6,9,10,12,26];
+var index = binary_search(numbers, 1);
+escribir("numero encontrado en el indice ", index);
+// output: numero encontrado en el indice 0
+```
 
 ## Usage
+for using it you need to have Go install check https://golang.org/ for install Go
+
 first copy the repository and change to the directory created:
 ```shell
 $ git clone https://github.com/Haizza1/Katan && cd Katan
