@@ -335,6 +335,7 @@ func (e *EvaluatorTests) TestOperators() {
 		{"var a = 10; a-=1; a;", 9},
 		{"var a = 10; a/=2; a;", 5},
 		{"var a = 10; a*=2; a;", 20},
+		{"var a = 10; a**; a;", 100},
 	}
 
 	for _, test := range tests {

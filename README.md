@@ -3,7 +3,9 @@
 ## What is this?
 This is a very basic programming lenguage inspired in javascript, the goal is to create a programming lenguage in spanish
 that helps people that are begining in software development or computer science, probiding a high level programming lenguage
-in spanish that is very simple to use
+in spanish that is very simple to use.
+
+It is an interpreted language fully built using Go.
 
 ## Syntax example
 
@@ -16,47 +18,102 @@ var c = a + b;
 escribir(c); // prints 10
 ```
 
+### Operators
+
+These are operators:
+| Operator             | Symbol |
+|----------------------|--------|
+| Plus                 |    +   |
+| Increment            |   ++   |
+| Add assigment        |   +=   |
+| Minus                |    -   |
+| Decrement            |    --  |
+| Subtract assigment   |   -=   |
+| Multiplication       |    *   |
+| Exponential          |   **   |
+| Multiply assigment   |   *=   |
+| Division             |    /   |
+| Division assigment   |   /=   |
+| Modulus              |    %   |
+| Equal                |   ==   |
+| Not Equal            |   !=   |
+| Not                  |    !   |
+| Less than            |    <   |
+| Greater than         |    >   |
+| Less or equal than   |   <=   |
+| Greater or equal than|   >=   |
+| And                  |   &&   |
+| Or                   |  \|\|  |
+<br/>
+
 ## Functions
-
+For declaring a function, you need to use the next syntax:
 ```ts
-var suma = funcion(x, y) {
-    regresa x + y;
+var example = funcion(<Argmuent name>, <Argmuent name>) {
+    regresa <return value>;
 };
-
-// this will print 9
-var resultado = suma(5, 4);
-escribir(resultado); 
 ```
 
-```ts 
-var mayor_de_edad = funcion(edad) {
-    si (edad >= 18) {
-        regresa verdadero;
-    } si_no {
-        regresa falso;
-    }
+binary search exapmle:
+```dart
+var binary_search = funcion(elements, val) {
+    var left = 0;
+    var rigth = largo(elements) - 1;
+    var mid = 0;
+
+	mientras(left <= rigth) {
+		mid = (left + rigth) / 2;
+		var mid_number = elements[mid];
+
+		si (mid_number == val) {
+			regresa mid;
+		}
+
+		si (mid_number < val) {
+			left = mid + 1;
+		} si_no {
+			rigth = mid - 1;
+		}
+	}
+
+	regresa -1
 }
 
-var resultado = mayor_de_edad(18);
-escribir(resultado); // prints verdadero
-
-resultado = mayor_de_edad(10);   
-escribir(resultado); // prints falso
-
-var edad = recibir_entero();
-resultado = mayor_de_edad(edad); 
-escribir(resultado);
+var numbers = lista[1,4,6,9,10,12,26];
+var index = binary_search(numbers, 1);
+escribir("numero encontrado en el indice ", index);
+// output: 0;
 ```
 
 ## Lists
+List allows you to group a list of data, 
+lists are escential in any programming lengauge
 ```ts
-var mi_lista = lista[2,3,4];
-mi_lista:agregar(4); // add 4 to the list
-mi_lista:pop(); // pop the last item
-mi_lista:popIndice(0); // remove by index
+var mi_lista = lista[2, 3, 4, "hello", "world"];
+mi_lista[0] // output: 2
 ```
 
+Also list have methods:
+```js
+mi_lista:agregar(5);   // add 5 to the list
+mi_lista:pop();        // pop the last item and return it
+mi_lista:popIndice(0); // remove by index and return it
+```
+
+
 ## HashMaps
+HashMaps are datastructures that help you store data by key => value
+representation
+
+For declaring a HashMap, you need to use the next syntax:
+```ts
+var example = mapa{key => value, key => value, key => value};
+
+// get the value of the given key
+example[key]
+```
+
+for example:
 ```dart
 var mi_mapa = mapa{
     "a" => 1,
@@ -64,23 +121,42 @@ var mi_mapa = mapa{
     "c" => 3,
 }
 
-mi_mapa["a"] // return 1
+mi_mapa["a"] // output: 1
 ```
 
 ## Loops
+WhileLoop syntax:
+```ts
+mientras(<condition>) {
+    // code to be execute
+}
+```
+
+for example:
 ```ts
 var i = 0;
 mientras(i <= 5) {
     escribir("hola mundo");
-    i++
+    i++;
 }
 ```
 
+For loop syntax:
+```ts
+por(i en <iterable>) {
+    // code to be execute
+}
+```
+
+for example:
 ```ts
 por(i en rango(5)) {
     escribir("hola mundo");
 }
+```
 
+you can also can iterate lists:
+```ts
 var mi_lista = lista[2,3,4];
 por(i en mi_lista) {
     escribir(i);

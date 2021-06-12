@@ -3,7 +3,9 @@ package src
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -29,6 +31,12 @@ func StartRpl() {
 
 		if source == "salir()" {
 			break
+		} else if source == "limpiar()" {
+			cmd := exec.Command("clear")
+			if err := cmd.Run(); err != nil {
+				log.Fatal(err)
+			}
+			continue
 		}
 
 		scanned = append(scanned, source)
