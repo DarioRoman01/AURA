@@ -1,4 +1,4 @@
-# The Katan programing lenguage
+# The AURA programing lenguage
 
 ## What is this?
 This is a very basic programming lenguage inspired in javascript, the goal is to create a programming lenguage in spanish
