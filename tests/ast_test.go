@@ -1,25 +1,26 @@
 package test_test
 
 import (
-	"katan/src"
+	"katan/src/ast"
+	l "katan/src/lexer"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLetStatement(t *testing.T) {
-	program := src.NewProgram([]src.Stmt{
-		src.LetStatement{
-			Token: src.Token{
-				Token_type: src.LET,
+	program := ast.NewProgram([]ast.Stmt{
+		ast.LetStatement{
+			Token: l.Token{
+				Token_type: l.LET,
 				Literal:    "var",
 			},
-			Name: src.NewIdentifier(src.Token{
-				Token_type: src.IDENT,
+			Name: ast.NewIdentifier(l.Token{
+				Token_type: l.IDENT,
 				Literal:    "mi_var",
 			}, "mi_var"),
-			Value: src.NewIdentifier(src.Token{
-				Token_type: src.IDENT,
+			Value: ast.NewIdentifier(l.Token{
+				Token_type: l.IDENT,
 				Literal:    "otra_var",
 			}, "otra_var"),
 		},
@@ -29,29 +30,29 @@ func TestLetStatement(t *testing.T) {
 }
 
 func TestReturnStatements(t *testing.T) {
-	program := src.NewProgram([]src.Stmt{
-		src.LetStatement{
-			Token: src.Token{
-				Token_type: src.LET,
+	program := ast.NewProgram([]ast.Stmt{
+		ast.LetStatement{
+			Token: l.Token{
+				Token_type: l.LET,
 				Literal:    "var",
 			},
-			Name: src.NewIdentifier(src.Token{
-				Token_type: src.IDENT,
+			Name: ast.NewIdentifier(l.Token{
+				Token_type: l.IDENT,
 				Literal:    "x",
 			}, "x"),
-			Value: src.NewIdentifier(src.Token{
-				Token_type: src.INT,
+			Value: ast.NewIdentifier(l.Token{
+				Token_type: l.INT,
 				Literal:    "5",
 			}, "5"),
 		},
-		src.ReturnStament{
-			Token: src.Token{
-				Token_type: src.RETURN,
+		ast.ReturnStament{
+			Token: l.Token{
+				Token_type: l.RETURN,
 				Literal:    "regresa",
 			},
-			ReturnValue: src.NewIdentifier(
-				src.Token{
-					Token_type: src.IDENT,
+			ReturnValue: ast.NewIdentifier(
+				l.Token{
+					Token_type: l.IDENT,
 					Literal:    "x",
 				}, "x"),
 		},
@@ -62,18 +63,18 @@ func TestReturnStatements(t *testing.T) {
 
 func TestIntegerExpression(t *testing.T) {
 	value := 5
-	program := src.NewProgram([]src.Stmt{
-		src.LetStatement{
-			Token: src.Token{
-				Token_type: src.LET,
+	program := ast.NewProgram([]ast.Stmt{
+		ast.LetStatement{
+			Token: l.Token{
+				Token_type: l.LET,
 				Literal:    "var",
 			},
-			Name: src.NewIdentifier(src.Token{
-				Token_type: src.IDENT,
+			Name: ast.NewIdentifier(l.Token{
+				Token_type: l.IDENT,
 				Literal:    "x",
 			}, "x"),
-			Value: src.NewInteger(src.Token{
-				Token_type: src.INT,
+			Value: ast.NewInteger(l.Token{
+				Token_type: l.INT,
 				Literal:    "5",
 			}, &value),
 		},

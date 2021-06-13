@@ -1,7 +1,10 @@
 package test_test
 
 import (
-	"katan/src"
+	"katan/src/evaluator"
+	l "katan/src/lexer"
+	obj "katan/src/object"
+	p "katan/src/parser"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -203,8 +206,8 @@ func (e *EvaluatorTests) TestErrorhandling() {
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		e.Assert().IsType(&src.Error{}, evaluated.(*src.Error))
-		evaluatedError := evaluated.(*src.Error)
+		e.Assert().IsType(&obj.Error{}, evaluated.(*obj.Error))
+		evaluatedError := evaluated.(*obj.Error)
 		e.Assert().Equal(test.expected, evaluatedError.Message)
 	}
 }
@@ -374,7 +377,7 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		} else {
 			expected := test.expected.(string)
 
-			if str, isStr := evaluated.(*src.String); isStr {
+			if str, isStr := evaluated.(*obj.String); isStr {
 				e.testStringObject(str, expected)
 			} else {
 				e.testErrorObject(evaluated, expected)
@@ -383,18 +386,18 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 	}
 }
 
-func (e *EvaluatorTests) testErrorObject(evlauated src.Object, expected string) {
-	e.IsType(&src.Error{}, evlauated.(*src.Error))
-	err := evlauated.(*src.Error)
+func (e *EvaluatorTests) testErrorObject(evlauated obj.Object, expected string) {
+	e.IsType(&obj.Error{}, evlauated.(*obj.Error))
+	err := evlauated.(*obj.Error)
 	e.Equal(expected, err.Message)
 }
 
 func (e *EvaluatorTests) TestFunctionEvaluation() {
 	source := "funcion(x) { x + 2; };"
 	evaluated := e.evaluateTests(source)
-	e.IsType(&src.Def{}, evaluated.(*src.Def))
+	e.IsType(&obj.Def{}, evaluated.(*obj.Def))
 
-	function := evaluated.(*src.Def)
+	function := evaluated.(*obj.Def)
 	e.Equal(1, len(function.Parameters))
 	e.Equal("x", function.Parameters[0].Str())
 	e.Equal("(x + 2)", function.Body.Str())
@@ -458,8 +461,8 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 
 	for _, test := range tests {
 		evluated := e.evaluateTests(test.source)
-		e.IsType(&src.String{}, evluated.(*src.String))
-		stringObj := evluated.(*src.String)
+		e.IsType(&obj.String{}, evluated.(*obj.String))
+		stringObj := evluated.(*obj.String)
 		e.Equal(test.expected, stringObj.Value)
 	}
 }
@@ -488,9 +491,9 @@ func (e *EvaluatorTests) TestStringConcatenation() {
 	}
 }
 
-func (e *EvaluatorTests) testStringObject(evaluated src.Object, expected string) {
-	e.IsType(&src.String{}, evaluated.(*src.String))
-	str := evaluated.(*src.String)
+func (e *EvaluatorTests) testStringObject(evaluated obj.Object, expected string) {
+	e.IsType(&obj.String{}, evaluated.(*obj.String))
+	str := evaluated.(*obj.String)
 	e.Equal(expected, str.Value)
 }
 
@@ -511,41 +514,41 @@ func (e *EvaluatorTests) TestStringComparison() {
 	}
 }
 
-func (e *EvaluatorTests) testNullObject(eval src.Object) {
-	e.Assert().Equal(src.SingletonNUll, eval.(*src.Null))
+func (e *EvaluatorTests) testNullObject(eval obj.Object) {
+	e.Assert().Equal(obj.SingletonNUll, eval.(*obj.Null))
 }
 
-func (e *EvaluatorTests) evaluateTests(source string) src.Object {
-	lexer := src.NewLexer(source)
-	parser := src.NewParser(lexer)
+func (e *EvaluatorTests) evaluateTests(source string) obj.Object {
+	lexer := l.NewLexer(source)
+	parser := p.NewParser(lexer)
 	program := parser.ParseProgam()
-	env := src.NewEnviroment(nil)
-	evaluated := src.Evaluate(program, env)
+	env := obj.NewEnviroment(nil)
+	evaluated := evaluator.Evaluate(program, env)
 	e.Assert().NotNil(evaluated)
 	return evaluated
 }
 
-func (e *EvaluatorTests) testBooleanObject(object src.Object, expected bool) {
-	e.Assert().IsType(&src.Bool{}, object.(*src.Bool))
-	evaluated := object.(*src.Bool)
+func (e *EvaluatorTests) testBooleanObject(object obj.Object, expected bool) {
+	e.Assert().IsType(&obj.Bool{}, object.(*obj.Bool))
+	evaluated := object.(*obj.Bool)
 	e.Assert().Equal(expected, evaluated.Value)
 }
 
-func (e *EvaluatorTests) testIntArrayObject(obj src.Object, expected []int) {
-	e.Assert().IsType(&src.List{}, obj.(*src.List))
-	evaluated := obj.(*src.List)
+func (e *EvaluatorTests) testIntArrayObject(object obj.Object, expected []int) {
+	e.Assert().IsType(&obj.List{}, object.(*obj.List))
+	evaluated := object.(*obj.List)
 	e.Assert().Equal(len(expected), len(evaluated.Values))
 
 	objList := evaluated.Values
 	for i := 0; i < len(expected); i++ {
-		e.Assert().IsType(&src.Number{}, objList[i].(*src.Number))
-		e.Assert().Equal(expected[i], objList[i].(*src.Number).Value)
+		e.Assert().IsType(&obj.Number{}, objList[i].(*obj.Number))
+		e.Assert().Equal(expected[i], objList[i].(*obj.Number).Value)
 	}
 }
 
-func (e *EvaluatorTests) testIntegerObject(evaluated src.Object, expected int) {
-	e.Assert().IsType(&src.Number{}, evaluated.(*src.Number))
-	eval := evaluated.(*src.Number)
+func (e *EvaluatorTests) testIntegerObject(evaluated obj.Object, expected int) {
+	e.Assert().IsType(&obj.Number{}, evaluated.(*obj.Number))
+	eval := evaluated.(*obj.Number)
 	e.Assert().Equal(expected, eval.Value)
 }
 

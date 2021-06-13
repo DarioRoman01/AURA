@@ -4,14 +4,18 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"katan/src"
+	e "katan/src/evaluator"
+	l "katan/src/lexer"
+	obj "katan/src/object"
+	p "katan/src/parser"
+	"katan/src/repl"
 	"os"
 )
 
 type CommandLine struct{}
 
 func (cli *CommandLine) Repl() {
-	src.StartRpl()
+	repl.StartRpl()
 }
 
 func (cli *CommandLine) PrintUsage() {
@@ -38,9 +42,9 @@ func (cli *CommandLine) ReadFile(path string) {
 		return
 	}
 
-	lexer := src.NewLexer(string(source))
-	parser := src.NewParser(lexer)
-	env := src.NewEnviroment(nil)
+	lexer := l.NewLexer(string(source))
+	parser := p.NewParser(lexer)
+	env := obj.NewEnviroment(nil)
 	program := parser.ParseProgam()
 
 	if len(parser.Errors()) > 0 {
@@ -51,8 +55,8 @@ func (cli *CommandLine) ReadFile(path string) {
 		os.Exit(0)
 	}
 
-	evaluated := src.Evaluate(program, env)
-	if evaluated != nil && evaluated != src.SingletonNUll {
+	evaluated := e.Evaluate(program, env)
+	if evaluated != nil && evaluated != obj.SingletonNUll {
 		fmt.Println(evaluated.Inspect())
 	}
 }
