@@ -12,17 +12,21 @@ import (
 
 var scanner = bufio.NewScanner(os.Stdin)
 
-func wrongNumberofArgs(found, actual int) string {
-	return fmt.Sprintf("numero incorrecto de argumentos para largo, se recibieron %d, se requieren %d", found, actual)
+func wrongNumberofArgs(funcName string, found, actual int) *obj.Error {
+	return &obj.Error{
+		Message: fmt.Sprintf("numero incorrecto de argumentos para %s, se recibieron %d, se requieren %d", funcName, found, actual),
+	}
 }
 
-func unsoportedArgumentType(funcname, objType string) string {
-	return fmt.Sprintf("argumento para %s no valido, se recibio %s", funcname, objType)
+func unsoportedArgumentType(funcname, objType string) *obj.Error {
+	return &obj.Error{
+		Message: fmt.Sprintf("argumento para %s no valido, se recibio %s", funcname, objType),
+	}
 }
 
 func Longitud(args ...obj.Object) obj.Object {
 	if len(args) != 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+		return wrongNumberofArgs("largo", len(args), 1)
 	}
 
 	switch arg := args[0].(type) {
@@ -37,7 +41,7 @@ func Longitud(args ...obj.Object) obj.Object {
 		return &obj.Number{Value: len(arg.Store)}
 
 	default:
-		return &obj.Error{Message: unsoportedArgumentType("largo", obj.Types[args[0].Type()])}
+		return unsoportedArgumentType("largo", obj.Types[args[0].Type()])
 	}
 }
 
@@ -63,7 +67,7 @@ func Escribir(args ...obj.Object) obj.Object {
 			buff.WriteString(node.Inspect())
 
 		default:
-			return &obj.Error{Message: unsoportedArgumentType("escribir", obj.Types[node.Type()])}
+			return unsoportedArgumentType("escribir", obj.Types[node.Type()])
 		}
 	}
 
@@ -73,7 +77,7 @@ func Escribir(args ...obj.Object) obj.Object {
 
 func Recibir(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+		return wrongNumberofArgs("recibir", len(args), 1)
 	}
 
 	if len(args) == 0 {
@@ -87,24 +91,24 @@ func Recibir(args ...obj.Object) obj.Object {
 		return &obj.String{Value: str}
 	}
 
-	return &obj.Error{Message: unsoportedArgumentType("recibir", obj.Types[args[0].Type()])}
+	return unsoportedArgumentType("recibir", obj.Types[args[0].Type()])
 }
 
 func castInt(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+		return wrongNumberofArgs("entero", len(args), 1)
 	}
 
 	if arg, isString := args[0].(*obj.String); isString {
 		return toInt(arg.Value)
 	}
 
-	return &obj.Error{Message: unsoportedArgumentType("recibir", obj.Types[args[0].Type()])}
+	return unsoportedArgumentType("entero", obj.Types[args[0].Type()])
 }
 
 func castString(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+		return wrongNumberofArgs("texto", len(args), 1)
 	}
 
 	if arg, isNumber := args[0].(*obj.Number); isNumber {
@@ -112,12 +116,12 @@ func castString(args ...obj.Object) obj.Object {
 		return &obj.String{Value: strInt}
 	}
 
-	return &obj.Error{Message: unsoportedArgumentType("recibir", obj.Types[args[0].Type()])}
+	return unsoportedArgumentType("recibir", obj.Types[args[0].Type()])
 }
 
 func RecibirEntero(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+		return wrongNumberofArgs("recibir_entero", len(args), 1)
 	}
 
 	if len(args) == 0 {
@@ -131,83 +135,26 @@ func RecibirEntero(args ...obj.Object) obj.Object {
 		return toInt(strInt)
 	}
 
-	return &obj.Error{
-		Message: unsoportedArgumentType("recbir_entero", obj.Types[args[0].Type()]),
-	}
+	return unsoportedArgumentType("recbir_entero", obj.Types[args[0].Type()])
 
-}
-
-func add(args ...obj.Object) obj.Object {
-	if len(args) > 1 || len(args) == 0 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
-	}
-
-	if num, isNumber := args[0].(*obj.Number); isNumber {
-		return obj.NewMethod(num, obj.APPEND)
-	}
-
-	return &obj.Error{Message: unsoportedArgumentType("add", obj.Types[args[0].Type()])}
-}
-
-func remove(args ...obj.Object) obj.Object {
-	if len(args) > 1 || len(args) == 0 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
-	}
-
-	if num, isNumber := args[0].(*obj.Number); isNumber {
-		return obj.NewMethod(num, obj.REMOVE)
-	}
-
-	return &obj.Error{Message: unsoportedArgumentType("add", obj.Types[args[0].Type()])}
-}
-
-func pop(args ...obj.Object) obj.Object {
-	if len(args) > 0 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
-	}
-
-	return obj.NewMethod(obj.SingletonNUll, obj.POP)
-}
-
-func contains(args ...obj.Object) obj.Object {
-	if len(args) > 1 || len(args) < 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
-	}
-
-	return obj.NewMethod(args[0], obj.CONTAIS)
-}
-
-func values(args ...obj.Object) obj.Object {
-	if len(args) > 0 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
-	}
-
-	return obj.NewMethod(obj.SingletonNUll, obj.VALUES)
 }
 
 func rango(args ...obj.Object) obj.Object {
-	if len(args) > 1 || len(args) == 0 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+	switch len(args) {
+	case 1:
+		return makeOneArgList(args[0])
+
+	case 2:
+		return makeTwoArgList(args[0], args[1])
+
+	default:
+		return wrongNumberofArgs("rango", len(args), 2)
 	}
-
-	if num, isNum := args[0].(*obj.Number); isNum {
-		if num.Value == 0 {
-			return &obj.Error{Message: "el rango debe mayor a 0"}
-		}
-
-		list := &obj.List{Values: []obj.Object{}}
-		for i := 0; i < num.Value; i++ {
-			list.Values = append(list.Values, &obj.Number{Value: i})
-		}
-		return list
-	}
-
-	return &obj.Error{Message: unsoportedArgumentType("rango", obj.Types[args[0].Type()])}
 }
 
 func Tipo(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) < 1 {
-		return &obj.Error{Message: wrongNumberofArgs(len(args), 1)}
+		return wrongNumberofArgs("tipo", len(args), 1)
 	}
 
 	return &obj.String{Value: obj.Types[args[0].Type()]}
@@ -241,5 +188,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"pop":            obj.NewBuiltin(pop),
 	"popIndice":      obj.NewBuiltin(remove),
 	"contiene":       obj.NewBuiltin(contains),
-	"valores":        obj.NewBuiltin((values)),
+	"valores":        obj.NewBuiltin(values),
 }

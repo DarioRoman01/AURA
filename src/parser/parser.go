@@ -94,7 +94,7 @@ func (p *Parser) advanceTokens() {
 func (p *Parser) checkCurrentTokenIsNotNil() {
 	defer p.handlePeekTokenPanic()
 	if p.currentToken == nil {
-		panic("current token cannot be nil")
+		panic("Ocurrio un error mientras se parseaba")
 	}
 }
 
@@ -102,13 +102,13 @@ func (p *Parser) checkCurrentTokenIsNotNil() {
 func (p *Parser) checkPeekTokenIsNotNil() {
 	defer p.handlePeekTokenPanic()
 	if p.peekToken == nil {
-		panic("peek token cannot be nil")
+		panic("Ocurrio un error mientras se parseaba")
 	}
 }
 
 func (p *Parser) handlePeekTokenPanic() {
 	if r := recover(); r != nil {
-		fmt.Println("Syntax error: ", r)
+		fmt.Println("Error: ", r)
 	}
 }
 
