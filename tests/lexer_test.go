@@ -1,7 +1,7 @@
 package test_test
 
 import (
-	"katan/src/lexer"
+	"aura/src/lexer"
 	"testing"
 	"unicode/utf8"
 

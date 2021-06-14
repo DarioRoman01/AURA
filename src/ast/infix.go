@@ -1,8 +1,8 @@
 package ast
 
 import (
+	l "aura/src/lexer"
 	"fmt"
-	l "katan/src/lexer"
 )
 
 type RangeExpression struct {

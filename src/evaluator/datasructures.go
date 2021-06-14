@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"katan/src/ast"
-	obj "katan/src/object"
+	"aura/src/ast"
+	obj "aura/src/object"
 )
 
 func evaluateMap(mapa *ast.MapExpression, env *obj.Enviroment) obj.Object {

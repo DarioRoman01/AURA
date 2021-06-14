@@ -1,4 +1,4 @@
-# The AURA programing lenguage
+# The Aura programing lenguage
 
 ## What is this?
 This is a very basic programming lenguage inspired in javascript, the goal is to create a programming lenguage in spanish
@@ -188,17 +188,17 @@ $ go test -v ./...
 ```
 compile the package:
 ```shell
-$ go build -o AURA
+$ go build -o aura
 ```
 
 then you can create a file or play with the repl to play with the repl just run:
 ```shell
-$ ./AURA rpl
+$ ./aura rpl
 ```
 
 to use a file you can create a file with the .lpp extension and run:
 ```shell
-$ ./AURA file -path <path to your file>
+$ ./aura file -path <path to your file>
 ```
 
 

@@ -1,8 +1,8 @@
 package object
 
 import (
+	"aura/src/ast"
 	"fmt"
-	"katan/src/ast"
 	"strings"
 )
 

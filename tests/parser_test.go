@@ -1,10 +1,10 @@
 package test_test
 
 import (
+	"aura/src/ast"
+	l "aura/src/lexer"
+	"aura/src/parser"
 	"fmt"
-	"katan/src/ast"
-	l "katan/src/lexer"
-	"katan/src/parser"
 	"reflect"
 	"testing"
 

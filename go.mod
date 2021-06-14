@@ -1,4 +1,4 @@
-module katan
+module aura
 
 go 1.16
 

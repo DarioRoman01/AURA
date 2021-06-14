@@ -1,10 +1,9 @@
 package parser
 
 import (
+	"aura/src/ast"
+	l "aura/src/lexer"
 	"fmt"
-	"katan/src/ast"
-	l "katan/src/lexer"
-	"strconv"
 )
 
 type PrefixParsFn func() ast.Expression
@@ -166,19 +165,6 @@ func (p *Parser) expectedTokenError(tokenType l.TokenType) {
 	p.errors = append(p.errors, err)
 }
 
-// parse boolean expression and check if true or false
-func (p *Parser) parseBoolean() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	var value bool
-	if p.currentToken.Token_type == l.TRUE {
-		value = true
-		return ast.NewBoolean(*p.currentToken, &value)
-	}
-
-	value = false
-	return ast.NewBoolean(*p.currentToken, &value)
-}
-
 // parse a block of staments
 func (p *Parser) parseBlock() *ast.Block {
 	p.checkCurrentTokenIsNotNil()
@@ -195,25 +181,6 @@ func (p *Parser) parseBlock() *ast.Block {
 	}
 
 	return blockStament
-}
-
-// parse function calls
-func (p *Parser) parseCall(function ast.Expression) ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	call := ast.NewCall(*p.currentToken, function)
-	call.Arguments = p.parseCallArguments()
-	return call
-}
-
-func (p *Parser) ParseArray() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	arr := ast.NewArray(*p.currentToken, nil)
-	if !p.expepectedToken(l.LBRACKET) {
-		return nil
-	}
-
-	arr.Values = p.ParseArrayValues()
-	return arr
 }
 
 func (p *Parser) ParseArrayValues() []ast.Expression {
@@ -301,7 +268,7 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 
 		p.advanceTokens()
 		if leftExpression == nil {
-			panic("left expression cannot be nil while parsing a expression")
+			panic("Error de parseo")
 		}
 
 		leftExpression = infixParseFn(leftExpression)
@@ -324,42 +291,6 @@ func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 	}
 
 	return expressionStament
-}
-
-// parse group expression like (5 + 5) / 2
-func (p *Parser) parseGroupExpression() ast.Expression {
-	p.advanceTokens()
-	expression := p.parseExpression(LOWEST)
-	if !p.expepectedToken(l.RPAREN) {
-		return nil
-	}
-
-	return expression
-}
-
-func (p *Parser) parseReassigment(ident ast.Expression) ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	reassignment := ast.NewReassignment(*p.currentToken, ident, nil)
-	p.advanceTokens()
-	reassignment.NewVal = p.parseExpression(LOWEST)
-	return reassignment
-}
-
-// parse a function declaration
-func (p *Parser) parseFunction() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	function := ast.NewFunction(*p.currentToken, nil)
-	if !p.expepectedToken(l.LPAREN) {
-		return nil
-	}
-
-	function.Parameters = p.parseFunctionParameters()
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
-	}
-
-	function.Body = p.parseBlock()
-	return function
 }
 
 // parse function parameters and check the syntax
@@ -389,193 +320,8 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 	return params
 }
 
-// parse a identifier
-func (p *Parser) parseIdentifier() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	return &ast.Identifier{Token: *p.currentToken, Value: p.currentToken.Literal}
-}
-
-// parse infix expressoins
-func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	infix := ast.Newinfix(*p.currentToken, nil, p.currentToken.Literal, left)
-	precedence := p.currentPrecedence()
-	p.advanceTokens()
-	infix.Rigth = p.parseExpression(precedence)
-	return infix
-}
-
-func (p *Parser) parseRangeExpression() ast.Expression {
-	rangeExpress := ast.NewRange(*p.currentToken, nil, nil)
-	if !p.expepectedToken(l.IDENT) {
-		return nil
-	}
-
-	rangeExpress.Variable = p.parseIdentifier()
-	if !p.expepectedToken(l.IN) {
-		return nil
-	}
-
-	p.advanceTokens()
-	rangeExpress.Range = p.parseExpression(LOWEST)
-	return rangeExpress
-}
-
-func (p *Parser) parseFor() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	forExpression := ast.NewFor(*p.currentToken, nil, nil)
-	if !p.expepectedToken(l.LPAREN) {
-		return nil
-	}
-
-	forExpression.Condition = p.parseRangeExpression()
-	if !p.expepectedToken(l.RPAREN) {
-		return nil
-	}
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
-	}
-
-	forExpression.Body = p.parseBlock()
-	return forExpression
-}
-
-func (p *Parser) parseCallList(valueList ast.Expression) ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	callList := ast.NewCallList(*p.currentToken, valueList, nil)
-	p.advanceTokens()
-	callList.Index = p.parseExpression(LOWEST)
-	if !p.expepectedToken(l.RBRACKET) {
-		return nil
-	}
-
-	return callList
-}
-
-func (p *Parser) parseWhile() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	whileExpression := ast.NewWhile(*p.currentToken, nil, nil)
-	if !p.expepectedToken(l.LPAREN) {
-		return nil
-	}
-
-	p.advanceTokens()
-	whileExpression.Condition = p.parseExpression(LOWEST)
-	if !p.expepectedToken(l.RPAREN) {
-		return nil
-	}
-
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
-	}
-
-	whileExpression.Body = p.parseBlock()
-	return whileExpression
-}
-
-// parse if expressions, check sintax and if there is an else in the expression
-func (p *Parser) parseIf() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	ifExpression := ast.NewIf(*p.currentToken, nil, nil, nil)
-	if !p.expepectedToken(l.LPAREN) {
-		return nil
-	}
-
-	p.advanceTokens()
-	ifExpression.Condition = p.parseExpression(LOWEST)
-	if !p.expepectedToken(l.RPAREN) {
-		return nil
-	}
-
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
-	}
-
-	ifExpression.Consequence = p.parseBlock()
-
-	p.checkPeekTokenIsNotNil()
-	if p.peekToken.Token_type == l.ELSE {
-		p.advanceTokens()
-		if !p.expepectedToken(l.LBRACE) {
-			return nil
-		}
-
-		ifExpression.Alternative = p.parseBlock()
-	}
-
-	return ifExpression
-}
-
 func (p *Parser) parseSuffixFn(left ast.Expression) ast.Expression {
 	return ast.NewSuffix(*p.currentToken, left, p.currentToken.Literal)
-}
-
-func (p *Parser) parseMethod(left ast.Expression) ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	method := ast.NewMethodExpression(*p.currentToken, left, nil)
-	if !p.expepectedToken(l.IDENT) {
-		return nil
-	}
-
-	method.Method = p.parseExpression(LOWEST)
-	return method
-}
-
-// parse integer expressions
-func (p *Parser) parseInteger() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	integer := ast.NewInteger(*p.currentToken, nil)
-
-	val, err := strconv.Atoi(p.currentToken.Literal)
-	if err != nil {
-		message := fmt.Sprintf("no se pudo parsear %s como entero", p.currentToken.Literal)
-		p.errors = append(p.errors, message)
-		return nil
-	}
-
-	integer.Value = &val
-	return integer
-}
-
-func (p *Parser) parseKeyValues() *ast.KeyValue {
-	p.checkCurrentTokenIsNotNil()
-	keyVal := ast.NewKeyVal(*p.currentToken, nil, nil)
-	keyVal.Key = p.parseExpression(LOWEST)
-	if !p.expepectedToken(l.ARROW) {
-		return nil
-	}
-
-	p.advanceTokens()
-	keyVal.Value = p.parseExpression(LOWEST)
-	return keyVal
-}
-
-func (p *Parser) parseMap() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	mapExpress := ast.NewMapExpression(*p.currentToken, []*ast.KeyValue{})
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
-	}
-
-	p.advanceTokens()
-	keyVal := p.parseKeyValues()
-	if keyVal == nil {
-		return nil
-	}
-
-	mapExpress.Body = append(mapExpress.Body, keyVal)
-	for p.peekToken.Token_type == l.COMMA {
-		p.advanceTokens()
-		p.advanceTokens()
-		keyVal := p.parseKeyValues()
-		if keyVal == nil {
-			return nil
-		}
-
-		mapExpress.Body = append(mapExpress.Body, keyVal)
-	}
-	p.advanceTokens()
-	return mapExpress
 }
 
 func (p *Parser) ParseNull() ast.Expression {
@@ -606,15 +352,6 @@ func (p *Parser) parseLetSatement() ast.Stmt {
 	return stament
 }
 
-// parse a prefix expression
-func (p *Parser) parsePrefixExpression() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	prefixExpression := ast.NewPrefix(*p.currentToken, p.currentToken.Literal, nil)
-	p.advanceTokens()
-	prefixExpression.Rigth = p.parseExpression(PREFIX)
-	return prefixExpression
-}
-
 // parse given return stament
 func (p *Parser) parseReturnStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
@@ -640,11 +377,6 @@ func (p *Parser) parseStament() ast.Stmt {
 	}
 
 	return p.parserExpressionStatement()
-}
-
-func (p *Parser) parseStringLiteral() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	return ast.NewStringLiteral(*p.currentToken, p.currentToken.Literal)
 }
 
 // check the precedence of the current token

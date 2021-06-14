@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	obj "katan/src/object"
+	obj "aura/src/object"
 )
 
 func makeStringList(str string) []obj.Object {

@@ -1,6 +1,6 @@
 package evaluator
 
-import obj "katan/src/object"
+import obj "aura/src/object"
 
 // evluate infix expressions between objects
 func evaluateInfixExpression(operator string, left obj.Object, right obj.Object) obj.Object {

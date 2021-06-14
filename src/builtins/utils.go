@@ -1,8 +1,8 @@
 package builtins
 
 import (
+	obj "aura/src/object"
 	"fmt"
-	obj "katan/src/object"
 )
 
 func makeOneArgList(arg obj.Object) obj.Object {

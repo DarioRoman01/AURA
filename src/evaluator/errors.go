@@ -1,8 +1,8 @@
 package evaluator
 
 import (
+	obj "aura/src/object"
 	"fmt"
-	obj "katan/src/object"
 )
 
 // utils functions to return errors

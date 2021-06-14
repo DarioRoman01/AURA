@@ -1,14 +1,14 @@
 package main
 
 import (
+	e "aura/src/evaluator"
+	l "aura/src/lexer"
+	obj "aura/src/object"
+	p "aura/src/parser"
+	"aura/src/repl"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	e "katan/src/evaluator"
-	l "katan/src/lexer"
-	obj "katan/src/object"
-	p "katan/src/parser"
-	"katan/src/repl"
 	"os"
 )
 

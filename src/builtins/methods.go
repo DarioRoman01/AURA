@@ -1,6 +1,6 @@
 package builtins
 
-import obj "katan/src/object"
+import obj "aura/src/object"
 
 func add(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) == 0 {

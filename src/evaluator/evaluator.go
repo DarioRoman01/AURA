@@ -1,10 +1,10 @@
 package evaluator
 
 import (
+	"aura/src/ast"
+	b "aura/src/builtins"
+	obj "aura/src/object"
 	"fmt"
-	"katan/src/ast"
-	b "katan/src/builtins"
-	obj "katan/src/object"
 	"unicode/utf8"
 )
 

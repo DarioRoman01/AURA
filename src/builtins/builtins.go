@@ -1,9 +1,9 @@
 package builtins
 
 import (
+	obj "aura/src/object"
 	"bufio"
 	"fmt"
-	obj "katan/src/object"
 	"os"
 	"strconv"
 	"strings"

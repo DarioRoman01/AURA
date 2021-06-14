@@ -1,10 +1,10 @@
 package test_test
 
 import (
-	"katan/src/evaluator"
-	l "katan/src/lexer"
-	obj "katan/src/object"
-	p "katan/src/parser"
+	"aura/src/evaluator"
+	l "aura/src/lexer"
+	obj "aura/src/object"
+	p "aura/src/parser"
 	"testing"
 
 	"github.com/stretchr/testify/suite"

@@ -1,8 +1,8 @@
 package test_test
 
 import (
-	"katan/src/ast"
-	l "katan/src/lexer"
+	"aura/src/ast"
+	l "aura/src/lexer"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

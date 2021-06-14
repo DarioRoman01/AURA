@@ -1,12 +1,12 @@
 package repl
 
 import (
+	"aura/src/evaluator"
+	l "aura/src/lexer"
+	obj "aura/src/object"
+	p "aura/src/parser"
 	"bufio"
 	"fmt"
-	"katan/src/evaluator"
-	l "katan/src/lexer"
-	obj "katan/src/object"
-	p "katan/src/parser"
 	"log"
 	"os"
 	"os/exec"

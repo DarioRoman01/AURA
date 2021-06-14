@@ -1,8 +1,8 @@
 package ast
 
 import (
+	l "aura/src/lexer"
 	"fmt"
-	l "katan/src/lexer"
 )
 
 // prefix handles prefix staments like regresa x;
