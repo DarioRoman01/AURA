@@ -156,29 +156,6 @@ func (e ExpressionStament) Str() string {
 	return e.Expression.Str()
 }
 
-// integer type
-type Integer struct {
-	Token l.Token
-	Value *int
-}
-
-// geneerate a new instance of integer
-func NewInteger(token l.Token, value *int) *Integer {
-	return &Integer{Token: token, Value: value}
-}
-
-func (i Integer) TokenLiteral() string {
-	return i.Token.Literal
-}
-
-// ensure integer implements expression
-func (i Integer) expressNode() {}
-
-// return the integer value as a string
-func (i Integer) Str() string {
-	return fmt.Sprintf("%d", *i.Value)
-}
-
 type Suffix struct {
 	Token    l.Token
 	Left     Expression
@@ -201,34 +178,6 @@ func (s *Suffix) expressNode() {}
 
 func (s *Suffix) Str() string {
 	return fmt.Sprintf("%s%s", s.Left.Str(), s.Operator)
-}
-
-// prefix handles prefix staments like regresa x;
-type Prefix struct {
-	Token    l.Token
-	Operator string
-	Rigth    Expression
-}
-
-// generates a new prefix instance
-func NewPrefix(token l.Token, operator string, rigth Expression) *Prefix {
-	return &Prefix{
-		Token:    token,
-		Operator: operator,
-		Rigth:    rigth,
-	}
-}
-
-func (p Prefix) TokenLiteral() string {
-	return p.Token.Literal
-}
-
-// ensure that prefix implements expression
-func (p Prefix) expressNode() {}
-
-// return a string representation of the prefix stament
-func (p Prefix) Str() string {
-	return fmt.Sprintf("(%s %s)", p.Operator, p.Rigth.Str())
 }
 
 // infix handles expressions like 5 + 5; where the operator is in the middle of two values
@@ -259,29 +208,6 @@ func (i Infix) expressNode() {}
 // return a string representation of the infix stament
 func (i Infix) Str() string {
 	return fmt.Sprintf("(%s %s %s)", i.Left.Str(), i.Operator, i.Rigth.Str())
-}
-
-// boolean type
-type Boolean struct {
-	Token l.Token
-	Value *bool
-}
-
-// return a new boolean instance
-func NewBoolean(token l.Token, value *bool) *Boolean {
-	return &Boolean{Token: token, Value: value}
-}
-
-func (b Boolean) TokenLiteral() string {
-	return b.Token.Literal
-}
-
-// ensure boolean implements expression
-func (b Boolean) expressNode() {}
-
-// return a string representation of the boolean
-func (b Boolean) Str() string {
-	return b.TokenLiteral()
 }
 
 // Block group a chunk of staments
@@ -419,25 +345,6 @@ func (c Call) Str() string {
 	return fmt.Sprintf("%s(%s)", c.Function.Str(), args)
 }
 
-type StringLiteral struct {
-	Token l.Token
-	Value string
-}
-
-func NewStringLiteral(token l.Token, value string) *StringLiteral {
-	return &StringLiteral{Token: token, Value: value}
-}
-
-func (s StringLiteral) TokenLiteral() string {
-	return s.Token.Literal
-}
-
-func (s StringLiteral) expressNode() {}
-
-func (s StringLiteral) Str() string {
-	return s.Value
-}
-
 type For struct {
 	Token     l.Token
 	Condition Expression
@@ -525,96 +432,6 @@ func (c *CallList) Str() string {
 	return fmt.Sprintf("%s[%s]", c.ListIdent.Str(), c.Index.Str())
 }
 
-type Reassignment struct {
-	Token      l.Token
-	Identifier Expression
-	NewVal     Expression
-}
-
-func NewReassignment(token l.Token, ident Expression, newVal Expression) *Reassignment {
-	return &Reassignment{
-		Token:      token,
-		Identifier: ident,
-		NewVal:     newVal,
-	}
-}
-
-func (r *Reassignment) TokenLiteral() string {
-	return r.Token.Literal
-}
-
-func (r *Reassignment) expressNode() {}
-
-func (r *Reassignment) Str() string {
-	return fmt.Sprintf("%s = %s", r.Identifier.Str(), r.NewVal.Str())
-}
-
-type RangeExpression struct {
-	Token    l.Token
-	Variable Expression
-	Range    Expression
-}
-
-func NewRange(token l.Token, variable Expression, Range Expression) *RangeExpression {
-	return &RangeExpression{
-		Token:    token,
-		Variable: variable,
-		Range:    Range,
-	}
-}
-
-func (r *RangeExpression) TokenLiteral() string {
-	return r.Token.Literal
-}
-
-func (r *RangeExpression) expressNode() {}
-
-func (r *RangeExpression) Str() string {
-	return fmt.Sprintf("%s en %s", r.Variable.Str(), r.Range.Str())
-}
-
-type MethodExpression struct {
-	Token  l.Token
-	Obj    Expression
-	Method Expression
-}
-
-func NewMethodExpression(token l.Token, obj Expression, method Expression) *MethodExpression {
-	return &MethodExpression{
-		Token:  token,
-		Obj:    obj,
-		Method: method,
-	}
-}
-
-func (m *MethodExpression) TokenLiteral() string {
-	return m.Token.Literal
-}
-
-func (m *MethodExpression) expressNode() {}
-
-func (m *MethodExpression) Str() string {
-	return fmt.Sprintf("%s:%s", m.Obj.Str(), m.Method.Str())
-}
-
-type NullExpression struct {
-	Token l.Token
-}
-
-func NewNull(token l.Token) *NullExpression {
-	return &NullExpression{Token: token}
-}
-
-func (n *NullExpression) TokenLiteral() string {
-	return n.Token.Literal
-}
-
-func (n *NullExpression) expressNode() {}
-
-func (n *NullExpression) Str() string {
-	return "nulo"
-}
-
 type MapExpression struct {
 	Token l.Token
 	Body  []*KeyValue
@@ -637,28 +454,4 @@ func (m *MapExpression) Str() string {
 	}
 
 	return fmt.Sprintf("mapa{%s}", strings.Join(buff, ", "))
-}
-
-type KeyValue struct {
-	Token l.Token
-	Key   Expression
-	Value Expression
-}
-
-func NewKeyVal(token l.Token, key, value Expression) *KeyValue {
-	return &KeyValue{
-		Token: token,
-		Key:   key,
-		Value: value,
-	}
-}
-
-func (k *KeyValue) TokenLiteral() string {
-	return k.Token.Literal
-}
-
-func (k *KeyValue) expressNode() {}
-
-func (k *KeyValue) Str() string {
-	return fmt.Sprintf("%s => %s", k.Key.Str(), k.Value.Str())
 }

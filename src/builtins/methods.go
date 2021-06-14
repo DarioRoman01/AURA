@@ -23,7 +23,7 @@ func remove(args ...obj.Object) obj.Object {
 		return obj.NewMethod(num, obj.REMOVE)
 	}
 
-	return unsoportedArgumentType("add", obj.Types[args[0].Type()])
+	return unsoportedArgumentType("popIndice", obj.Types[args[0].Type()])
 }
 
 func pop(args ...obj.Object) obj.Object {
