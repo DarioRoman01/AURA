@@ -5,6 +5,7 @@ import (
 	"katan/src/ast"
 	b "katan/src/builtins"
 	obj "katan/src/object"
+	"unicode/utf8"
 )
 
 // evlauate given nodes of an ast
@@ -323,6 +324,18 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 		return iter
 	}
 
+	if str, isStr := Evaluate(rangeExpress.Range, env).(*obj.String); isStr {
+		val, isVar := rangeExpress.Variable.(*ast.Identifier)
+		if !isVar {
+			return newError("no es una variable")
+		}
+
+		list := makeStringList(str.Value)
+		iter := obj.NewIterator(list[0], list)
+		env.SetItem(val.Value, iter.List[0])
+		return iter
+	}
+
 	return newError("Rango invalido")
 }
 
@@ -460,6 +473,20 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 	if hashMap, isMap := evaluated.(*obj.Map); isMap {
 		evaluated := Evaluate(call.Index, env)
 		return hashMap.Get(string(hashMap.Serialize(evaluated)))
+	}
+
+	if str, isStr := evaluated.(*obj.String); isStr {
+		evaluated := Evaluate(call.Index, env)
+		num, isNumber := evaluated.(*obj.Number)
+		if !isNumber {
+			return &obj.Error{Message: "El indice debe ser un entero"}
+		}
+
+		if num.Value >= utf8.RuneCountInString(str.Value) {
+			return &obj.Error{Message: "Indice fuera de rango"}
+		}
+
+		return &obj.String{Value: string(str.Value[num.Value])}
 	}
 
 	return notAList(obj.Types[evaluated.Type()])
