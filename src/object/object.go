@@ -37,7 +37,7 @@ const (
 )
 
 var Types = [...]string{
-	BOOLEAN:    "boolean",
+	BOOLEAN:    "booleano",
 	BUILTIN:    "builtin",
 	DEF:        "funcion",
 	ERROR:      "error",

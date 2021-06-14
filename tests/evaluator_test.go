@@ -179,17 +179,17 @@ func (e *EvaluatorTests) TestErrorhandling() {
 		source   string
 		expected string
 	}{
-		{source: "5 + verdadero;", expected: "Discrepancia de tipos: ENTERO + BOOLEANO"},
-		{source: "5 + verdadero; 9;", expected: "Discrepancia de tipos: ENTERO + BOOLEANO"},
-		{source: "-verdadero", expected: "Operador desconocido: -BOOLEANO"},
-		{source: "verdadero + falso", expected: "Operador desconocido: BOOLEANO + BOOLEANO"},
-		{source: "5; verdadero - falso; 10;", expected: "Operador desconocido: BOOLEANO - BOOLEANO"},
+		{source: "5 + verdadero;", expected: "Discrepancia de tipos: entero + booleano"},
+		{source: "5 + verdadero; 9;", expected: "Discrepancia de tipos: entero + booleano"},
+		{source: "-verdadero", expected: "Operador desconocido: -booleano"},
+		{source: "verdadero + falso", expected: "Operador desconocido: booleano + booleano"},
+		{source: "5; verdadero - falso; 10;", expected: "Operador desconocido: booleano - booleano"},
 		{source: `
 			si (10 > 7) {
 				regresa verdadero + falso;
 			}
 		`,
-			expected: "Operador desconocido: BOOLEANO + BOOLEANO",
+			expected: "Operador desconocido: booleano + booleano",
 		},
 		{source: `
 			si (5 < 2) {
@@ -198,10 +198,10 @@ func (e *EvaluatorTests) TestErrorhandling() {
 				regresa verdadero / falso;
 			}
 		`,
-			expected: "Operador desconocido: BOOLEANO / BOOLEANO",
+			expected: "Operador desconocido: booleano / booleano",
 		},
 		{source: "foobar;", expected: "Identificador no encontrado: foobar"},
-		{source: `"foo" - "bar";`, expected: "Operador desconocido: TEXTO - TEXTO"},
+		{source: `"foo" - "bar";`, expected: "Operador desconocido: texto - texto"},
 	}
 
 	for _, test := range tests {
@@ -355,14 +355,14 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `largo("");`, expected: 0},
 		{source: `largo("cuatro");`, expected: 6},
 		{source: `largo("hola mundo");`, expected: 10},
-		{source: "largo(1);", expected: "argumento para largo no valido, se recibio ENTERO"},
+		{source: "largo(1);", expected: "argumento para largo no valido, se recibio entero"},
 		{
 			source:   `largo("uno", "dos");`,
 			expected: "numero incorrecto de argumentos para largo, se recibieron 2, se requieren 1",
 		},
-		{source: "tipo(1);", expected: "ENTERO"},
-		{source: "tipo(verdadero)", expected: "BOOLEANO"},
-		{source: `tipo("hello world")`, expected: "TEXTO"},
+		{source: "tipo(1);", expected: "entero"},
+		{source: "tipo(verdadero)", expected: "booleano"},
+		{source: `tipo("hello world")`, expected: "texto"},
 		{source: `entero("1")`, expected: 1},
 		{source: `entero("hola")`, expected: "No se puede parsear como entero hola"},
 		{source: "texto(12)", expected: "12"},
