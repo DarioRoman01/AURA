@@ -147,7 +147,7 @@ var binary_search = funcion(elements, val) {
     var rigth = largo(elements) - 1;
     var mid = 0;
 
-	mientras(left <= rigth) {
+    mientras(left <= rigth) {
 		mid = (left + rigth) / 2;
 		var mid_number = elements[mid];
 
@@ -176,7 +176,7 @@ for using it you need to have Go install check https://golang.org/ for install G
 
 first copy the repository and change to the directory created:
 ```shell
-$ git clone https://github.com/Haizza1/Katan && cd Katan
+$ git clone https://github.com/Haizza1/AURA && cd AURA
 ```
 download the dependencies:
 ```shell
@@ -188,17 +188,17 @@ $ go test -v ./...
 ```
 compile the package:
 ```shell
-$ go build -o katan
+$ go build -o AURA
 ```
 
 then you can create a file or play with the repl to play with the repl just run:
 ```shell
-$ ./katan rpl
+$ ./AURA rpl
 ```
 
 to use a file you can create a file with the .lpp extension and run:
 ```shell
-$ ./katan file -path <path to your file>
+$ ./AURA file -path <path to your file>
 ```
 
 
