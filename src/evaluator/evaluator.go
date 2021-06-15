@@ -322,7 +322,7 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 
 	if hashMap, isMap := evaluated.(*obj.Map); isMap {
 		evaluated := Evaluate(call.Index, env)
-		return hashMap.Get(string(hashMap.Serialize(evaluated)))
+		return hashMap.Get(evaluated.Inspect())
 	}
 
 	if str, isStr := evaluated.(*obj.String); isStr {

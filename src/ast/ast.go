@@ -6,27 +6,25 @@ import (
 	"strings"
 )
 
-// ast node interface
+// Represents and AST node
 type ASTNode interface {
 	TokenLiteral() string
 	Str() string
 }
 
-// statement interface
-// ensure all statements implements ast node
+// represents a statement
 type Stmt interface {
 	ASTNode
 	stmtNode()
 }
 
-// expression interfaces
-// ensure all expressions implements ast node
+// represents a expression
 type Expression interface {
 	ASTNode
 	expressNode()
 }
 
-// program is the base node of the ast
+// Program represents all the program
 type Program struct {
 	Staments []Stmt
 }
@@ -47,8 +45,7 @@ func (p Program) TokenLiteral() string {
 
 // return a string representation of the program
 func (p Program) Str() string {
-	var out []string
-
+	var out = make([]string, 0, len(p.Staments))
 	for _, v := range p.Staments {
 		out = append(out, v.Str())
 	}
@@ -56,31 +53,7 @@ func (p Program) Str() string {
 	return strings.Join(out, " ")
 }
 
-// identifier handles variables names and function names
-type Identifier struct {
-	Token l.Token
-	Value string
-}
-
-// generates a new identifier instance
-func NewIdentifier(token l.Token, value string) *Identifier {
-	return &Identifier{Token: token, Value: value}
-}
-
-// ensure the identifier is a expression
-func (i Identifier) expressNode() {}
-
-// return literal of the identifier token
-func (i Identifier) TokenLiteral() string {
-	return i.Token.Literal
-}
-
-// return the value of the identifier wich is the name
-func (i Identifier) Str() string {
-	return i.Value
-}
-
-// let stament handles assing operations
+// Represents a variable or function declaration
 type LetStatement struct {
 	Token l.Token
 	Name  *Identifier
@@ -180,37 +153,7 @@ func (s *Suffix) Str() string {
 	return fmt.Sprintf("%s%s", s.Left.Str(), s.Operator)
 }
 
-// infix handles expressions like 5 + 5; where the operator is in the middle of two values
-type Infix struct {
-	Token    l.Token
-	Rigth    Expression
-	Operator string
-	Left     Expression
-}
-
-// generates a new infix instance
-func Newinfix(token l.Token, r Expression, operator string, l Expression) *Infix {
-	return &Infix{
-		Token:    token,
-		Rigth:    r,
-		Operator: operator,
-		Left:     l,
-	}
-}
-
-func (i Infix) TokenLiteral() string {
-	return i.Token.Literal
-}
-
-// ensure that infix implements expression node
-func (i Infix) expressNode() {}
-
-// return a string representation of the infix stament
-func (i Infix) Str() string {
-	return fmt.Sprintf("(%s %s %s)", i.Left.Str(), i.Operator, i.Rigth.Str())
-}
-
-// Block group a chunk of staments
+// Block represents a chunk of staments
 type Block struct {
 	Token    l.Token
 	Staments []Stmt
@@ -233,7 +176,7 @@ func (b Block) stmtNode() {}
 
 // return a string representation of the block
 func (b Block) Str() string {
-	var out []string
+	var out = make([]string, 0, len(b.Staments))
 	for _, stament := range b.Staments {
 		out = append(out, stament.Str())
 	}
@@ -302,7 +245,7 @@ func (f Function) expressNode() {}
 
 // return a string representation of the function
 func (f Function) Str() string {
-	var paramList []string
+	var paramList = make([]string, 0, len(f.Parameters))
 	for _, parameter := range f.Parameters {
 		paramList = append(paramList, parameter.Str())
 	}
@@ -336,7 +279,7 @@ func (C Call) expressNode() {}
 
 // return a string representation of the call
 func (c Call) Str() string {
-	var argsList []string
+	var argsList = make([]string, 0, len(c.Arguments))
 	for _, arg := range c.Arguments {
 		argsList = append(argsList, arg.Str())
 	}
@@ -401,7 +344,7 @@ func (a *Array) TokenLiteral() string {
 func (a *Array) expressNode() {}
 
 func (a *Array) Str() string {
-	var out []string
+	var out = make([]string, 0, len(a.Values))
 	for _, val := range a.Values {
 		out = append(out, val.Str())
 	}
@@ -448,7 +391,7 @@ func (m *MapExpression) TokenLiteral() string {
 func (m *MapExpression) expressNode() {}
 
 func (m *MapExpression) Str() string {
-	var buff []string
+	var buff = make([]string, 0, len(m.Body))
 	for _, keyVal := range m.Body {
 		buff = append(buff, keyVal.Str())
 	}

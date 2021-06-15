@@ -5,6 +5,36 @@ import (
 	"fmt"
 )
 
+// infix handles expressions like 5 + 5; where the operator is in the middle of two values
+type Infix struct {
+	Token    l.Token
+	Rigth    Expression
+	Operator string
+	Left     Expression
+}
+
+// generates a new infix instance
+func Newinfix(token l.Token, r Expression, operator string, l Expression) *Infix {
+	return &Infix{
+		Token:    token,
+		Rigth:    r,
+		Operator: operator,
+		Left:     l,
+	}
+}
+
+func (i Infix) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+// ensure that infix implements expression node
+func (i Infix) expressNode() {}
+
+// return a string representation of the infix stament
+func (i Infix) Str() string {
+	return fmt.Sprintf("(%s %s %s)", i.Left.Str(), i.Operator, i.Rigth.Str())
+}
+
 type RangeExpression struct {
 	Token    l.Token
 	Variable Expression

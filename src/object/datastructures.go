@@ -1,8 +1,6 @@
 package object
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"fmt"
 	"strings"
@@ -14,8 +12,7 @@ type List struct {
 
 func (l *List) Type() ObjectType { return LIST }
 func (l *List) Inspect() string {
-	var buff []string
-
+	var buff = make([]string, 0, len(l.Values))
 	for _, val := range l.Values {
 		buff = append(buff, val.Inspect())
 	}
@@ -53,10 +50,9 @@ type Map struct {
 
 func (m *Map) Type() ObjectType { return DICT }
 func (m *Map) Inspect() string {
-	var buff []string
-
+	var buff = make([]string, 0, len(m.Store))
 	for key, val := range m.Store {
-		str := fmt.Sprintf("%s => %s", m.Deserialize([]byte(key)), val.Inspect())
+		str := fmt.Sprintf("%s => %s", key, val.Inspect())
 		buff = append(buff, str)
 	}
 
@@ -73,30 +69,13 @@ func (m *Map) Get(key string) Object {
 }
 
 func (m *Map) UpdateKey(key, newVal Object) {
-	hashedKey := m.Serialize(key)
-	m.Store[string(hashedKey)] = newVal
-}
-
-func (m *Map) Serialize(obj Object) []byte {
-	var buff bytes.Buffer
-	encoder := gob.NewEncoder(&buff)
-	encoder.Encode(obj.Inspect())
-	return buff.Bytes()
-}
-
-func (m *Map) Deserialize(data []byte) string {
-	var str string
-	decoder := gob.NewDecoder(bytes.NewReader(data))
-	decoder.Decode(&str)
-	return str
+	m.Store[key.Inspect()] = newVal
 }
 
 func (m *Map) SetValues(key Object, value Object) error {
-	hashedKey := m.Serialize(key)
-	if _, exists := m.Store[string(hashedKey)]; exists {
+	if _, exists := m.Store[key.Inspect()]; exists {
 		return errors.New("la llave ya existe en el mapa")
 	}
-
-	m.Store[string(hashedKey)] = value
+	m.Store[key.Inspect()] = value
 	return nil
 }

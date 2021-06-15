@@ -114,8 +114,7 @@ func (d *Def) Type() ObjectType {
 }
 
 func (d *Def) Inspect() string {
-	var argsList []string
-
+	var argsList = make([]string, 0, len(d.Parameters))
 	for _, arg := range d.Parameters {
 		argsList = append(argsList, arg.Str())
 	}
@@ -200,8 +199,7 @@ func (i *Iterator) Next() Object {
 
 func (i *Iterator) Type() ObjectType { return ITER }
 func (i *Iterator) Inspect() string {
-	var buff []string
-
+	var buff = make([]string, 0, len(i.List))
 	for _, val := range i.List {
 		buff = append(buff, val.Inspect())
 	}

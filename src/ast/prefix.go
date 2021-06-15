@@ -33,6 +33,30 @@ func (p Prefix) Str() string {
 	return fmt.Sprintf("(%s %s)", p.Operator, p.Rigth.Str())
 }
 
+// Identifier represents a variable or function name
+type Identifier struct {
+	Token l.Token
+	Value string
+}
+
+// generates a new identifier instance
+func NewIdentifier(token l.Token, value string) *Identifier {
+	return &Identifier{Token: token, Value: value}
+}
+
+// ensure the identifier is a expression
+func (i Identifier) expressNode() {}
+
+// return literal of the identifier token
+func (i Identifier) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+// return the string representation
+func (i Identifier) Str() string {
+	return i.Value
+}
+
 // integer type
 type Integer struct {
 	Token l.Token

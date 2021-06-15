@@ -42,7 +42,7 @@ func evaluateListReassigment(call *ast.CallList, list *obj.List, newVal ast.Expr
 }
 
 func evaluateMapReassigment(hashMap *obj.Map, key obj.Object, value obj.Object) obj.Object {
-	if err := hashMap.Get(string(hashMap.Serialize(key))); err != nil {
+	if err := hashMap.Get(key.Inspect()); err != nil {
 		hashMap.SetValues(key, value)
 		return obj.SingletonNUll
 	}
@@ -98,7 +98,7 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 func evaluateMapMethods(hashMap *obj.Map, method *obj.Method) obj.Object {
 	switch method.MethodType {
 	case obj.CONTAIS:
-		return obj.NewBool(hashMap.Get(string(hashMap.Serialize(method.Value))) != obj.NullVAlue)
+		return obj.NewBool(hashMap.Get(method.Value.Inspect()) != obj.NullVAlue)
 
 	case obj.VALUES:
 		list := &obj.List{Values: []obj.Object{}}
