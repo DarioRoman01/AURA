@@ -8,7 +8,7 @@ escribir(mi_mapa);
 mi_mapa["a"];
 mi_mapa["a"] = 24;
 escribir(mi_mapa);
-escribir(largo(mi_mapa))
+escribir(largo(mi_mapa));
 
 var existe = funcion(llave, map) {
     var valor = map[llave];

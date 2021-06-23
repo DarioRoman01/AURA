@@ -28,7 +28,7 @@ func remove(args ...obj.Object) obj.Object {
 
 func pop(args ...obj.Object) obj.Object {
 	if len(args) > 0 {
-		return wrongNumberofArgs("pop", len(args), 1)
+		return wrongNumberofArgs("pop", len(args), 0)
 	}
 
 	return obj.NewMethod(obj.SingletonNUll, obj.POP)
@@ -44,7 +44,7 @@ func contains(args ...obj.Object) obj.Object {
 
 func values(args ...obj.Object) obj.Object {
 	if len(args) > 0 {
-		return wrongNumberofArgs("valores", len(args), 1)
+		return wrongNumberofArgs("valores", len(args), 0)
 	}
 
 	return obj.NewMethod(obj.SingletonNUll, obj.VALUES)

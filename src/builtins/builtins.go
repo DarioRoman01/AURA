@@ -147,6 +147,9 @@ func rango(args ...obj.Object) obj.Object {
 	case 2:
 		return makeTwoArgList(args[0], args[1])
 
+	case 3:
+		return makeTreArgList(args[0], args[1], args[2])
+
 	default:
 		return wrongNumberofArgs("rango", len(args), 2)
 	}

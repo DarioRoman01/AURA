@@ -228,11 +228,11 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 
 func (e *EvaluatorTests) TestWhileLoop() {
 	tests := []tuple{
-		{`var i = 0; mientras(i <= 10) { i = i + 1; }; i;`, 11},
-		{`var i = 0; mientras(i <= 3) { i = i + 1; }; i;`, 4},
-		{`var i = 0; mientras(i <= 5) { i = i + 1; }; i;`, 6},
-		{`var i = 0; mientras(i <= 4) { i = i + 1; }; i;`, 5},
-		{`var i = 0; mientras(i <= 1) { i = i + 1; }; i;`, 2},
+		{`var i = 0; mientras(i <= 10) { i++; }; i;`, 11},
+		{`var i = 0; mientras(i <= 3) { i++; }; i;`, 4},
+		{`var i = 0; mientras(i <= 5) { i++; }; i;`, 6},
+		{`var i = 0; mientras(i <= 4) { i++; }; i;`, 5},
+		{`var i = 0; mientras(i <= 1) { i++; }; i;`, 2},
 	}
 
 	for _, test := range tests {
@@ -281,10 +281,11 @@ func (e *EvaluatorTests) TestListMethods() {
 
 func (e *EvaluatorTests) TestForLoop() {
 	tests := []tuple{
-		{`var i = 0; por(n en rango(10)) { i = i + 1; }; i;`, 10},
-		{`var i = 0; por(n en rango(3)) { i = i + 1; }; i;`, 3},
-		{`var i = 0; por(n en rango(5)) { i = i + 1; }; i;`, 5},
-		{`var i = 0; por(n en rango(4)) { i = i + 1; }; i;`, 4},
+		{`var i = 0; por(n en rango(10)) { i++; }; i;`, 10},
+		{`var i = 0; por(n en rango(3)) { i++; }; i;`, 3},
+		{`var i = 0; por(n en rango(5)) { i++; }; i;`, 5},
+		{`var i = 0; por(n en rango(4)) { i++; }; i;`, 4},
+		{`var i = 0; por(n en rango(5, 10)) {i += n}; i;`, 35},
 	}
 
 	for _, test := range tests {
@@ -317,6 +318,8 @@ func (e *EvaluatorTests) TestCallList() {
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[0];", 1},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[2];", 4},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[3];", 5},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[3] + mi_lista[0];", 6},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[1] + mi_lista[2];", 27},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[100];", "Indice fuera de rango"},
 	}
 
@@ -454,8 +457,8 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 	}{
 		{source: `"hello world!"`, expected: "hello world!"},
 		{
-			source:   `funcion() { regresa "src is awesome"; }()`,
-			expected: "src is awesome",
+			source:   `funcion() { regresa "aura is awesome"; }()`,
+			expected: "aura is awesome",
 		},
 	}
 

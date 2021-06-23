@@ -43,3 +43,27 @@ func makeTwoArgList(start, end obj.Object) obj.Object {
 
 	return list
 }
+
+func makeTreArgList(start, end, pass obj.Object) obj.Object {
+	startVal, isNum := start.(*obj.Number)
+	if !isNum {
+		return &obj.Error{Message: fmt.Sprintf("El valor de inicio debe ser un entero %s", start.Inspect())}
+	}
+
+	endVal, isNum := end.(*obj.Number)
+	if !isNum {
+		return &obj.Error{Message: fmt.Sprintf("El valor de inicio debe ser un entero %s", end.Inspect())}
+	}
+
+	passVal, isNum := pass.(*obj.Number)
+	if !isNum {
+		return &obj.Error{Message: fmt.Sprintf("El valor de inicio debe ser un entero %s", end.Inspect())}
+	}
+
+	list := &obj.List{Values: []obj.Object{}}
+	for i := startVal.Value; i < endVal.Value; i += passVal.Value {
+		list.Values = append(list.Values, &obj.Number{Value: i})
+	}
+
+	return list
+}

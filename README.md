@@ -140,7 +140,7 @@ por(i en mi_lista) {
 }
 ```
 
-with all thys lets look a real world example with bynary search:
+with all this lets look a real world example with bynary search:
 ```ts
 var binary_search = funcion(elements, val) {
     var left = 0;
@@ -148,21 +148,21 @@ var binary_search = funcion(elements, val) {
     var mid = 0;
 
     mientras(left <= rigth) {
-		mid = (left + rigth) / 2;
-		var mid_number = elements[mid];
+        mid = (left + rigth) / 2;
+        var mid_number = elements[mid];
 
-		si (mid_number == val) {
-			regresa mid;
-		}
+        si (mid_number == val) {
+            regresa mid;
+        }
 
-		si (mid_number < val) {
-			left = mid + 1;
-		} si_no {
-			rigth = mid - 1;
-		}
+        si (mid_number < val) {
+            left = mid + 1;
+        } si_no {
+            rigth = mid - 1;
+        }
 	}
 
-	regresa -1
+    regresa -1
 }
 
 var numbers = lista[1,4,6,9,10,12,26];

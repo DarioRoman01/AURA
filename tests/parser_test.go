@@ -212,6 +212,16 @@ func (p *ParserTests) TestLIstExpression() {
 	p.testInteger(list.Values[2], 3)
 }
 
+func (p *ParserTests) TestArrayExpression() {
+	source := `mapa{"a" => 1, "b" => 2, "c" => 3}`
+	parser, program := p.InitParserTests(source)
+	p.testProgramStatements(parser, program, 1)
+	hashMap := (program.Staments[0].(*ast.ExpressionStament)).Expression.(*ast.MapExpression)
+	p.Assert().IsType(&ast.MapExpression{}, hashMap)
+	p.Assert().NotNil(hashMap.Body)
+	p.Assert().Equal(3, len(hashMap.Body))
+}
+
 func (p *ParserTests) TestCallExpression() {
 	source := "suma(1, 2 * 3, 4 + 5);"
 	parser, program := p.InitParserTests(source)

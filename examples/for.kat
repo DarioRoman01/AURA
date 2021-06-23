@@ -15,5 +15,4 @@ var insertar = funcion(array) {
 
 var mi_lista = lista[2,2,3];
 escribir(mi_lista);
-insertar(mi_lista);
 escribir(mi_lista);
