@@ -192,4 +192,6 @@ var BUILTINS = map[string]*obj.Builtin{
 	"popIndice":      obj.NewBuiltin(remove),
 	"contiene":       obj.NewBuiltin(contains),
 	"valores":        obj.NewBuiltin(values),
+	"mayusculas":     obj.NewBuiltin(toUppper),
+	"minusculas":     obj.NewBuiltin(toLower),
 }

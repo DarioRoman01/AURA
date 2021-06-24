@@ -34,6 +34,8 @@ const (
 	CONTAIS
 	KEYS
 	VALUES
+	UPPER
+	LOWER
 )
 
 var Types = [...]string{

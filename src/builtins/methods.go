@@ -49,3 +49,19 @@ func values(args ...obj.Object) obj.Object {
 
 	return obj.NewMethod(obj.SingletonNUll, obj.VALUES)
 }
+
+func toUppper(args ...obj.Object) obj.Object {
+	if len(args) > 0 {
+		return wrongNumberofArgs("mayusculas", len(args), 0)
+	}
+
+	return obj.NewMethod(obj.SingletonNUll, obj.UPPER)
+}
+
+func toLower(args ...obj.Object) obj.Object {
+	if len(args) > 0 {
+		return wrongNumberofArgs("minusculas", len(args), 0)
+	}
+
+	return obj.NewMethod(obj.SingletonNUll, obj.LOWER)
+}

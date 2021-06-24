@@ -3,6 +3,8 @@ package evaluator
 import (
 	"aura/src/ast"
 	obj "aura/src/object"
+	"reflect"
+	"strings"
 )
 
 func evaluateMap(mapa *ast.MapExpression, env *obj.Enviroment) obj.Object {
@@ -90,6 +92,15 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 		index := method.Value.(*obj.Number)
 		return list.RemoveAt(index.Value)
 
+	case obj.CONTAIS:
+		for _, val := range list.Values {
+			if reflect.DeepEqual(val, method.Value) {
+				return obj.SingletonTRUE
+			}
+		}
+
+		return obj.SingletonFALSE
+
 	default:
 		return noSuchMethod(method.Inspect(), "list")
 	}
@@ -98,7 +109,11 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 func evaluateMapMethods(hashMap *obj.Map, method *obj.Method) obj.Object {
 	switch method.MethodType {
 	case obj.CONTAIS:
-		return obj.NewBool(hashMap.Get(method.Value.Inspect()) != obj.NullVAlue)
+		if hashMap.Get(method.Value.Inspect()) != obj.NullVAlue {
+			return obj.SingletonTRUE
+		}
+
+		return obj.SingletonFALSE
 
 	case obj.VALUES:
 		list := &obj.List{Values: []obj.Object{}}
@@ -109,6 +124,33 @@ func evaluateMapMethods(hashMap *obj.Map, method *obj.Method) obj.Object {
 
 	default:
 		return noSuchMethod(method.Inspect(), "mapa")
+	}
+}
+
+func evaluateStringMethod(str *obj.String, method *obj.Method) obj.Object {
+	switch method.MethodType {
+	case obj.UPPER:
+		str.Value = strings.ToUpper(str.Value)
+		return str
+
+	case obj.LOWER:
+		str.Value = strings.ToLower(str.Value)
+		return str
+
+	case obj.CONTAIS:
+		val, isStr := method.Value.(*obj.String)
+		if !isStr {
+			return newError("La funcion contiene solo puede recibir caracteres o cadenas")
+		}
+
+		if strings.Contains(str.Value, val.Value) {
+			return obj.SingletonTRUE
+		}
+
+		return obj.SingletonFALSE
+
+	default:
+		return noSuchMethod(method.Inspect(), "texto")
 	}
 }
 
@@ -130,6 +172,15 @@ func evaluateMethod(method *ast.MethodExpression, env *obj.Enviroment) obj.Objec
 		}
 
 		return evaluateMapMethods(hashMap, mapMethod)
+	}
+
+	if str, isStr := evaluated.(*obj.String); isStr {
+		strMethod, isMethod := Evaluate(method.Method, env).(*obj.Method)
+		if !isMethod {
+			return noSuchMethod(strMethod.Inspect(), "texto")
+		}
+
+		return evaluateStringMethod(str, strMethod)
 	}
 
 	return noSuchMethod(method.Method.Str(), method.Obj.Str())

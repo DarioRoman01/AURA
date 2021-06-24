@@ -1,6 +1,9 @@
 package evaluator
 
-import obj "aura/src/object"
+import (
+	obj "aura/src/object"
+	"fmt"
+)
 
 // evluate infix expressions between objects
 func evaluateInfixExpression(operator string, left obj.Object, right obj.Object) obj.Object {
@@ -69,6 +72,10 @@ func evaluateStringInfixExpression(operator string, left obj.Object, rigth obj.O
 	switch operator {
 	case "+":
 		return &obj.String{Value: leftVal + rigthVal}
+
+	case "+=":
+		left.(*obj.String).Value += rigthVal
+		return left
 	case "==":
 		return toBooleanObject(leftVal == rigthVal)
 	case "!=":
@@ -101,7 +108,7 @@ func evaluateSuffixExpression(operator string, left obj.Object) obj.Object {
 		}
 	}
 
-	return &obj.Error{Message: "No es un numero"}
+	return newError(fmt.Sprintf("el operador %s solo puede ser aplicado en numeros", operator))
 }
 
 // evluate infix integer operations
