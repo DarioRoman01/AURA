@@ -5,11 +5,12 @@ import (
 	"fmt"
 )
 
-// prefix handles prefix staments like regresa x;
+// Represents a prefix expression like:
+//		return 5;
 type Prefix struct {
-	Token    l.Token
-	Operator string
-	Rigth    Expression
+	Token    l.Token    // represents the token of the expression
+	Operator string     // represents the operator of the expression
+	Rigth    Expression // represents the obj of the expression
 }
 
 // generates a new prefix instance
@@ -25,18 +26,16 @@ func (p Prefix) TokenLiteral() string {
 	return p.Token.Literal
 }
 
-// ensure that prefix implements expression
 func (p Prefix) expressNode() {}
 
-// return a string representation of the prefix stament
 func (p Prefix) Str() string {
 	return fmt.Sprintf("(%s %s)", p.Operator, p.Rigth.Str())
 }
 
-// Identifier represents a variable or function name
+// represents a variable or function name
 type Identifier struct {
-	Token l.Token
-	Value string
+	Token l.Token // represents the token of the expression
+	Value string  // represents the name of the identifier
 }
 
 // generates a new identifier instance
@@ -44,23 +43,20 @@ func NewIdentifier(token l.Token, value string) *Identifier {
 	return &Identifier{Token: token, Value: value}
 }
 
-// ensure the identifier is a expression
 func (i Identifier) expressNode() {}
 
-// return literal of the identifier token
 func (i Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
 
-// return the string representation
 func (i Identifier) Str() string {
 	return i.Value
 }
 
-// integer type
+// Represents a Integer expression
 type Integer struct {
-	Token l.Token
-	Value *int
+	Token l.Token // represents the token of the expression
+	Value *int    // represents the value of the integer
 }
 
 // geneerate a new instance of integer
@@ -72,18 +68,16 @@ func (i Integer) TokenLiteral() string {
 	return i.Token.Literal
 }
 
-// ensure integer implements expression
 func (i Integer) expressNode() {}
 
-// return the integer value as a string
 func (i Integer) Str() string {
 	return fmt.Sprintf("%d", *i.Value)
 }
 
-// boolean type
+// Represents a boolean expression
 type Boolean struct {
-	Token l.Token
-	Value *bool
+	Token l.Token // represents the token of the expression
+	Value *bool   // represents the value of the expression
 }
 
 // return a new boolean instance
@@ -95,19 +89,19 @@ func (b Boolean) TokenLiteral() string {
 	return b.Token.Literal
 }
 
-// ensure boolean implements expression
 func (b Boolean) expressNode() {}
 
-// return a string representation of the boolean
 func (b Boolean) Str() string {
 	return b.TokenLiteral()
 }
 
+// represents a string literal expression
 type StringLiteral struct {
-	Token l.Token
-	Value string
+	Token l.Token // represents the token of the expression
+	Value string  // represents the value of the expression
 }
 
+// return a new string literal instance
 func NewStringLiteral(token l.Token, value string) *StringLiteral {
 	return &StringLiteral{Token: token, Value: value}
 }
@@ -122,10 +116,12 @@ func (s StringLiteral) Str() string {
 	return s.Value
 }
 
+// represents a null expression
 type NullExpression struct {
-	Token l.Token
+	Token l.Token // represents the token of the expression
 }
 
+// generates a new null instance
 func NewNull(token l.Token) *NullExpression {
 	return &NullExpression{Token: token}
 }

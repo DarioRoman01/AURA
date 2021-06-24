@@ -6,14 +6,20 @@ import (
 	"fmt"
 )
 
+// Signature for functions to parse prefix expressions
 type PrefixParsFn func() ast.Expression
+
+// Signature for functions to parse suffix expressions
 type SuffixParseFn func(ast.Expression) ast.Expression
+
+// Signature for functions to parse infix expressions
 type InfixParseFn func(ast.Expression) ast.Expression
 
 type PrefixParsFns map[l.TokenType]PrefixParsFn
 type InfixParseFns map[l.TokenType]InfixParseFn
 type SuffixParseFns map[l.TokenType]SuffixParseFn
 
+// represents the precedence of evaluation
 type Precedence int
 
 const (
@@ -55,15 +61,15 @@ var PRECEDENCES = map[l.TokenType]Precedence{
 	l.MINUS2:      PRODUCT,
 }
 
-// parser handle the parsing of the program staments and syntax of the program
+// Represents the Parser of the programming lenguage
 type Parser struct {
-	lexer          *l.Lexer
-	currentToken   *l.Token
-	peekToken      *l.Token
-	errors         []string
-	prefixParsFns  PrefixParsFns
-	infixParseFns  InfixParseFns
-	suffixParseFns SuffixParseFns
+	lexer          *l.Lexer       // represents the lexer of the programming lenguage
+	currentToken   *l.Token       // represents the current token in the parsing
+	peekToken      *l.Token       // represnts the next token in the parsing
+	errors         []string       // represents the error found while parsing
+	prefixParsFns  PrefixParsFns  // represents all the functions to parse prefix expressions
+	infixParseFns  InfixParseFns  // represents all the functions to parse infix expressions
+	suffixParseFns SuffixParseFns // represents all the functions to parse suffix expressions
 }
 
 // generates a new parser instance
@@ -74,9 +80,12 @@ func NewParser(lexer *l.Lexer) *Parser {
 		peekToken:    nil,
 	}
 
+	// we register all the functions to parse the expressions
 	parser.prefixParsFns = parser.registerPrefixFns()
 	parser.infixParseFns = parser.registerInfixFns()
 	parser.suffixParseFns = parser.registerSuffixFns()
+
+	// we advance two times tokens to have a not nil first token
 	parser.advanceTokens()
 	parser.advanceTokens()
 	return parser
@@ -105,13 +114,14 @@ func (p *Parser) checkPeekTokenIsNotNil() {
 	}
 }
 
+// handle a possible panic in the parser
 func (p *Parser) handlePeekTokenPanic() {
 	if r := recover(); r != nil {
 		fmt.Println("Error: ", r)
 	}
 }
 
-// check precedence of the current token
+// return the precedence of the current token
 func (p *Parser) currentPrecedence() Precedence {
 	p.checkCurrentTokenIsNotNil()
 	precedence, exists := PRECEDENCES[p.currentToken.Token_type]
@@ -127,7 +137,7 @@ func (p *Parser) Errors() []string {
 	return p.errors
 }
 
-// parse all program staments
+// parse all the program
 func (p *Parser) ParseProgam() ast.Program {
 	program := ast.Program{Staments: []ast.Stmt{}}
 
@@ -154,7 +164,7 @@ func (p *Parser) expepectedToken(tokenType l.TokenType) bool {
 	return false
 }
 
-// add a error to errors list if there is any unexpected token error
+// add an error to errors list if there is any unexpected token error
 func (p *Parser) expectedTokenError(tokenType l.TokenType) {
 	p.checkCurrentTokenIsNotNil()
 	err := fmt.Sprintf(
@@ -165,12 +175,13 @@ func (p *Parser) expectedTokenError(tokenType l.TokenType) {
 	p.errors = append(p.errors, err)
 }
 
-// parse a block of staments
+// parseBlock will parse a block expression
 func (p *Parser) parseBlock() *ast.Block {
 	p.checkCurrentTokenIsNotNil()
 	blockStament := ast.NewBlock(*p.currentToken)
 	p.advanceTokens()
 
+	// we iterate until we find a } token
 	for !(p.currentToken.Token_type == l.RBRACE) && !(p.currentToken.Token_type == l.EOF) {
 		stament := p.parseStament()
 		if stament != nil {
@@ -183,6 +194,7 @@ func (p *Parser) parseBlock() *ast.Block {
 	return blockStament
 }
 
+// ParseArrayValues will parse all the values in array expressions
 func (p *Parser) ParseArrayValues() []ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	var values []ast.Expression
@@ -211,11 +223,12 @@ func (p *Parser) ParseArrayValues() []ast.Expression {
 	return values
 }
 
-// parse args in function calls
+// parse all the arguments when a function is call
 func (p *Parser) parseCallArguments() []ast.Expression {
 	var args []ast.Expression
 	p.checkPeekTokenIsNotNil()
 	if p.peekToken.Token_type == l.RPAREN {
+		// there is no arguemnts
 		p.advanceTokens()
 		return args
 	}
@@ -225,6 +238,7 @@ func (p *Parser) parseCallArguments() []ast.Expression {
 		args = append(args, expression)
 	}
 
+	// we loop until we dont have commas. this means whe parse all the values
 	for p.peekToken.Token_type == l.COMMA {
 		p.advanceTokens()
 		p.advanceTokens()
@@ -240,12 +254,15 @@ func (p *Parser) parseCallArguments() []ast.Expression {
 	return args
 }
 
-// parse a expression and check if there is a valid expression
+// parse a expression based on the given precedence
 func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 	defer p.handlePeekTokenPanic()
 	p.checkCurrentTokenIsNotNil()
+
+	// we check if there is any function to parse the current token
 	prefixParseFn, exist := p.prefixParsFns[p.currentToken.Token_type]
 	if !exist {
+		// there is no function to parse the token
 		message := fmt.Sprintf("no se encontro ninguna funcion para parsear %s", p.currentToken.Literal)
 		p.errors = append(p.errors, message)
 		return nil
@@ -254,13 +271,16 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 	leftExpression := prefixParseFn()
 	p.checkPeekTokenIsNotNil()
 
+	// we check if there is any suffix expression to be parsed
 	if suffixFn, exists := p.suffixParseFns[p.peekToken.Token_type]; exists {
 		p.advanceTokens()
 		leftExpression = suffixFn(leftExpression)
 		p.advanceTokens()
 	}
 
+	// we loop until the precedence is lowest than the next precedence
 	for !(p.peekToken.Token_type == l.SEMICOLON) && precedence < p.peekPrecedence() {
+		// we check if there is any function to parse an infix expression
 		infixParseFn, exist := p.infixParseFns[p.peekToken.Token_type]
 		if !exist {
 			return leftExpression
@@ -293,11 +313,12 @@ func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 	return expressionStament
 }
 
-// parse function parameters and check the syntax
+// parse all the parameters of the function expresison
 func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 	var params []*ast.Identifier
 	p.checkPeekTokenIsNotNil()
 	if p.peekToken.Token_type == l.RPAREN {
+		// there is no parameters
 		p.advanceTokens()
 		return params
 	}
@@ -306,6 +327,7 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 	identifier := ast.NewIdentifier(*p.currentToken, p.currentToken.Literal)
 	params = append(params, identifier)
 
+	// we loop until we dont have commas. this means we parse all the parameters
 	for p.peekToken.Token_type == l.COMMA {
 		p.advanceTokens()
 		p.advanceTokens()
@@ -314,22 +336,25 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 	}
 
 	if !p.expepectedToken(l.RPAREN) {
+		// syntax error
 		return make([]*ast.Identifier, 0)
 	}
 
 	return params
 }
 
+// parse a suffix function
 func (p *Parser) parseSuffixFn(left ast.Expression) ast.Expression {
 	return ast.NewSuffix(*p.currentToken, left, p.currentToken.Literal)
 }
 
+// parse a null expression
 func (p *Parser) ParseNull() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	return ast.NewNull(*p.currentToken)
 }
 
-// parse given let stament and check sintax
+// parse a let statement
 func (p *Parser) parseLetSatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
 	stament := ast.NewLetStatement(*p.currentToken, nil, nil)
@@ -339,6 +364,7 @@ func (p *Parser) parseLetSatement() ast.Stmt {
 
 	stament.Name = p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.ASSING) {
+		// syntax error. we dont allow this
 		return nil
 	}
 
@@ -352,7 +378,7 @@ func (p *Parser) parseLetSatement() ast.Stmt {
 	return stament
 }
 
-// parse given return stament
+// parse a return stament
 func (p *Parser) parseReturnStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
 	stament := ast.NewReturnStatement(*p.currentToken, nil)
@@ -379,7 +405,7 @@ func (p *Parser) parseStament() ast.Stmt {
 	return p.parserExpressionStatement()
 }
 
-// check the precedence of the current token
+// return the precedence of the next token
 func (p *Parser) peekPrecedence() Precedence {
 	p.checkPeekTokenIsNotNil()
 	precedence, exists := PRECEDENCES[p.peekToken.Token_type]
@@ -390,7 +416,7 @@ func (p *Parser) peekPrecedence() Precedence {
 	return precedence
 }
 
-// register all infix functions for the different token types
+// register all the functions to parse infix expressions
 func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns := make(InfixParseFns)
 	inFixFns[l.PLUS] = p.parseInfixExpression
@@ -419,7 +445,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	return inFixFns
 }
 
-// register all prefix functions for the different token types
+// register all the functions to parse prefix expressions
 func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns := make(PrefixParsFns)
 	prefixFns[l.FALSE] = p.parseBoolean
@@ -440,6 +466,7 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	return prefixFns
 }
 
+// register all the functions to parse suffix expressions
 func (p *Parser) registerSuffixFns() SuffixParseFns {
 	suffixFns := make(SuffixParseFns)
 	suffixFns[l.EXPONENT] = p.parseSuffixFn
