@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 )
 
-// evlauate given nodes of an ast
+// evlauate given nodes of the ast
 func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 	switch node := baseNode.(type) {
 
@@ -127,17 +127,19 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 
 // generates a new function object
 func applyFunction(fn obj.Object, args []obj.Object) obj.Object {
-	if function, isFn := fn.(*obj.Def); isFn {
+	switch function := fn.(type) {
+	case *obj.Def:
 		extendedEnviron := extendFunctionEnviroment(function, args)
 		evaluated := Evaluate(function.Body, extendedEnviron)
 		CheckIsNotNil(evaluated)
 		return unwrapReturnValue(evaluated)
 
-	} else if builtin, isBuiltin := fn.(*obj.Builtin); isBuiltin {
-		return builtin.Fn(args...)
-	}
+	case *obj.Builtin:
+		return function.Fn(args...)
 
-	return notAFunction(obj.Types[fn.Type()])
+	default:
+		return notAFunction(obj.Types[fn.Type()])
+	}
 }
 
 // unwrap the return value of a function

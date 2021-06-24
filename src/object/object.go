@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// represents all the types in the programming lenguage
 type ObjectType int
 
 const (
@@ -24,6 +25,7 @@ const (
 	DICT
 )
 
+// represents the methods in the standar library
 type MethodsTypes int
 
 const (
@@ -38,6 +40,7 @@ const (
 	LOWER
 )
 
+// string representation of the types
 var Types = [...]string{
 	BOOLEAN:    "booleano",
 	BUILTIN:    "builtin",
@@ -53,18 +56,19 @@ var Types = [...]string{
 	DICT:       "mapa",
 }
 
+// Object is an interface for abstract all the structs
 type Object interface {
-	Type() ObjectType
-	Inspect() string
+	Type() ObjectType // return the object type of the object
+	Inspect() string  // return the value of the object
 }
 
-// int object type
+// represent the int object
 type Number struct{ Value int }
 
 func (i *Number) Type() ObjectType { return INTEGERS }
 func (i *Number) Inspect() string  { return fmt.Sprint(i.Value) }
 
-// Bool object type
+// represent the bool object
 type Bool struct{ Value bool }
 
 func NewBool(value bool) *Bool   { return &Bool{Value: value} }
@@ -77,23 +81,23 @@ func (b *Bool) Inspect() string {
 	return "falso"
 }
 
-// null object type
+// represent the null object
 type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL }
 func (n *Null) Inspect() string  { return "" }
 
-// return object type
+// represent the return object
 type Return struct {
-	Value Object
+	Value Object // represents the value to be returned
 }
 
 func (r *Return) Type() ObjectType { return RETURNTYPE }
 func (r *Return) Inspect() string  { return r.Value.Inspect() }
 
-// error object type
+// represents the error object
 type Error struct {
-	Message string
+	Message string // represents the error message
 }
 
 func (e *Error) Type() ObjectType { return ERROR }
@@ -101,12 +105,14 @@ func (e *Error) Inspect() string {
 	return fmt.Sprintf("Error: %s", e.Message)
 }
 
+// represents the function object
 type Def struct {
-	Parameters []*ast.Identifier
-	Body       *ast.Block
-	Env        *Enviroment
+	Parameters []*ast.Identifier // represents the parameters of the function
+	Body       *ast.Block        // represents the body of the function
+	Env        *Enviroment       // represents the scope of the function
 }
 
+// return a new function object instance
 func NewDef(body *ast.Block, env *Enviroment, parameters ...*ast.Identifier) *Def {
 	return &Def{Parameters: parameters, Body: body, Env: env}
 }
@@ -124,30 +130,35 @@ func (d *Def) Inspect() string {
 	return fmt.Sprintf("funcion(%s) {\n %s \n}", strings.Join(argsList, ", "), d.Body.Str())
 }
 
+// represents the strings object
 type String struct {
-	Value string
+	Value string // represents the value of the string
 }
 
 func (s *String) Type() ObjectType { return STRINGTYPE }
 func (s *String) Inspect() string  { return s.Value }
 
+// signature for builtin functions
 type BuiltinFunction func(args ...Object) Object
 
+// represents a builtin function
 type Builtin struct {
-	Fn BuiltinFunction
+	Fn BuiltinFunction // represents the function of the builtin
 }
 
+// return a new builtin instance
 func NewBuiltin(fn BuiltinFunction) *Builtin { return &Builtin{Fn: fn} }
 
 func (b *Builtin) Type() ObjectType { return BUILTIN }
 func (b *Builtin) Inspect() string  { return "builtin function" }
 
-// enviroment handles stores the variables of the given program
+// Represents a escope in the programming lengauge
 type Enviroment struct {
-	Store map[string]Object
-	outer *Enviroment
+	Store map[string]Object // repesents the store of all variables
+	outer *Enviroment       // represents a posible outer scope
 }
 
+// return a new enviroment instance
 func NewEnviroment(outer *Enviroment) *Enviroment {
 	return &Enviroment{
 		Store: make(map[string]Object),
@@ -155,9 +166,11 @@ func NewEnviroment(outer *Enviroment) *Enviroment {
 	}
 }
 
+// return a optional object if exists in the scope
 func (e *Enviroment) GetItem(key string) (Object, bool) {
 	val, exists := e.Store[key]
 	if !exists {
+		// we check if there is an outer env and call the same method to find the object
 		if e.outer != nil {
 			return e.outer.GetItem(key)
 		}
@@ -167,23 +180,29 @@ func (e *Enviroment) GetItem(key string) (Object, bool) {
 	return val, true
 }
 
+// store an object in the eviroment
 func (e *Enviroment) SetItem(key string, val Object) {
 	e.Store[key] = val
 }
 
+// delete an item form the enviroment
 func (e *Enviroment) DelItem(key string) {
 	delete(e.Store, key)
 }
 
+// repesents an iterator object
 type Iterator struct {
-	Current Object
-	List    []Object
+	Current Object   // represents the current object
+	List    []Object // represents the values in the iter
 }
 
+// return a new iterator instance
 func NewIterator(current Object, values []Object) *Iterator {
 	return &Iterator{Current: current, List: values}
 }
 
+// return the next value in the iter if there is any
+// and remove the value from the iter
 func (i *Iterator) Next() Object {
 	if len(i.List) == 0 {
 		return nil
@@ -209,11 +228,13 @@ func (i *Iterator) Inspect() string {
 	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
 }
 
+// represents a method object
 type Method struct {
-	Value      Object
-	MethodType MethodsTypes
+	Value      Object       // represents the value evaluated from the arguments
+	MethodType MethodsTypes // represents the method type
 }
 
+// generates a new method instance
 func NewMethod(val Object, methodType MethodsTypes) *Method {
 	return &Method{Value: val, MethodType: methodType}
 }

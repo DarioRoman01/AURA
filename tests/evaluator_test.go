@@ -301,6 +301,11 @@ func (e *EvaluatorTests) TestReassigment() {
 		{"var a = 12; a = 23; a = 25; a;", 25},
 		{"var a = 32; a = 34; a = 5; a;", 5},
 		{"var a = 32; a = 34; a = 6; a;", 6},
+		{`var b = mapa{"a" => 1, "b" => 2}; b["a"] = 5; b["a"]`, 5},
+		{`var b = mapa{"a" => 1, "b" => 2}; b["a"] = 5; b["a"] = 12; b["a"]`, 12},
+		{`var b = mapa{"a" => 1, "b" => 2}; b["c"] = 32; b["c"];`, 32},
+		{`var c = lista[2,3,4]; c[0] = 10; c[0]`, 10},
+		{`var c = lista[2,3,4]; c[0] = 10; c[0] = 23; c[0]`, 23},
 	}
 
 	for _, test := range tests {
