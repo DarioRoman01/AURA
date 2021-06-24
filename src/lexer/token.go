@@ -2,6 +2,7 @@ package lexer
 
 import "fmt"
 
+// Represents all the posibles tokens that can exist
 type TokenType int
 
 const (
@@ -58,6 +59,7 @@ const (
 	MAP
 )
 
+// String representation of all tokens
 var Tokens = [...]string{
 	AND:         "&&",
 	ASSING:      "=",
@@ -104,20 +106,23 @@ var Tokens = [...]string{
 	EXPONENT:    "**",
 }
 
+// Represents a Token in the programmig lenguage
 type Token struct {
 	Token_type TokenType
 	Literal    string
 }
 
+// Generate a new Token instance
 func NewToken(t TokenType, literal string) Token {
 	return Token{Token_type: t, Literal: literal}
 }
 
+// print token info
 func (t *Token) PrintToken() string {
 	return fmt.Sprintf("Token Type: %s, Literal: %s", Tokens[t.Token_type], t.Literal)
 }
 
-// verify that given literal is a string
+// verify that given literal is a keyword or not
 func LookUpTokenType(literal string) TokenType {
 	keywords := map[string]TokenType{
 		"falso":     FALSE,

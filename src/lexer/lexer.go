@@ -6,11 +6,12 @@ import (
 	"unicode/utf8"
 )
 
+// Represents the lexer of the programming lenguage
 type Lexer struct {
-	source        string
-	character     string
-	read_position int
-	position      int
+	source        string // represents the source code
+	character     string // represents the current character
+	read_position int    // represents the next position in the current source
+	position      int    // represents the current postion in source read
 }
 
 // create a new lexer
@@ -167,6 +168,7 @@ func (l *Lexer) isNumber(char string) bool {
 	return isValid
 }
 
+// create a two character token
 func (l *Lexer) makeTwoCharacterToken(tokenType TokenType) Token {
 	prefix := l.character
 	l.readCharacter()
@@ -174,7 +176,7 @@ func (l *Lexer) makeTwoCharacterToken(tokenType TokenType) Token {
 	return NewToken(tokenType, fmt.Sprintf("%s%s", prefix, suffix))
 }
 
-// read current character.
+// read the current character and advance to  the next character
 func (l *Lexer) readCharacter() {
 	if l.read_position >= utf8.RuneCountInString(l.source) {
 		l.character = ""
@@ -196,7 +198,7 @@ func (l *Lexer) readIdentifier() string {
 	return l.source[initialPosition:l.position]
 }
 
-// read number sequence of characters
+// read a sequence of digits characters
 func (l *Lexer) readNumber() string {
 	initialPosition := l.position
 	for l.isNumber(l.character) {
@@ -205,6 +207,7 @@ func (l *Lexer) readNumber() string {
 	return l.source[initialPosition:l.position]
 }
 
+// read string will read a string literal
 func (l *Lexer) readString() string {
 	l.readCharacter()
 	initialPosition := l.position
@@ -226,7 +229,7 @@ func (l *Lexer) peekCharacter() string {
 	return string([]rune(l.source)[l.read_position])
 }
 
-// skipp whitespaces
+// skip all whitespaces
 func (l *Lexer) skipWhiteSpaces() {
 	m, _ := regexp.Compile(`^\s$`)
 	for m.MatchString(l.character) {
