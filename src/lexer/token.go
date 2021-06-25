@@ -113,8 +113,8 @@ var Tokens = [...]string{
 
 // Represents a Token in the programmig lenguage
 type Token struct {
-	Token_type TokenType
-	Literal    string
+	Token_type TokenType // represents the type of the token
+	Literal    string    // represents the literal of the token
 }
 
 // Generate a new Token instance

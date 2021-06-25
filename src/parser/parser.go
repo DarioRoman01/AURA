@@ -364,7 +364,7 @@ func (p *Parser) parseLetSatement() ast.Stmt {
 
 	stament.Name = p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.ASSING) {
-		// syntax error. we dont allow this
+		// syntax error. we dont allow this -> var name 5;
 		return nil
 	}
 

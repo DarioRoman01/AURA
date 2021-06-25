@@ -15,13 +15,13 @@ type ASTNode interface {
 // represents a statement
 type Stmt interface {
 	ASTNode    // ensure all statements implements the ASTnode Interface
-	stmtNode() // method to distinguish statements and expression
+	stmtNode() // method to distinguish statements and expressions
 }
 
 // represents a expression
 type Expression interface {
 	ASTNode       // ensure all statements implements the ASTnode Interface
-	expressNode() // method to distinguish statements and expression
+	expressNode() // method to distinguish statements and expressions
 }
 
 // BaseNode is a struct wich all the expressions and statements
@@ -71,13 +71,11 @@ type LetStatement struct {
 
 // generate a new let stament instance
 func NewLetStatement(token l.Token, name *Identifier, value Expression) *LetStatement {
-	stmt := &LetStatement{
-		Name:  name,
-		Value: value,
+	return &LetStatement{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Value:    value,
 	}
-
-	stmt.Token = token
-	return stmt
 }
 
 func (l LetStatement) stmtNode() {}
@@ -94,9 +92,7 @@ type ReturnStament struct {
 
 // generates a new return statement instance
 func NewReturnStatement(token l.Token, returnValue Expression) *ReturnStament {
-	rStatemente := &ReturnStament{ReturnValue: returnValue}
-	rStatemente.Token = token
-	return rStatemente
+	return &ReturnStament{BaseNode: BaseNode{token}, ReturnValue: returnValue}
 }
 
 func (r ReturnStament) stmtNode() {}
@@ -113,9 +109,7 @@ type ExpressionStament struct {
 
 // generates a new expression statement instance
 func NewExpressionStament(token l.Token, expression Expression) *ExpressionStament {
-	expStmt := &ExpressionStament{BaseNode: BaseNode{token}, Expression: expression}
-	expStmt.Token = token
-	return expStmt
+	return &ExpressionStament{BaseNode: BaseNode{token}, Expression: expression}
 }
 
 func (e ExpressionStament) stmtNode() {}
