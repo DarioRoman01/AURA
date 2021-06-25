@@ -8,7 +8,7 @@ import (
 // Represents a prefix expression like:
 //		return 5;
 type Prefix struct {
-	Token    l.Token    // represents the token of the expression
+	BaseNode            // Extends base node struct
 	Operator string     // represents the operator of the expression
 	Rigth    Expression // represents the obj of the expression
 }
@@ -16,16 +16,11 @@ type Prefix struct {
 // generates a new prefix instance
 func NewPrefix(token l.Token, operator string, rigth Expression) *Prefix {
 	return &Prefix{
-		Token:    token,
+		BaseNode: BaseNode{token},
 		Operator: operator,
 		Rigth:    rigth,
 	}
 }
-
-func (p Prefix) TokenLiteral() string {
-	return p.Token.Literal
-}
-
 func (p Prefix) expressNode() {}
 
 func (p Prefix) Str() string {
@@ -34,20 +29,16 @@ func (p Prefix) Str() string {
 
 // represents a variable or function name
 type Identifier struct {
-	Token l.Token // represents the token of the expression
-	Value string  // represents the name of the identifier
+	BaseNode        // Extends base node struct
+	Value    string // represents the name of the identifier
 }
 
 // generates a new identifier instance
 func NewIdentifier(token l.Token, value string) *Identifier {
-	return &Identifier{Token: token, Value: value}
+	return &Identifier{BaseNode: BaseNode{token}, Value: value}
 }
 
 func (i Identifier) expressNode() {}
-
-func (i Identifier) TokenLiteral() string {
-	return i.Token.Literal
-}
 
 func (i Identifier) Str() string {
 	return i.Value
@@ -55,17 +46,13 @@ func (i Identifier) Str() string {
 
 // Represents a Integer expression
 type Integer struct {
-	Token l.Token // represents the token of the expression
-	Value *int    // represents the value of the integer
+	BaseNode      // Extends base node struct
+	Value    *int // represents the value of the integer
 }
 
 // geneerate a new instance of integer
 func NewInteger(token l.Token, value *int) *Integer {
-	return &Integer{Token: token, Value: value}
-}
-
-func (i Integer) TokenLiteral() string {
-	return i.Token.Literal
+	return &Integer{BaseNode: BaseNode{token}, Value: value}
 }
 
 func (i Integer) expressNode() {}
@@ -76,12 +63,12 @@ func (i Integer) Str() string {
 
 // Represents a float expression
 type FloatExp struct {
-	Token l.Token // represents the token of the expression
-	Value float64 // represents the value of the expression
+	BaseNode         // Extends base node struct
+	Value    float64 // represents the value of the expression
 }
 
-func (f *FloatExp) TokenLiteral() string {
-	return f.Token.Literal
+func NewFloatExp(token l.Token, value float64) *FloatExp {
+	return &FloatExp{BaseNode: BaseNode{token}, Value: value}
 }
 
 func (f *FloatExp) expressNode() {}
@@ -92,19 +79,14 @@ func (f *FloatExp) Str() string {
 
 // Represents a boolean expression
 type Boolean struct {
-	Token l.Token // represents the token of the expression
-	Value *bool   // represents the value of the expression
+	BaseNode       // Extends base node struct
+	Value    *bool // represents the value of the expression
 }
 
 // return a new boolean instance
 func NewBoolean(token l.Token, value *bool) *Boolean {
-	return &Boolean{Token: token, Value: value}
+	return &Boolean{BaseNode: BaseNode{token}, Value: value}
 }
-
-func (b Boolean) TokenLiteral() string {
-	return b.Token.Literal
-}
-
 func (b Boolean) expressNode() {}
 
 func (b Boolean) Str() string {
@@ -113,17 +95,13 @@ func (b Boolean) Str() string {
 
 // represents a string literal expression
 type StringLiteral struct {
-	Token l.Token // represents the token of the expression
-	Value string  // represents the value of the expression
+	BaseNode        // Extends base node struct
+	Value    string // represents the value of the expression
 }
 
 // return a new string literal instance
 func NewStringLiteral(token l.Token, value string) *StringLiteral {
-	return &StringLiteral{Token: token, Value: value}
-}
-
-func (s StringLiteral) TokenLiteral() string {
-	return s.Token.Literal
+	return &StringLiteral{BaseNode: BaseNode{token}, Value: value}
 }
 
 func (s StringLiteral) expressNode() {}
@@ -134,16 +112,12 @@ func (s StringLiteral) Str() string {
 
 // represents a null expression
 type NullExpression struct {
-	Token l.Token // represents the token of the expression
+	BaseNode // Extends base node struct
 }
 
 // generates a new null instance
 func NewNull(token l.Token) *NullExpression {
-	return &NullExpression{Token: token}
-}
-
-func (n *NullExpression) TokenLiteral() string {
-	return n.Token.Literal
+	return &NullExpression{BaseNode: BaseNode{token}}
 }
 
 func (n *NullExpression) expressNode() {}

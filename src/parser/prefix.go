@@ -93,7 +93,7 @@ func (p *Parser) parseWhile() ast.Expression {
 // parse a identifier expression
 func (p *Parser) parseIdentifier() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	return &ast.Identifier{Token: *p.currentToken, Value: p.currentToken.Literal}
+	return ast.NewIdentifier(*p.currentToken, p.currentToken.Literal)
 }
 
 // parse an if expresion
@@ -153,7 +153,7 @@ func (p *Parser) parseInteger() ast.Expression {
 // parse a float expression
 func (p *Parser) parseFloat() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	float := &ast.FloatExp{}
+	float := &ast.FloatExp{BaseNode: ast.BaseNode{Token: *p.currentToken}}
 	val, err := strconv.ParseFloat(p.currentToken.Literal, 64)
 	if err != nil {
 		// the value is not a float. this is very weird to happend
