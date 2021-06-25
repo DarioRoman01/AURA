@@ -12,6 +12,9 @@ func evaluateInfixExpression(operator string, left obj.Object, right obj.Object)
 	case left.Type() == obj.INTEGERS && right.Type() == obj.INTEGERS:
 		return evaluateIntegerInfixExpression(operator, left, right)
 
+	case left.Type() == obj.FLOATING && right.Type() == obj.FLOATING:
+		return evaluateFloatInfixExpression(operator, left, right)
+
 	case left.Type() == obj.STRINGTYPE && right.Type() == obj.STRINGTYPE:
 		return evaluateStringInfixExpression(operator, left, right)
 
@@ -114,8 +117,59 @@ func evaluateSuffixExpression(operator string, left obj.Object) obj.Object {
 	return newError(fmt.Sprintf("el operador %s solo puede ser aplicado en numeros", operator))
 }
 
+func evaluateFloatInfixExpression(operator string, left, rigth obj.Object) obj.Object {
+	leftVal := left.(*obj.Float).Value
+	rigthVal := rigth.(*obj.Float).Value
+
+	switch operator {
+	case "+":
+		return &obj.Float{Value: leftVal + rigthVal}
+	case "-":
+		return &obj.Float{Value: leftVal - rigthVal}
+	case "*":
+		return &obj.Float{Value: leftVal * rigthVal}
+	case "/":
+		return &obj.Float{Value: leftVal / rigthVal}
+	case "+=":
+		left.(*obj.Float).Value += rigthVal
+		return left
+
+	case "-=":
+		left.(*obj.Float).Value -= rigthVal
+		return left
+
+	case "/=":
+		left.(*obj.Float).Value /= rigthVal
+		return left
+
+	case "*=":
+		left.(*obj.Float).Value *= rigthVal
+		return left
+
+	case ">":
+		return toBooleanObject(leftVal > rigthVal)
+	case "<":
+		return toBooleanObject(leftVal < rigthVal)
+	case "==":
+		return toBooleanObject(leftVal == rigthVal)
+	case "!=":
+		return toBooleanObject(leftVal != rigthVal)
+	case ">=":
+		return toBooleanObject(leftVal >= rigthVal)
+	case "<=":
+		return toBooleanObject(leftVal <= rigthVal)
+
+	default:
+		return unknownInfixOperator(
+			obj.Types[left.Type()],
+			operator,
+			obj.Types[rigth.Type()],
+		)
+	}
+}
+
 // evluate infix integer expressions
-func evaluateIntegerInfixExpression(operator string, left obj.Object, rigth obj.Object) obj.Object {
+func evaluateIntegerInfixExpression(operator string, left, rigth obj.Object) obj.Object {
 	leftVal := left.(*obj.Number).Value
 	rigthVal := rigth.(*obj.Number).Value
 

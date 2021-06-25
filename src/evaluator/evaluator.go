@@ -26,6 +26,10 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		CheckIsNotNil(node.Value)
 		return &obj.Number{Value: *node.Value}
 
+	case *ast.FloatExp:
+		CheckIsNotNil(node.Value)
+		return &obj.Float{Value: node.Value}
+
 	case *ast.Boolean:
 		CheckIsNotNil(node.Value)
 		return toBooleanObject(*node.Value)
