@@ -74,6 +74,11 @@ func (e *EvaluatorTests) TestBangOperator() {
 		{"!!falso", false},
 		{"!5", false},
 		{"!!5", true},
+		{"!(5 > 2)", false},
+		{"!(5 > 2 && 4 < 2)", true},
+		{"!(5 > 2 || 4 < 2)", false},
+		{"!!(5 > 2 || 4 < 2)", true},
+		{"!!(5 > 2 && 4 < 2)", false},
 	}
 
 	for _, test := range tests {
@@ -137,6 +142,10 @@ func (e *EvaluatorTests) TestIfElseEvaluation() {
 		{"si (1 < 2) { 10 } si_no { 20 }", 10},
 		{"si (1 > 2) { 10 } si_no { 20 }", 20},
 		{"si (4 % 2 == 0) { 10 } si_no { 20 }", 10},
+		{"si (4 > 2 && 5 < 10) { 10 } si_no { 20 }", 10},
+		{"si (4 > 2 && 5 > 10) { 10 } si_no { 20 }", 20},
+		{"si (4 > 2 || 5 > 10) { 10 } si_no { 20 }", 10},
+		{"si (4 < 2 || 5 > 10) { 10 } si_no { 20 }", 20},
 	}
 
 	for _, test := range tests {
@@ -263,7 +272,10 @@ func (e *EvaluatorTests) TestMaps() {
 }
 
 func (e *EvaluatorTests) TestListMethods() {
-	tests := []tuple{
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
 		{"var a = lista[2,3]; a:agregar(4); a:pop();", 4},
 		{"var a = lista[2,3,4,2,12]; a:agregar(17); a:pop();", 17},
 		{"var a = lista[2,3,4,2,12]; a:agregar(4); a:popIndice(1);", 3},
@@ -271,11 +283,18 @@ func (e *EvaluatorTests) TestListMethods() {
 		{"var a = lista[2,3]; a:agregar(4); largo(a);", 3},
 		{"var a = lista[2,3]; largo(a);", 2},
 		{"var a = lista[2,3,4,2,12]; a:popIndice(0); largo(a);", 4},
+		{"var a = lista[2,3,4,2,12]; a:popIndice(0); a:contiene(3);", true},
+		{"var a = lista[2,3,4,12]; a:popIndice(0); a:contiene(2);", false},
+		{"var a = lista[2,3,4,2,12]; a:popIndice(0); a:agregar(25); a:contiene(25);", true},
 	}
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		e.testIntegerObject(evaluated, test.expected)
+		if num, isNum := test.expected.(int); isNum {
+			e.testIntegerObject(evaluated, num)
+		} else {
+			e.testBooleanObject(evaluated, test.expected.(bool))
+		}
 	}
 }
 
@@ -286,6 +305,7 @@ func (e *EvaluatorTests) TestForLoop() {
 		{`var i = 0; por(n en rango(5)) { i++; }; i;`, 5},
 		{`var i = 0; por(n en rango(4)) { i++; }; i;`, 4},
 		{`var i = 0; por(n en rango(5, 10)) {i += n}; i;`, 35},
+		{`var i = 0; var j = "hola"; por(k en j) { i++; }; i;`, 4},
 	}
 
 	for _, test := range tests {
@@ -464,6 +484,11 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 		{
 			source:   `funcion() { regresa "aura is awesome"; }()`,
 			expected: "aura is awesome",
+		},
+		{source: `var a = "hello"; a += " world!"; a;`, expected: "hello world!"},
+		{
+			source:   `var a = "G"; por(i en rango(3)) { a += "o"; }; a += "al!"; a;`,
+			expected: "Goooal!",
 		},
 	}
 

@@ -3,9 +3,9 @@
 ## What is this?
 This is a very basic programming lenguage inspired in javascript, the goal is to create a programming lenguage in spanish
 that helps people that are begining in software development or computer science, probiding a high level programming lenguage
-in spanish that is very simple to use.
+in spanish that is very simple to use. Also is an expressions based lenguage so is more easy to work with it
 
-It is an interpreted language fully built using Go.
+It is an interpreted language fully built using Go standar libreary.
 
 ## Syntax example
 
@@ -59,7 +59,7 @@ var add = funcion(a, b) {
     regresa a + b;
 }
 
-escribir(add(5,8)) // output: 13
+escribir(add(5,8)); // output: 13
 ```
 
 ## Lists
@@ -67,7 +67,7 @@ List allows you to group a list of data,
 lists are escential in any programming lengauge
 ```ts
 var mi_lista = lista[2, 3, 4, "hello", "world"];
-mi_lista[0] // output: 2
+mi_lista[0]; // output: 2
 ```
 
 Also list have methods:
@@ -87,7 +87,7 @@ For declaring a HashMap, you need to use the next syntax:
 var example = mapa{key => value, key => value, key => value};
 
 // get the value of the given key
-example[key]
+example[key];
 ```
 
 for example:

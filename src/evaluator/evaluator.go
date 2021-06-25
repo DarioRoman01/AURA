@@ -160,9 +160,11 @@ func extendFunctionEnviroment(fn *obj.Def, args []obj.Object) *obj.Enviroment {
 	return env
 }
 
+// Evaluate a variable reassigment
 func evaluateVarReassigment(variable *ast.Identifier, newVal ast.Expression, env *obj.Enviroment) obj.Object {
 	_, exists := env.GetItem(variable.Value)
 	if !exists {
+		// the veriable does not exists
 		return unknownIdentifier(variable.Value)
 	}
 
@@ -170,16 +172,22 @@ func evaluateVarReassigment(variable *ast.Identifier, newVal ast.Expression, env
 	return obj.SingletonNUll
 }
 
+// Evaluate a forloop expression
 func evaluateFor(forLoop *ast.For, env *obj.Enviroment) obj.Object {
 	evaluated := Evaluate(forLoop.Condition, env)
 	if iter, isIter := evaluated.(*obj.Iterator); isIter {
+
+		// this does not fail because if not a variable the error will be handle by
+		// the evaluate iter function
 		val := forLoop.Condition.(*ast.RangeExpression).Variable.(*ast.Identifier).Value
 		for iter.Next() != nil {
 			evaluated = Evaluate(forLoop.Body, env)
 			if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
+				// we breal the loop because we have a return statement
 				return returnVal
 			}
 
+			// we update the variable in the expression
 			env.Store[val] = iter.Current
 		}
 		return obj.SingletonNUll
@@ -192,23 +200,23 @@ func evaluateFor(forLoop *ast.For, env *obj.Enviroment) obj.Object {
 	return newError("Expression por invalida")
 }
 
+// evaluate an iter expression like:
+//		for(i in range(10)):
 func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.Object {
+	val, isVar := rangeExpress.Variable.(*ast.Identifier)
+	if !isVar {
+		return notAVariable(rangeExpress.Variable.Str())
+	}
+
 	if list, isList := Evaluate(rangeExpress.Range, env).(*obj.List); isList {
-		val, isVar := rangeExpress.Variable.(*ast.Identifier)
-		if !isVar {
-			return notAVariable(rangeExpress.Variable.Str())
-		}
+		// if the iter is a list we make a iterable with the list
 		iter := obj.NewIterator(list.Values[0], list.Values)
 		env.SetItem(val.Value, iter.List[0])
 		return iter
 	}
 
 	if str, isStr := Evaluate(rangeExpress.Range, env).(*obj.String); isStr {
-		val, isVar := rangeExpress.Variable.(*ast.Identifier)
-		if !isVar {
-			return notAVariable(rangeExpress.Variable.Str())
-		}
-
+		// if the iter is a string we make a iterable with all the string characters
 		list := makeStringList(str.Value)
 		iter := obj.NewIterator(list[0], list)
 		env.SetItem(val.Value, iter.List[0])
@@ -226,13 +234,14 @@ func CheckIsNotNil(val interface{}) {
 	}
 }
 
+// handle posible panic in the program
 func handlePanic() {
 	if r := recover(); r != nil {
 		fmt.Println("syntax Error")
 	}
 }
 
-// evluate a block statement
+// evluate all the statements in a bock expression
 func evaluateBLockStaments(block *ast.Block, env *obj.Enviroment) obj.Object {
 	var result obj.Object = nil
 	for _, statement := range block.Staments {
@@ -245,7 +254,7 @@ func evaluateBLockStaments(block *ast.Block, env *obj.Enviroment) obj.Object {
 	return result
 }
 
-// evaluate an slice of expressions
+// evaluate a slice of expressions
 func evaluateExpression(expressions []ast.Expression, env *obj.Enviroment) []obj.Object {
 	var result []obj.Object
 
@@ -262,8 +271,10 @@ func evaluateExpression(expressions []ast.Expression, env *obj.Enviroment) []obj
 func evaluateIdentifier(node *ast.Identifier, env *obj.Enviroment) obj.Object {
 	value, exists := env.GetItem(node.Value)
 	if !exists {
+		// check if the identifier is a builtin function
 		builtint, exists := b.BUILTINS[node.Value]
 		if !exists {
+			// the identifier doest not exists
 			return unknownIdentifier(node.Value)
 		}
 
@@ -289,11 +300,13 @@ func evaluateProgram(program ast.Program, env *obj.Enviroment) obj.Object {
 	return result
 }
 
+// evaluate a while looop expression
 func evaluateWhileExpression(whileExpression *ast.While, env *obj.Enviroment) obj.Object {
 	CheckIsNotNil(whileExpression.Condition)
 	condition := Evaluate(whileExpression.Condition, env)
-
 	CheckIsNotNil(condition)
+
+	// we loop an update the condition until is not trythy
 	for isTruthy(condition) {
 		evaluated := Evaluate(whileExpression.Body, env)
 		if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
@@ -306,54 +319,61 @@ func evaluateWhileExpression(whileExpression *ast.While, env *obj.Enviroment) ob
 	return obj.SingletonNUll
 }
 
+// Evaluate a call to a datastructure like:
+//		array[0];
 func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 	evaluated := Evaluate(call.ListIdent, env)
-	if list, isList := evaluated.(*obj.List); isList {
+	switch object := evaluated.(type) {
+
+	case *obj.List:
 		evaluated := Evaluate(call.Index, env)
 		num, isNumber := evaluated.(*obj.Number)
 		if !isNumber {
 			return &obj.Error{Message: "El indice debe ser un entero"}
 		}
 
-		if num.Value >= len(list.Values) {
+		if num.Value >= len(object.Values) {
 			return &obj.Error{Message: "Indice fuera de rango"}
 		}
 
-		return list.Values[num.Value]
-	}
+		return object.Values[num.Value]
 
-	if hashMap, isMap := evaluated.(*obj.Map); isMap {
+	case *obj.Map:
 		evaluated := Evaluate(call.Index, env)
-		return hashMap.Get(evaluated.Inspect())
-	}
+		return object.Get(evaluated.Inspect())
 
-	if str, isStr := evaluated.(*obj.String); isStr {
+	case *obj.String:
 		evaluated := Evaluate(call.Index, env)
 		num, isNumber := evaluated.(*obj.Number)
 		if !isNumber {
 			return &obj.Error{Message: "El indice debe ser un entero"}
 		}
 
-		if num.Value >= utf8.RuneCountInString(str.Value) {
+		if num.Value >= utf8.RuneCountInString(object.Value) {
 			return &obj.Error{Message: "Indice fuera de rango"}
 		}
 
-		return &obj.String{Value: string(str.Value[num.Value])}
-	}
+		return &obj.String{Value: string(object.Value[num.Value])}
 
-	return notAList(obj.Types[evaluated.Type()])
+	default:
+		return notAList(obj.Types[evaluated.Type()])
+	}
 }
 
+// evaluate an if expression
 func evaluateIfExpression(ifExpression *ast.If, env *obj.Enviroment) obj.Object {
 	CheckIsNotNil(ifExpression.Condition)
 	condition := Evaluate(ifExpression.Condition, env)
-
 	CheckIsNotNil(condition)
+
 	if isTruthy(condition) {
+		// if the first condition is truthy we evaluate the consequence
 		CheckIsNotNil(ifExpression.Consequence)
 		return Evaluate(ifExpression.Consequence, env)
 
 	} else if ifExpression.Alternative != nil {
+		// if the condition is not truthy and the alternative
+		// is not nil we evaluate the alternative
 		return Evaluate(ifExpression.Alternative, env)
 	}
 

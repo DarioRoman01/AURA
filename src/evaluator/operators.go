@@ -41,6 +41,7 @@ func evaluateInfixExpression(operator string, left obj.Object, right obj.Object)
 
 }
 
+// evaluate bool infix expressions
 func evaluateBoolInfixExpression(operator string, left *obj.Bool, rigth *obj.Bool) obj.Object {
 	switch operator {
 
@@ -65,6 +66,7 @@ func evaluateBoolInfixExpression(operator string, left *obj.Bool, rigth *obj.Boo
 	}
 }
 
+// evaluate string infix expressions
 func evaluateStringInfixExpression(operator string, left obj.Object, rigth obj.Object) obj.Object {
 	leftVal := left.(*obj.String).Value
 	rigthVal := rigth.(*obj.String).Value
@@ -89,6 +91,7 @@ func evaluateStringInfixExpression(operator string, left obj.Object, rigth obj.O
 	}
 }
 
+// evaluate suffix expressions
 func evaluateSuffixExpression(operator string, left obj.Object) obj.Object {
 	if num, isNumber := left.(*obj.Number); isNumber {
 		switch operator {
@@ -111,7 +114,7 @@ func evaluateSuffixExpression(operator string, left obj.Object) obj.Object {
 	return newError(fmt.Sprintf("el operador %s solo puede ser aplicado en numeros", operator))
 }
 
-// evluate infix integer operations
+// evluate infix integer expressions
 func evaluateIntegerInfixExpression(operator string, left obj.Object, rigth obj.Object) obj.Object {
 	leftVal := left.(*obj.Number).Value
 	rigthVal := rigth.(*obj.Number).Value
@@ -165,7 +168,7 @@ func evaluateIntegerInfixExpression(operator string, left obj.Object, rigth obj.
 	}
 }
 
-// check that the character after - is a number
+// check that the character after - is a number and apply the operator
 func evaluateMinusOperatorExpression(rigth obj.Object) obj.Object {
 	if right, isNumber := rigth.(*obj.Number); isNumber {
 		right.Value = -right.Value

@@ -10,8 +10,10 @@ import (
 	"unicode/utf8"
 )
 
+// use singleton pattern for the scanner
 var scanner = bufio.NewScanner(os.Stdin)
 
+// return an error indicating the the builtin has wrong number of args
 func wrongNumberofArgs(funcName string, found, actual int) *obj.Error {
 	return &obj.Error{
 		Message: fmt.Sprintf("numero incorrecto de argumentos para %s, se recibieron %d, se requieren %d", funcName, found, actual),
@@ -24,6 +26,7 @@ func unsoportedArgumentType(funcname, objType string) *obj.Error {
 	}
 }
 
+// Longitud return the length of the object if is suported by the function
 func Longitud(args ...obj.Object) obj.Object {
 	if len(args) != 1 {
 		return wrongNumberofArgs("largo", len(args), 1)
@@ -45,6 +48,7 @@ func Longitud(args ...obj.Object) obj.Object {
 	}
 }
 
+// same as println function
 func Escribir(args ...obj.Object) obj.Object {
 	var buff strings.Builder
 
@@ -75,6 +79,7 @@ func Escribir(args ...obj.Object) obj.Object {
 	return obj.SingletonNUll
 }
 
+// same as python input function
 func Recibir(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
 		return wrongNumberofArgs("recibir", len(args), 1)
@@ -94,6 +99,7 @@ func Recibir(args ...obj.Object) obj.Object {
 	return unsoportedArgumentType("recibir", obj.Types[args[0].Type()])
 }
 
+// convert a string object to int object
 func castInt(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
 		return wrongNumberofArgs("entero", len(args), 1)
@@ -106,6 +112,7 @@ func castInt(args ...obj.Object) obj.Object {
 	return unsoportedArgumentType("entero", obj.Types[args[0].Type()])
 }
 
+// convert a string object to int object
 func castString(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
 		return wrongNumberofArgs("texto", len(args), 1)
@@ -119,6 +126,7 @@ func castString(args ...obj.Object) obj.Object {
 	return unsoportedArgumentType("recibir", obj.Types[args[0].Type()])
 }
 
+// input function to recibe int objects from console
 func RecibirEntero(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
 		return wrongNumberofArgs("recibir_entero", len(args), 1)
@@ -139,6 +147,7 @@ func RecibirEntero(args ...obj.Object) obj.Object {
 
 }
 
+// same as python range function
 func rango(args ...obj.Object) obj.Object {
 	switch len(args) {
 	case 1:
@@ -155,6 +164,7 @@ func rango(args ...obj.Object) obj.Object {
 	}
 }
 
+// return the type of the object
 func Tipo(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) < 1 {
 		return wrongNumberofArgs("tipo", len(args), 1)
@@ -163,12 +173,14 @@ func Tipo(args ...obj.Object) obj.Object {
 	return &obj.String{Value: obj.Types[args[0].Type()]}
 }
 
+// input function to recibe input from console
 func input(scan *bufio.Scanner) string {
 	scan.Scan()
 	str := scan.Text()
 	return str
 }
 
+// perform the string to int conversion and handle the error
 func toInt(str string) obj.Object {
 	number, err := strconv.Atoi(str)
 	if err != nil {
