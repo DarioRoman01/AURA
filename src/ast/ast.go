@@ -125,7 +125,7 @@ func (e ExpressionStament) Str() string {
 
 // Suffix representrs a suffix expression
 type Suffix struct {
-	BaseNode            // represents the token of the expression
+	BaseNode            // Extends base node struct
 	Left     Expression // represents the object that will be apply the suffix expression
 	Operator string     // represents the operator to be apply to the object
 }
@@ -165,7 +165,7 @@ func (b Block) Str() string {
 
 // IF represents an If expression
 type If struct {
-	BaseNode               // represents the token of the expression
+	BaseNode               // Extends base node struct
 	Condition   Expression // represents the condition of the expression
 	Consequence *Block     // represents the consequence if the condition is trythy
 	Alternative *Block     // represents the alternative if the condition is not trythy
@@ -195,7 +195,7 @@ func (i If) Str() string {
 
 // Represents a function declaration
 type Function struct {
-	BaseNode                 // represents the token of the expression
+	BaseNode                 // Extends base node struct
 	Parameters []*Identifier // represents the parameters of the function
 	Body       *Block        // represents the function body
 }
@@ -251,7 +251,7 @@ func (c Call) Str() string {
 
 // Represents a for expression
 type For struct {
-	BaseNode             // represents the token of the expression
+	BaseNode             // Extends base node struct
 	Condition Expression // represents the iterable expression
 	Body      *Block     // represents the body of the forloop
 }
@@ -269,7 +269,7 @@ func (f *For) Str() string {
 
 // Represents a WhileLoop expression
 type While struct {
-	BaseNode             // represents the token of the expression
+	BaseNode             // Extends base node struct
 	Condition Expression // represents the condition of the while loop
 	Body      *Block     // represents the body of the while loop
 }
@@ -287,7 +287,7 @@ func (w *While) Str() string {
 
 // represents an Array Expression
 type Array struct {
-	BaseNode              // represents the token of the expression
+	BaseNode              // Extends base node struct
 	Values   []Expression // represents the values inside the array
 }
 
@@ -309,7 +309,7 @@ func (a *Array) Str() string {
 
 // represents a call to a data structure like maps, arrays or strings
 type CallList struct {
-	BaseNode             // represents the token of the expression
+	BaseNode             // Extends base node struct
 	ListIdent Expression // represents the data structure to be call
 	Index     Expression // represents where is the values in the data structure
 }
@@ -330,7 +330,7 @@ func (c *CallList) Str() string {
 
 // Represents a HashMap expression
 type MapExpression struct {
-	BaseNode             // represents the token of the expression
+	BaseNode             // Extends base node struct
 	Body     []*KeyValue // represents all the key values pairs in the HashMap
 }
 
