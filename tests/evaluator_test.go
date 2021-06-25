@@ -42,6 +42,25 @@ func (e *EvaluatorTests) TestIntegerEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestFloatEvaluation() {
+	tests := []struct {
+		souce    string
+		expected float64
+	}{
+		{`5.5`, 5.5},
+		{`-5.5`, -5.5},
+		{`2.2 + 2.7`, 4.9},
+		{`5 + 2.7`, 7.7},
+		{"5.5 += 2.4", 7.9},
+		{"5.5 -= 2.4", 3.1},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.souce)
+		e.testFloatObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestArrayEvaluation() {
 	tests := []struct {
 		source   string
@@ -583,6 +602,12 @@ func (e *EvaluatorTests) testIntegerObject(evaluated obj.Object, expected int) {
 	e.Assert().IsType(&obj.Number{}, evaluated.(*obj.Number))
 	eval := evaluated.(*obj.Number)
 	e.Assert().Equal(expected, eval.Value)
+}
+
+func (e *EvaluatorTests) testFloatObject(evaluated obj.Object, expected float64) {
+	e.Assert().IsType(&obj.Float{}, evaluated.(*obj.Float))
+	val := evaluated.(*obj.Float)
+	e.Assert().Equal(expected, val.Value)
 }
 
 func TestEvalutorSuite(t *testing.T) {
