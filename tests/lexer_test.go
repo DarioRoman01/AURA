@@ -57,6 +57,18 @@ func (l *LexerTests) TestOneCharacterOperator() {
 	l.Assert().Equal(expectedTokens, tokens)
 }
 
+func (l *LexerTests) TestFloat() {
+	source := "5.5"
+
+	tokens := l.loadTokens(utf8.RuneCountInString(source)-1, source)
+	expectedTokens := []lexer.Token{
+		{Token_type: lexer.FLOAT, Literal: "5.5"},
+		{Token_type: lexer.EOF, Literal: ""},
+	}
+
+	l.Assert().Equal(expectedTokens, tokens)
+}
+
 func (l *LexerTests) TestEOF() {
 	source := "+"
 	tokens := l.loadTokens(utf8.RuneCountInString(source)+1, source)

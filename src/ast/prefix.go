@@ -74,6 +74,22 @@ func (i Integer) Str() string {
 	return fmt.Sprintf("%d", *i.Value)
 }
 
+// Represents a float expression
+type FloatExp struct {
+	Token l.Token // represents the token of the expression
+	Value float64 // represents the value of the expression
+}
+
+func (f *FloatExp) TokenLiteral() string {
+	return f.Token.Literal
+}
+
+func (f *FloatExp) expressNode() {}
+
+func (f *FloatExp) Str() string {
+	return fmt.Sprintf("%f", f.Value)
+}
+
 // Represents a boolean expression
 type Boolean struct {
 	Token l.Token // represents the token of the expression

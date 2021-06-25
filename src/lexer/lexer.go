@@ -6,6 +6,12 @@ import (
 	"unicode/utf8"
 )
 
+var (
+	charRegex   = regexp.MustCompile(`^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$`)
+	numRegex    = regexp.MustCompile(`^\d$`)
+	wSpaceRegex = regexp.MustCompile(`^\s$`)
+)
+
 // Represents the lexer of the programming lenguage
 type Lexer struct {
 	source        string // represents the source code
@@ -39,6 +45,12 @@ func (l *Lexer) NextToken() Token {
 
 	} else if l.isNumber(l.character) {
 		literal := l.readNumber()
+		if l.character == "." {
+			literal += l.character
+			l.readCharacter()
+			literal += l.readNumber()
+			return NewToken(FLOAT, literal)
+		}
 		return NewToken(INT, literal)
 	}
 
@@ -158,14 +170,12 @@ func (l *Lexer) NextToken() Token {
 
 // check if current character is letter
 func (l *Lexer) isLetter(char string) bool {
-	isValid, _ := regexp.MatchString(`^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$`, char)
-	return isValid
+	return charRegex.MatchString(char)
 }
 
 // check if current character is number
 func (l *Lexer) isNumber(char string) bool {
-	isValid, _ := regexp.MatchString(`^\d$`, char)
-	return isValid
+	return numRegex.MatchString(char)
 }
 
 // create a two character token
@@ -216,8 +226,7 @@ func (l *Lexer) readString() string {
 		l.readCharacter()
 	}
 
-	str := l.source[initialPosition:l.position]
-	return str
+	return l.source[initialPosition:l.position]
 }
 
 // return the next of character of the current string
@@ -226,13 +235,12 @@ func (l *Lexer) peekCharacter() string {
 		return ""
 	}
 
-	return string([]rune(l.source)[l.read_position])
+	return string(l.source[l.read_position])
 }
 
 // skip all whitespaces
 func (l *Lexer) skipWhiteSpaces() {
-	m, _ := regexp.Compile(`^\s$`)
-	for m.MatchString(l.character) {
+	for wSpaceRegex.MatchString(l.character) {
 		l.readCharacter()
 	}
 }

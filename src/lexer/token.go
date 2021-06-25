@@ -15,11 +15,13 @@ const (
 	DATASTRCUT
 	DIVISION
 	DIVASSING
+	DOT
 	ELSE
 	EOF
 	EQ
 	EXPONENT
 	FALSE
+	FLOAT
 	FOR
 	FUNCTION
 	GT     // grather than
@@ -63,13 +65,16 @@ const (
 var Tokens = [...]string{
 	AND:         "&&",
 	ASSING:      "=",
+	ARROW:       "=>",
 	COLON:       ":",
 	COMMA:       ",",
 	DIVISION:    "/",
+	DOT:         ".",
 	ELSE:        "si_no",
 	EOF:         "final del archivo",
 	EQ:          "==",
 	FALSE:       "falso",
+	FLOAT:       "flotante",
 	FUNCTION:    "funcion",
 	GT:          ">",
 	IDENT:       "identificador",

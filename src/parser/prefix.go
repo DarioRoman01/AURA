@@ -140,7 +140,7 @@ func (p *Parser) parseInteger() ast.Expression {
 
 	val, err := strconv.Atoi(p.currentToken.Literal)
 	if err != nil {
-		// the value is not a number. this is very weird will happend
+		// the value is not a number. this is very weird to happend
 		message := fmt.Sprintf("no se pudo parsear %s como entero", p.currentToken.Literal)
 		p.errors = append(p.errors, message)
 		return nil
@@ -148,6 +148,22 @@ func (p *Parser) parseInteger() ast.Expression {
 
 	integer.Value = &val
 	return integer
+}
+
+// parse a float expression
+func (p *Parser) parseFloat() ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	float := &ast.FloatExp{}
+	val, err := strconv.ParseFloat(p.currentToken.Literal, 64)
+	if err != nil {
+		// the value is not a float. this is very weird to happend
+		message := fmt.Sprintf("no se pudo parsear %s como flotante", p.currentToken.Literal)
+		p.errors = append(p.errors, message)
+		return nil
+	}
+
+	float.Value = val
+	return float
 }
 
 // parse a group expression like (5 + 5) / 2

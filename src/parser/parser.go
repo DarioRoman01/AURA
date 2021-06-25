@@ -463,6 +463,7 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[l.DATASTRCUT] = p.ParseArray
 	prefixFns[l.NULLT] = p.ParseNull
 	prefixFns[l.MAP] = p.parseMap
+	prefixFns[l.FLOAT] = p.parseFloat
 	return prefixFns
 }
 

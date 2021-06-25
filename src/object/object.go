@@ -23,6 +23,7 @@ const (
 	LIST
 	METHOD
 	DICT
+	FLOATING
 )
 
 // represents the methods in the standar library
@@ -67,6 +68,12 @@ type Number struct{ Value int }
 
 func (i *Number) Type() ObjectType { return INTEGERS }
 func (i *Number) Inspect() string  { return fmt.Sprint(i.Value) }
+
+// represents the float object type
+type Float struct{ Value float64 }
+
+func (f *Float) Type() ObjectType { return FLOATING }
+func (f *Float) Inspect() string  { return fmt.Sprint(f.Value) }
 
 // represent the bool object
 type Bool struct{ Value bool }
