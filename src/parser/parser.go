@@ -100,7 +100,6 @@ func (p *Parser) advanceTokens() {
 
 // check that the current token is not nil
 func (p *Parser) checkCurrentTokenIsNotNil() {
-	defer p.handlePeekTokenPanic()
 	if p.currentToken == nil {
 		panic("Ocurrio un error mientras se parseaba")
 	}
@@ -108,16 +107,8 @@ func (p *Parser) checkCurrentTokenIsNotNil() {
 
 // check that the peek token is not nil
 func (p *Parser) checkPeekTokenIsNotNil() {
-	defer p.handlePeekTokenPanic()
 	if p.peekToken == nil {
 		panic("Ocurrio un error mientras se parseaba")
-	}
-}
-
-// handle a possible panic in the parser
-func (p *Parser) handlePeekTokenPanic() {
-	if r := recover(); r != nil {
-		fmt.Println("Error: ", r)
 	}
 }
 
@@ -256,7 +247,6 @@ func (p *Parser) parseCallArguments() []ast.Expression {
 
 // parse a expression based on the given precedence
 func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
-	defer p.handlePeekTokenPanic()
 	p.checkCurrentTokenIsNotNil()
 
 	// we check if there is any function to parse the current token

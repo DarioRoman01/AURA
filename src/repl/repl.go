@@ -29,6 +29,13 @@ func StartRpl() {
 	fmt.Println("escribe un comando para comenzar: ")
 
 	for {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("Error: %v", r)
+			}
+			scanned = scanned[:len(scanned)-1]
+		}()
+
 		fmt.Print(">>> ")
 		scanner.Scan()
 		source := scanner.Text()

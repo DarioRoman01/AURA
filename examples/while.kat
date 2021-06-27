@@ -1,9 +1,0 @@
-var hola_n_veces = funcion(n) {
-    var i = 1;
-    mientras(i <= n) {
-        escribir("hola");
-        i++;
-    }
-}
-
-hola_n_veces(4);

@@ -1,0 +1,29 @@
+var insertion_sort = funcion(elements) {
+    por(i en rango(1, largo(elements))) {
+        var anchor = elements[i];
+        j = i - 1;
+        mientras(j >= 0 && anchor < elements[j]) {
+            elements[j + 1] = elements[j];
+            j -= 1;
+        }
+
+        elements[j + 1] = anchor;
+    }
+
+    escribir("Array ordernado ", elements)
+}
+
+var main = funcion() {
+    var tests = lista[
+        lista[11,9,29,7,2,15,28],
+        lista[3, 7, 9, 11],
+        lista[25, 22, 21, 10],
+        lista[29, 15, 28]
+    ]
+
+    por(elemento en tests) {
+        insertion_sort(elemento)
+    }
+}
+
+main()

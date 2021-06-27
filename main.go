@@ -7,18 +7,11 @@ import (
 	p "aura/src/parser"
 	"aura/src/repl"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
-type CommandLine struct{}
-
-func Repl() {
-	repl.StartRpl()
-}
-
 func ReadFile(path string) {
-	source, err := ioutil.ReadFile(path)
+	source, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println("Archivo no encontrado!")
 		return
@@ -49,7 +42,7 @@ func ReadFile(path string) {
 
 func main() {
 	if len(os.Args) < 2 {
-		Repl()
+		repl.StartRpl()
 	}
 
 	filePath := os.Args[1]

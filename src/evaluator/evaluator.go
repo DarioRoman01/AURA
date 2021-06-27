@@ -4,7 +4,6 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
-	"fmt"
 	"unicode/utf8"
 )
 
@@ -232,16 +231,8 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 
 // check that the given value is not nil
 func CheckIsNotNil(val interface{}) {
-	defer handlePanic()
 	if val == nil {
 		panic("expression or stament cannot be nil :(")
-	}
-}
-
-// handle posible panic in the program
-func handlePanic() {
-	if r := recover(); r != nil {
-		fmt.Println("syntax Error")
 	}
 }
 

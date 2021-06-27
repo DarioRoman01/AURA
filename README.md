@@ -197,12 +197,12 @@ $ go build -o aura
 
 then you can create a file or play with the repl to play with the repl just run:
 ```shell
-$ ./aura rpl
+$ ./aura
 ```
 
 to use a file you can create a file with the .lpp extension and run:
 ```shell
-$ ./aura file -path <path to your file>
+$ ./aura some/file.aura
 ```
 
 
