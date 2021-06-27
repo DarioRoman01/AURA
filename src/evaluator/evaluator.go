@@ -247,7 +247,7 @@ func handlePanic() {
 
 // evluate all the statements in a bock expression
 func evaluateBLockStaments(block *ast.Block, env *obj.Enviroment) obj.Object {
-	var result obj.Object = nil
+	var result obj.Object
 	for _, statement := range block.Staments {
 		result = Evaluate(statement, env)
 		if result != nil && result.Type() == obj.RETURNTYPE || result.Type() == obj.ERROR {
