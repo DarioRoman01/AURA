@@ -11,6 +11,14 @@ import (
 )
 
 func ReadFile(path string) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Error: %s", r)
+		}
+
+		return
+	}()
+
 	source, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println("Archivo no encontrado!")
