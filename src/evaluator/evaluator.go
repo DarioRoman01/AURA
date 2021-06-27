@@ -4,6 +4,7 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
+	"math"
 	"unicode/utf8"
 )
 
@@ -332,7 +333,11 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 		}
 
 		if num.Value < 0 {
-			return &obj.Number{Value: -1}
+			if int(math.Abs(float64(num.Value))) > len(object.Values) {
+				return &obj.Error{Message: "Indice fuera de rango"}
+			}
+
+			return object.Values[len(object.Values)+num.Value]
 		}
 
 		return object.Values[num.Value]
