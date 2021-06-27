@@ -4,18 +4,18 @@ var binary_search = funcion(elements, val) {
     var mid = 0;
 
     mientras(left <= rigth) {
-	mid = (left + rigth) / 2;
-	var mid_number = elements[mid];
+		mid = (left + rigth) / 2;
+		var mid_number = elements[mid];
 
-	si (mid_number == val) {
-	    regresa mid;
-	}
+		si (mid_number == val) {
+			regresa mid;
+		}
 
-	si (mid_number < val) {
-	    left = mid + 1;
-	} si_no {
-	    rigth = mid - 1;
-	}
+		si (mid_number < val) {
+			left = mid + 1;
+		} si_no {
+			rigth = mid - 1;
+		}
     }
 
     regresa -1

@@ -82,7 +82,7 @@ func NewBool(value bool) *Bool   { return &Bool{Value: value} }
 func (b *Bool) Type() ObjectType { return BOOLEAN }
 func (b *Bool) Inspect() string {
 	if b.Value {
-		return "verdero"
+		return "verdadero"
 	}
 
 	return "falso"

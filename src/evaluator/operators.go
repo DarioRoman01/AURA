@@ -77,7 +77,7 @@ func evaluateBoolInfixExpression(operator string, left *obj.Bool, rigth *obj.Boo
 
 func evaluateLeftFloatInfixExp(operator string, left obj.Object, rigth obj.Object) obj.Object {
 	leftVal := left.(*obj.Float).Value
-	rigthVal := left.(*obj.Number).Value
+	rigthVal := rigth.(*obj.Number).Value
 
 	switch operator {
 	case "+":

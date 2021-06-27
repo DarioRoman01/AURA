@@ -132,10 +132,14 @@ por(i en rango(5)) {
 }
 ```
 
-you can also can iterate lists:
+you can also can iterate lists and strings:
 ```ts
 var mi_lista = lista[2,3,4];
 por(i en mi_lista) {
+    escribir(i);
+}
+
+por(i en "Hello world") {
     escribir(i);
 }
 ```

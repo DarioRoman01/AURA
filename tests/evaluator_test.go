@@ -53,6 +53,10 @@ func (e *EvaluatorTests) TestFloatEvaluation() {
 		{`5 + 2.7`, 7.7},
 		{"5.5 += 2.4", 7.9},
 		{"5.5 -= 2.4", 3.1},
+		{"5.5 * 5.5", 30.25},
+		{"5.5 *= 5.5", 30.25},
+		{"5.5 / 2", 2.75},
+		{"5.5 /= 2", 2.75},
 	}
 
 	for _, test := range tests {
@@ -135,11 +139,27 @@ func (e *EvaluatorTests) TestBooleanEvaluation() {
 		{"falso && falso", false},
 		{"falso == falso", true},
 		{"(1 < 2) == verdadero", true},
+		{"(1 < 2) && verdadero", true},
+		{"(1 < 2) || verdadero", true},
+		{"(1 < 2) && falso", false},
+		{"(1 < 2) || falso", true},
 		{"(1 < 2) == falso", false},
 		{"(1 > 2) == verdadero", false},
+		{"(1 > 2) && verdadero", false},
+		{"(1 > 2) || verdadero", true},
+		{"(1 > 2) && falso", false},
+		{"(1 > 2) || falso", false},
 		{"(1 > 2) == falso", true},
 		{"(1 >= 2) == falso", true},
+		{"(1 >= 2) && falso", false},
+		{"(1 >= 2) || falso", false},
+		{"(1 >= 2) || verdadero", true},
+		{"(1 >= 2) && verdadero", false},
 		{"(1 <= 2) == verdadero", true},
+		{"(1 <= 2) && verdadero", true},
+		{"(1 <= 2) || verdadero", true},
+		{"(1 <= 2) || falso", true},
+		{"(1 <= 2) && falso", false},
 	}
 
 	for _, test := range tests {
