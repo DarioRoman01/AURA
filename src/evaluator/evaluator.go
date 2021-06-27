@@ -331,6 +331,10 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 			return &obj.Error{Message: "Indice fuera de rango"}
 		}
 
+		if num.Value < 0 {
+			return &obj.Number{Value: -1}
+		}
+
 		return object.Values[num.Value]
 
 	case *obj.Map:

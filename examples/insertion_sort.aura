@@ -1,10 +1,10 @@
 var insertion_sort = funcion(elements) {
     por(i en rango(1, largo(elements))) {
         var anchor = elements[i];
-        j = i - 1;
+        var j = i - 1;
         mientras(j >= 0 && anchor < elements[j]) {
             elements[j + 1] = elements[j];
-            j -= 1;
+            j--;
         }
 
         elements[j + 1] = anchor;

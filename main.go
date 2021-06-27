@@ -15,8 +15,6 @@ func ReadFile(path string) {
 		if r := recover(); r != nil {
 			fmt.Printf("Error: %s", r)
 		}
-
-		return
 	}()
 
 	source, err := os.ReadFile(path)
