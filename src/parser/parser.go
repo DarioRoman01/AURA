@@ -133,8 +133,7 @@ func (p *Parser) ParseProgam() ast.Program {
 	program := ast.Program{Staments: []ast.Stmt{}}
 
 	for p.currentToken.Token_type != l.EOF {
-		statement := p.parseStament()
-		if statement != nil {
+		if statement := p.parseStament(); statement != nil {
 			program.Staments = append(program.Staments, statement)
 		}
 
@@ -174,8 +173,7 @@ func (p *Parser) parseBlock() *ast.Block {
 
 	// we iterate until we find a } token
 	for !(p.currentToken.Token_type == l.RBRACE) && !(p.currentToken.Token_type == l.EOF) {
-		stament := p.parseStament()
-		if stament != nil {
+		if stament := p.parseStament(); stament != nil {
 			blockStament.Staments = append(blockStament.Staments, stament)
 		}
 

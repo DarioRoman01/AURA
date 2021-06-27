@@ -310,6 +310,42 @@ func (e *EvaluatorTests) TestMaps() {
 	}
 }
 
+func (e *EvaluatorTests) TestMapMethods() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{`var m = mapa{"a" => 1, "b" => 2}; m:contiene("a");`, true},
+		{`var m = mapa{"a" => 1, "b" => 2}; m:contiene("b");`, true},
+		{`var m = mapa{"a" => 1, "b" => 2}; m:contiene("d");`, false},
+		{`var m = mapa{"a" => 1, "b" => 2}; m:valores();`, []int{1, 2}},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if boolVal, isBool := test.expected.(bool); isBool {
+			e.testBooleanObject(evaluated, boolVal)
+		} else {
+			e.testIntArrayObject(evaluated, test.expected.([]int))
+		}
+	}
+}
+
+func (e *EvaluatorTests) TestStringMethods() {
+	tests := []struct {
+		source   string
+		expected string
+	}{
+		{source: `var s = "hola"; s:mayusculas();`, expected: "HOLA"},
+		{source: `var s = "HOLA"; s:minusculas();`, expected: "hola"},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testStringObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestListMethods() {
 	tests := []struct {
 		source   string
@@ -438,6 +474,7 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: "texto(12)", expected: "12"},
 		{source: "var a = lista[2,3,4]; largo(a);", expected: 3},
 		{source: `var b = mapa{"a" => 2}; largo(b);`, expected: 1},
+		{source: `var b = mapa{"a" => 2}; tipo(b["a"]);`, expected: "entero"},
 	}
 
 	for _, test := range tests {
