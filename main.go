@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 )
 
+// validate that given path exists, have a file and the extension
+// is .aura
 func validatePath(path string) error {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
@@ -32,9 +34,11 @@ func validatePath(path string) error {
 	return nil
 }
 
-// read the file in th
+// read the file in the path and evaluate the file
 func ReadFile(path string) {
 	defer func() {
+		// we handle a posible panic in the parser
+		// and the evaluator
 		if r := recover(); r != nil {
 			fmt.Printf("Error: %s", r)
 		}
@@ -59,7 +63,7 @@ func ReadFile(path string) {
 		for _, err := range parser.Errors() {
 			fmt.Println(err)
 		}
-
+		// we dont evaluate the program if has syntax errors
 		return
 	}
 

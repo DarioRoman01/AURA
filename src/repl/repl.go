@@ -31,9 +31,9 @@ func StartRpl() {
 	for {
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Printf("Error: %v", r)
+				fmt.Printf("Error: %s", r)
+				scanned = scanned[:len(scanned)-1]
 			}
-			scanned = scanned[:len(scanned)-1]
 		}()
 
 		fmt.Print(">>> ")
@@ -44,6 +44,7 @@ func StartRpl() {
 			break
 		} else if source == "limpiar()" {
 			cmd := exec.Command("clear")
+			cmd.Stdout = os.Stdout
 			if err := cmd.Run(); err != nil {
 				log.Fatal(err)
 			}

@@ -18,6 +18,17 @@ var c = a + b;
 escribir(c); // prints 10
 ```
 
+## Types
+```ts
+var a = 5; // Integer
+var b = 2.5; // float
+var c = "string"; // string
+var d = verdadero; // boolean
+var e = lista[1,2,3] // list
+var f = mapa{1 => "a", 2 => "b"}; // map
+var sd = nulo; // null
+```
+
 ### Operators
 
 These are operators:
@@ -164,7 +175,7 @@ var binary_search = funcion(elements, val) {
         } si_no {
             rigth = mid - 1;
         }
-	}
+    }
 
     regresa -1
 }
@@ -195,12 +206,14 @@ compile the package:
 $ go build -o aura
 ```
 
-then you can create a file or play with the repl to play with the repl just run:
+then you can create a file or play with the repl. 
+to play with the repl just run:
 ```shell
 $ ./aura
 ```
 
-to use a file you can create a file with the .aura extension and run:
+to use a file you can create a file with the .aura extension and run: \
+**Is important to have the .aura extension otherwise the lenguage wont read the file**
 ```shell
 $ ./aura some/file.aura
 ```
