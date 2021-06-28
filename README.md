@@ -186,7 +186,7 @@ escribir("numero encontrado en el indice ", index);
 // output: numero encontrado en el indice 0
 ```
 
-## Usage
+## Installation
 for using it you need to have Go install check https://golang.org/ for install Go
 
 first copy the repository and change to the directory created:
@@ -206,16 +206,38 @@ compile the package:
 $ go build -o aura
 ```
 
+You can discover the install path by running the go list command, as in the following example
+```shell
+$ go list -f '{{.Target}}'
+```
+example output: /home/user/Go/bin/aura <br>
+
+Add the Go install directory to your system's shell path
+* on linux:
+```shell
+$ export PATH=$PATH:/path/to/your/install/directory
+```
+
+* on windows:
+```powershell
+$ set PATH=%PATH%;C:\path\to\your\install\directory
+```
+
+Once you've updated the shell path, run the go install command to compile and install the package.
+```shell
+$ go install
+```
+
 then you can create a file or play with the repl. 
 to play with the repl just run:
 ```shell
-$ ./aura
+$ aura
 ```
 
 to use a file you can create a file with the .aura extension and run: \
 **Is important to have the .aura extension otherwise the lenguage wont read the file**
 ```shell
-$ ./aura some/file.aura
+$ aura some/file.aura
 ```
 
 
