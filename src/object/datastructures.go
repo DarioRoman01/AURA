@@ -13,12 +13,16 @@ type List struct {
 
 func (l *List) Type() ObjectType { return LIST }
 func (l *List) Inspect() string {
-	var buff = make([]string, 0, len(l.Values))
-	for _, val := range l.Values {
-		buff = append(buff, val.Inspect())
+	var buf strings.Builder
+	for idx, val := range l.Values {
+		if idx == len(l.Values) {
+			buf.WriteString(val.Inspect())
+		} else {
+			buf.WriteString(val.Inspect() + ", ")
+		}
 	}
 
-	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
+	return fmt.Sprintf("[%s]", buf.String())
 }
 
 // add a object to the values of the array

@@ -129,12 +129,16 @@ func (d *Def) Type() ObjectType {
 }
 
 func (d *Def) Inspect() string {
-	var argsList = make([]string, 0, len(d.Parameters))
-	for _, arg := range d.Parameters {
-		argsList = append(argsList, arg.Str())
+	var buf strings.Builder
+	for idx, arg := range d.Parameters {
+		if idx == len(d.Parameters)-1 {
+			buf.WriteString(arg.Str())
+		} else {
+			buf.WriteString(arg.Str() + ", ")
+		}
 	}
 
-	return fmt.Sprintf("funcion(%s) {\n %s \n}", strings.Join(argsList, ", "), d.Body.Str())
+	return fmt.Sprintf("funcion(%s) {\n %s \n}", buf.String(), d.Body.Str())
 }
 
 // represents the strings object
@@ -227,12 +231,16 @@ func (i *Iterator) Next() Object {
 
 func (i *Iterator) Type() ObjectType { return ITER }
 func (i *Iterator) Inspect() string {
-	var buff = make([]string, 0, len(i.List))
-	for _, val := range i.List {
-		buff = append(buff, val.Inspect())
+	var buf strings.Builder
+	for idx, val := range i.List {
+		if idx == len(i.List)-1 {
+			buf.WriteString(val.Inspect())
+		} else {
+			buf.WriteString(val.Inspect() + ", ")
+		}
 	}
 
-	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
+	return fmt.Sprintf("[%s]", buf.String())
 }
 
 // represents a method object

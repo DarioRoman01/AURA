@@ -54,12 +54,16 @@ func (p Program) TokenLiteral() string {
 }
 
 func (p Program) Str() string {
-	var out = make([]string, 0, len(p.Staments))
-	for _, v := range p.Staments {
-		out = append(out, v.Str())
+	var buf strings.Builder
+	for idx, v := range p.Staments {
+		if idx >= len(p.Staments)-1 {
+			buf.WriteString(v.Str())
+		} else {
+			buf.WriteString(v.Str() + " ")
+		}
 	}
 
-	return strings.Join(out, " ")
+	return buf.String()
 }
 
 // Represents a variable or function declaration
@@ -149,12 +153,16 @@ func NewBlock(token l.Token, staments ...Stmt) *Block {
 func (b Block) stmtNode() {}
 
 func (b Block) Str() string {
-	var out = make([]string, 0, len(b.Staments))
-	for _, stament := range b.Staments {
-		out = append(out, stament.Str())
+	var buf strings.Builder
+	for idx, stament := range b.Staments {
+		if idx >= len(b.Staments)-1 {
+			buf.WriteString(stament.Str())
+		} else {
+			buf.WriteString(stament.Str() + " ")
+		}
 	}
 
-	return strings.Join(out, " ")
+	return buf.String()
 }
 
 // IF represents an If expression
@@ -206,13 +214,16 @@ func NewFunction(token l.Token, body *Block, parameters ...*Identifier) *Functio
 func (f Function) expressNode() {}
 
 func (f Function) Str() string {
-	var paramList = make([]string, 0, len(f.Parameters))
-	for _, parameter := range f.Parameters {
-		paramList = append(paramList, parameter.Str())
+	var buf strings.Builder
+	for idx, parameter := range f.Parameters {
+		if idx == len(f.Parameters)-1 {
+			buf.WriteString(parameter.Str())
+		} else {
+			buf.WriteString(parameter.Str() + " ")
+		}
 	}
 
-	params := strings.Join(paramList, ", ")
-	return fmt.Sprintf("%s(%s) %s", f.TokenLiteral(), params, f.Body.Str())
+	return fmt.Sprintf("%s(%s) %s", f.TokenLiteral(), buf.String(), f.Body.Str())
 }
 
 // represents a function call
@@ -234,13 +245,16 @@ func NewCall(token l.Token, function Expression, arguments ...Expression) *Call 
 func (C Call) expressNode() {}
 
 func (c Call) Str() string {
-	var argsList = make([]string, 0, len(c.Arguments))
-	for _, arg := range c.Arguments {
-		argsList = append(argsList, arg.Str())
+	var buf strings.Builder
+	for idx, arg := range c.Arguments {
+		if idx == len(c.Arguments)-1 {
+			buf.WriteString(arg.Str())
+		} else {
+			buf.WriteString(arg.Str() + ", ")
+		}
 	}
 
-	args := strings.Join(argsList, ", ")
-	return fmt.Sprintf("%s(%s)", c.Function.Str(), args)
+	return fmt.Sprintf("%s(%s)", c.Function.Str(), buf.String())
 }
 
 // Represents a for expression
@@ -293,12 +307,16 @@ func NewArray(token l.Token, values ...Expression) *Array {
 func (a *Array) expressNode() {}
 
 func (a *Array) Str() string {
-	var out = make([]string, 0, len(a.Values))
-	for _, val := range a.Values {
-		out = append(out, val.Str())
+	var buf strings.Builder
+	for idx, val := range a.Values {
+		if idx == len(a.Values)-1 {
+			buf.WriteString(val.Str())
+		} else {
+			buf.WriteString(val.Str() + ", ")
+		}
 	}
 
-	return strings.Join(out, ", ")
+	return buf.String()
 }
 
 // represents a call to a data structure like maps, arrays or strings
@@ -335,10 +353,14 @@ func NewMapExpression(token l.Token, body []*KeyValue) *MapExpression {
 func (m *MapExpression) expressNode() {}
 
 func (m *MapExpression) Str() string {
-	var buff = make([]string, 0, len(m.Body))
-	for _, keyVal := range m.Body {
-		buff = append(buff, keyVal.Str())
+	var buf strings.Builder
+	for idx, keyVal := range m.Body {
+		if idx >= len(m.Body)-1 {
+			buf.WriteString(keyVal.Str())
+		} else {
+			buf.WriteString(keyVal.Str() + ", ")
+		}
 	}
 
-	return fmt.Sprintf("mapa{%s}", strings.Join(buff, ", "))
+	return fmt.Sprintf("mapa{%s}", buf.String())
 }
