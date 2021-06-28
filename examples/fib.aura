@@ -1,0 +1,10 @@
+var fib = funcion(n) {
+    si(n <= 1) {
+        regresa n;
+    }
+
+    regresa fib(n - 1) + fib(n - 2);
+}
+
+var resultado = fib(10);
+escribir(resultado);
