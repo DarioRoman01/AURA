@@ -68,7 +68,7 @@ func (e *EvaluatorTests) TestFloatEvaluation() {
 func (e *EvaluatorTests) TestArrayEvaluation() {
 	tests := []struct {
 		source   string
-		expected []int
+		expected interface{}
 	}{
 		{
 			source:   "lista[2,4,5];",
@@ -78,11 +78,23 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 			source:   "lista[45,65,34,7];",
 			expected: []int{45, 65, 34, 7},
 		},
+		{
+			source:   `lista["h", "o", "la"];`,
+			expected: []string{"h", "o", "la"},
+		},
+		{
+			source:   `lista["a", "u", "r", "a"];`,
+			expected: []string{"a", "u", "r", "a"},
+		},
 	}
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		e.testIntArrayObject(evaluated, test.expected)
+		if list, isStrList := test.expected.([]string); isStrList {
+			e.testStringArrayObject(evaluated, list)
+		} else {
+			e.testIntArrayObject(evaluated, test.expected.([]int))
+		}
 	}
 }
 
@@ -473,7 +485,9 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `entero("hola")`, expected: "No se puede parsear como entero hola"},
 		{source: "texto(12)", expected: "12"},
 		{source: "var a = lista[2,3,4]; largo(a);", expected: 3},
+		{source: "var a = lista[2,3,4]; tipo(a);", expected: "lista"},
 		{source: `var b = mapa{"a" => 2}; largo(b);`, expected: 1},
+		{source: `var b = mapa{"a" => 2}; tipo(b);`, expected: "mapa"},
 		{source: `var b = mapa{"a" => 2}; tipo(b["a"]);`, expected: "entero"},
 	}
 
@@ -655,6 +669,18 @@ func (e *EvaluatorTests) testIntArrayObject(object obj.Object, expected []int) {
 	for i := 0; i < len(expected); i++ {
 		e.Assert().IsType(&obj.Number{}, objList[i].(*obj.Number))
 		e.Assert().Equal(expected[i], objList[i].(*obj.Number).Value)
+	}
+}
+
+func (e *EvaluatorTests) testStringArrayObject(object obj.Object, expected []string) {
+	e.Assert().IsType(&obj.List{}, object.(*obj.List))
+	evaluated := object.(*obj.List)
+	e.Assert().Equal(len(expected), len(evaluated.Values))
+
+	objList := evaluated.Values
+	for i := 0; i < len(expected); i++ {
+		e.Assert().IsType(&obj.String{}, objList[i].(*obj.String))
+		e.Assert().Equal(expected[i], objList[i].(*obj.String).Value)
 	}
 }
 

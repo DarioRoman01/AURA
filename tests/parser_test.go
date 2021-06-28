@@ -220,6 +220,23 @@ func (p *ParserTests) TestArrayExpression() {
 	p.Assert().IsType(&ast.MapExpression{}, hashMap)
 	p.Assert().NotNil(hashMap.Body)
 	p.Assert().Equal(3, len(hashMap.Body))
+
+	p.Assert().NotNil(hashMap.Body)
+	p.Assert().Equal(3, len(hashMap.Body))
+
+	expectedKeys := []string{"a", "b", "c"}
+	expectedValues := []int{1, 2, 3}
+
+	for idx, keyVal := range hashMap.Body {
+		p.Assert().IsType(&ast.KeyValue{}, keyVal)
+		p.Assert().IsType(&ast.StringLiteral{}, keyVal.Key.(*ast.StringLiteral))
+		p.Assert().IsType(&ast.Integer{}, keyVal.Value.(*ast.Integer))
+
+		key := keyVal.Key.(*ast.StringLiteral)
+		value := keyVal.Value.(*ast.Integer)
+		p.Assert().Equal(expectedKeys[idx], key.Value)
+		p.Assert().Equal(expectedValues[idx], *value.Value)
+	}
 }
 
 func (p *ParserTests) TestCallExpression() {

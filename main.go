@@ -11,8 +11,16 @@ import (
 	"path/filepath"
 )
 
-// validate that the given file in the path have the .aura extension
-func validateFileExtension(path string) error {
+func validatePath(path string) error {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return fmt.Errorf("la ruta %s no existe", path)
+	}
+
+	if fileInfo.IsDir() {
+		return fmt.Errorf("la ruta indicada es una carpeta: %s", path)
+	}
+
 	extension := filepath.Ext(path)
 	if extension != ".aura" {
 		return fmt.Errorf(
@@ -34,7 +42,7 @@ func ReadFile(path string) {
 
 	source, err := os.ReadFile(path)
 	if err != nil {
-		fmt.Println("Archivo no encontrado!")
+		fmt.Println("No se pudo leer el archivo")
 		return
 	}
 
@@ -68,20 +76,8 @@ func main() {
 	}
 
 	filePath := os.Args[1]
-	fileInfo, err := os.Stat(filePath)
-	if err != nil {
-		fmt.Printf("La ruta %s no existe", filePath)
-		return
-	}
-
-	if fileInfo.IsDir() {
-		fmt.Printf("La ruta indicada es una carpeta: %s", filePath)
-		return
-	}
-
-	err = validateFileExtension(filePath)
-	if err != nil {
-		fmt.Printf("%s", err.Error())
+	if err := validatePath(filePath); err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 
