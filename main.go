@@ -51,6 +51,7 @@ func ReadFile(path string) {
 	}
 
 	if len(source) == 0 {
+		fmt.Println("El archivo esta vacio!")
 		return
 	}
 
