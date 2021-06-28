@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -164,6 +165,25 @@ func rango(args ...obj.Object) obj.Object {
 	}
 }
 
+func slep(args ...obj.Object) obj.Object {
+	if len(args) > 1 {
+		return wrongNumberofArgs("dormir", len(args), 1)
+	}
+
+	switch arg := args[0].(type) {
+	case *obj.Number:
+		time.Sleep(time.Duration(arg.Value * int(time.Second)))
+		return obj.SingletonNUll
+
+	case *obj.Float:
+		time.Sleep(time.Duration(arg.Value * float64(time.Second)))
+		return obj.SingletonNUll
+
+	default:
+		return unsoportedArgumentType("dormir", obj.Types[arg.Type()])
+	}
+}
+
 // return the type of the object
 func Tipo(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) < 1 {
@@ -206,4 +226,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"valores":        obj.NewBuiltin(values),
 	"mayusculas":     obj.NewBuiltin(toUppper),
 	"minusculas":     obj.NewBuiltin(toLower),
+	"dormir":         obj.NewBuiltin(slep),
 }

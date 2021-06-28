@@ -7,17 +7,34 @@ import (
 	p "aura/src/parser"
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
 var EOF_TOKEN = l.Token{Token_type: l.EOF, Literal: ""}
 
+// iterate trough parser errors and print them
 func printParseErros(errors []string) {
 	for _, err := range errors {
 		fmt.Println(err)
+	}
+}
+
+// clear the console
+func clearConsole() {
+	var cmd *exec.Cmd
+
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cls")
+	} else {
+		cmd = exec.Command("clear")
+	}
+
+	cmd.Stdout = os.Stdout
+	if err := cmd.Run(); err != nil {
+		fmt.Println("No se pudo limpiar la consola :(")
 	}
 }
 
@@ -42,12 +59,8 @@ func StartRpl() {
 
 		if source == "salir()" || source == "salir" {
 			break
-		} else if source == "limpiar()" {
-			cmd := exec.Command("clear")
-			cmd.Stdout = os.Stdout
-			if err := cmd.Run(); err != nil {
-				log.Fatal(err)
-			}
+		} else if source == "limpiar()" || source == "limpiar" {
+			clearConsole()
 			continue
 		}
 
@@ -66,7 +79,7 @@ func StartRpl() {
 
 		evaluated := evaluator.Evaluate(program, env)
 		if strings.Contains(scanned[len(scanned)-1], "escribir") {
-			scanned = scanned[:len(scanned)-1] // avoid to print the previus print
+			scanned = scanned[:len(scanned)-1] // avoid to call the previus print
 		}
 
 		if evaluated != nil && evaluated != obj.SingletonNUll {
