@@ -200,7 +200,7 @@ then you can create a file or play with the repl to play with the repl just run:
 $ ./aura
 ```
 
-to use a file you can create a file with the .lpp extension and run:
+to use a file you can create a file with the .aura extension and run:
 ```shell
 $ ./aura some/file.aura
 ```
