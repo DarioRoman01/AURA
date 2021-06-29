@@ -13,12 +13,12 @@ var partition = funcion(elements, end) {
 
     mientras(elements[p_index] != pivot) {
         mientras(elements[pivot_index] < pivot) {
-            p_index += 1;
+            p_index++;
         }
 
         i = p_index;
         mientras(elements[i] > pivot) {
-            i += 1;
+            i++;
         }
 
         si(i > p_index) {

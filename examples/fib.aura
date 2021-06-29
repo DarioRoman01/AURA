@@ -6,5 +6,6 @@ var fib = funcion(n) {
     regresa fib(n - 1) + fib(n - 2);
 }
 
-var resultado = fib(10);
+var numero = recibir_entero("Ingrese un numero para calcular su fibonacci: ")
+var resultado = fib(numero);
 escribir(resultado);

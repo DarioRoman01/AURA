@@ -15,7 +15,7 @@ func (l *List) Type() ObjectType { return LIST }
 func (l *List) Inspect() string {
 	var buf strings.Builder
 	for idx, val := range l.Values {
-		if idx == len(l.Values) {
+		if idx == len(l.Values)-1 {
 			buf.WriteString(val.Inspect())
 		} else {
 			buf.WriteString(val.Inspect() + ", ")
