@@ -191,7 +191,7 @@ for using it you need to have Go install check https://golang.org/ for install G
 
 first copy the repository and change to the directory created:
 ```shell
-$ git clone https://github.com/Haizza1/AURA && cd AURA
+$ git clone https://github.com/DarioRoman01/AURA.git && cd AURA
 ```
 download the dependencies:
 ```shell
