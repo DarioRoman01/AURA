@@ -206,11 +206,39 @@ compile the package:
 $ go build -o aura
 ```
 
+if you use mac or linux just run: \
+this will install aura in your system
+```shell
+$ chmod a+x install.sh
+``` 
+```shell
+$ ./install.sh
+```
+
+if you use windows run the bach file:
+```shell
+> install.bat
+```
+<br>
+
+if you want to use anther path for the installation follow the next steps: \
 You can discover the install path by running the go list command, as in the following example
 ```shell
 $ go list -f '{{.Target}}'
 ```
 example output: /home/user/Go/bin/aura <br>
+<br>
+you can change the install target by setting the GOBIN variable using the go env command:
+* on linux
+```shell
+$ go env -w GOBIN=/path/to/your/bin
+```
+
+* on windows:
+```powershell
+$ go env -w GOBIN=C:\path\to\your\bin
+``` 
+<br>
 
 Add the Go install directory to your system's shell path
 * on linux:
@@ -222,6 +250,8 @@ $ export PATH=$PATH:/path/to/your/install/directory
 ```powershell
 $ set PATH=%PATH%;C:\path\to\your\install\directory
 ```
+
+<br>
 
 Once you've updated the shell path, run the go install command to compile and install the package.
 ```shell
