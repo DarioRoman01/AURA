@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"unicode"
 )
 
 // Represents an Array
@@ -91,4 +92,32 @@ func (m *Map) SetValues(key Object, value Object) error {
 	}
 	m.Store[key.Inspect()] = value
 	return nil
+}
+
+// represents the strings object
+type String struct {
+	Value string // represents the value of the string
+}
+
+func (s *String) Type() ObjectType { return STRINGTYPE }
+func (s *String) Inspect() string  { return s.Value }
+
+func (s String) IsUpper() Object {
+	for _, char := range s.Value {
+		if unicode.IsUpper(char) {
+			return SingletonTRUE
+		}
+	}
+
+	return SingletonFALSE
+}
+
+func (s *String) IsLower() Object {
+	for _, char := range s.Value {
+		if !unicode.IsUpper(char) {
+			return SingletonTRUE
+		}
+	}
+
+	return SingletonFALSE
 }

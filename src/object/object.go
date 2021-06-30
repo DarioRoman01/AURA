@@ -24,6 +24,8 @@ const (
 	METHOD
 	DICT
 	FLOATING
+	CLASS
+	THIS
 )
 
 // represents the methods in the standar library
@@ -39,6 +41,8 @@ const (
 	VALUES
 	UPPER
 	LOWER
+	ISUPPER
+	ISLOWER
 )
 
 // string representation of the types
@@ -55,6 +59,7 @@ var Types = [...]string{
 	LIST:       "lista",
 	METHOD:     "metodo",
 	DICT:       "mapa",
+	THIS:       "this",
 }
 
 // Object is an interface for abstract all the structs
@@ -140,14 +145,6 @@ func (d *Def) Inspect() string {
 
 	return fmt.Sprintf("funcion(%s) {\n %s \n}", buf.String(), d.Body.Str())
 }
-
-// represents the strings object
-type String struct {
-	Value string // represents the value of the string
-}
-
-func (s *String) Type() ObjectType { return STRINGTYPE }
-func (s *String) Inspect() string  { return s.Value }
 
 // signature for builtin functions
 type BuiltinFunction func(args ...Object) Object
@@ -257,6 +254,49 @@ func NewMethod(val Object, methodType MethodsTypes) *Method {
 func (m *Method) Type() ObjectType { return METHOD }
 func (m *Method) Inspect() string {
 	return fmt.Sprintf(":%d(%s)", m.MethodType, m.Value.Inspect())
+}
+
+type Class struct {
+	Name    string
+	Fields  map[string]Object
+	Methods map[string]*Def
+}
+
+func NewClass(name string) *Class {
+	return &Class{
+		Name:    name,
+		Fields:  make(map[string]Object),
+		Methods: make(map[string]*Def),
+	}
+}
+
+func (c *Class) Type() ObjectType { return CLASS }
+func (c *Class) Inspect() string {
+	var fieldsBuf strings.Builder
+	for _, field := range c.Fields {
+		fieldsBuf.WriteString(field.Inspect())
+	}
+
+	var methodBuf strings.Builder
+	for _, method := range c.Methods {
+		methodBuf.WriteString(method.Inspect())
+	}
+
+	return fmt.Sprintf(
+		"clase %s, {\n %s \n %s \n}",
+		c.Name,
+		fieldsBuf.String(),
+		methodBuf.String(),
+	)
+}
+
+type This struct {
+	Class *Class
+}
+
+func (t *This) Type() ObjectType { return THIS }
+func (t *This) Inspect() string {
+	return t.Class.Name
 }
 
 // use singleton patern with true false and null

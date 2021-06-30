@@ -296,11 +296,3 @@ func (p *Parser) parseClassCall() ast.Expression {
 	call.Arguments = p.parseCallArguments()
 	return call
 }
-
-func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
-	call := ast.NewClassFieldCall(*p.currentToken, left, nil)
-	p.checkPeekTokenIsNotNil()
-	p.advanceTokens()
-	call.Field = p.parseExpression(LOWEST)
-	return call
-}

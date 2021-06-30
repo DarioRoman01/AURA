@@ -91,3 +91,11 @@ func (p *Parser) parseRangeExpression() ast.Expression {
 	rangeExpress.Range = p.parseExpression(LOWEST)
 	return rangeExpress
 }
+
+func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
+	call := ast.NewClassFieldCall(*p.currentToken, left, nil)
+	p.checkPeekTokenIsNotNil()
+	p.advanceTokens()
+	call.Field = p.parseExpression(LOWEST)
+	return call
+}

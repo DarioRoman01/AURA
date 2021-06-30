@@ -76,15 +76,18 @@ type Parser struct {
 // generates a new parser instance
 func NewParser(lexer *l.Lexer) *Parser {
 	parser := &Parser{
-		lexer:        lexer,
-		currentToken: nil,
-		peekToken:    nil,
+		lexer:          lexer,
+		currentToken:   nil,
+		peekToken:      nil,
+		prefixParsFns:  make(PrefixParsFns),
+		infixParseFns:  make(InfixParseFns),
+		suffixParseFns: make(SuffixParseFns),
 	}
 
 	// we register all the functions to parse the expressions
-	parser.prefixParsFns = parser.registerPrefixFns()
-	parser.infixParseFns = parser.registerInfixFns()
-	parser.suffixParseFns = parser.registerSuffixFns()
+	parser.registerPrefixFns()
+	parser.registerInfixFns()
+	parser.registerSuffixFns()
 
 	// we advance two times tokens to have a not nil first token
 	parser.advanceTokens()
@@ -435,64 +438,58 @@ func (p *Parser) peekPrecedence() Precedence {
 }
 
 // register all the functions to parse infix expressions
-func (p *Parser) registerInfixFns() InfixParseFns {
-	inFixFns := make(InfixParseFns)
-	inFixFns[l.PLUS] = p.parseInfixExpression
-	inFixFns[l.MINUS] = p.parseInfixExpression
-	inFixFns[l.COLON] = p.parseMethod
-	inFixFns[l.DIVISION] = p.parseInfixExpression
-	inFixFns[l.TIMES] = p.parseInfixExpression
-	inFixFns[l.EQ] = p.parseInfixExpression
-	inFixFns[l.NOT_EQ] = p.parseInfixExpression
-	inFixFns[l.GTOREQ] = p.parseInfixExpression
-	inFixFns[l.LTOREQ] = p.parseInfixExpression
-	inFixFns[l.LT] = p.parseInfixExpression
-	inFixFns[l.IN] = p.parseInfixExpression
-	inFixFns[l.GT] = p.parseInfixExpression
-	inFixFns[l.PLUSASSING] = p.parseInfixExpression
-	inFixFns[l.MINUSASSING] = p.parseInfixExpression
-	inFixFns[l.TIMEASSI] = p.parseInfixExpression
-	inFixFns[l.DIVASSING] = p.parseInfixExpression
-	inFixFns[l.EXPONENT] = p.parseInfixExpression
-	inFixFns[l.LPAREN] = p.parseCall
-	inFixFns[l.ASSING] = p.parseReassigment
-	inFixFns[l.LBRACKET] = p.parseCallList
-	inFixFns[l.MOD] = p.parseInfixExpression
-	inFixFns[l.AND] = p.parseInfixExpression
-	inFixFns[l.OR] = p.parseInfixExpression
-	inFixFns[l.DOT] = p.parseClassFieldsCall
-	return inFixFns
+func (p *Parser) registerInfixFns() {
+	p.infixParseFns[l.PLUS] = p.parseInfixExpression
+	p.infixParseFns[l.MINUS] = p.parseInfixExpression
+	p.infixParseFns[l.COLON] = p.parseMethod
+	p.infixParseFns[l.DIVISION] = p.parseInfixExpression
+	p.infixParseFns[l.TIMES] = p.parseInfixExpression
+	p.infixParseFns[l.EQ] = p.parseInfixExpression
+	p.infixParseFns[l.NOT_EQ] = p.parseInfixExpression
+	p.infixParseFns[l.GTOREQ] = p.parseInfixExpression
+	p.infixParseFns[l.LTOREQ] = p.parseInfixExpression
+	p.infixParseFns[l.LT] = p.parseInfixExpression
+	p.infixParseFns[l.IN] = p.parseInfixExpression
+	p.infixParseFns[l.GT] = p.parseInfixExpression
+	p.infixParseFns[l.PLUSASSING] = p.parseInfixExpression
+	p.infixParseFns[l.MINUSASSING] = p.parseInfixExpression
+	p.infixParseFns[l.TIMEASSI] = p.parseInfixExpression
+	p.infixParseFns[l.DIVASSING] = p.parseInfixExpression
+	p.infixParseFns[l.EXPONENT] = p.parseInfixExpression
+	p.infixParseFns[l.LPAREN] = p.parseCall
+	p.infixParseFns[l.ASSING] = p.parseReassigment
+	p.infixParseFns[l.LBRACKET] = p.parseCallList
+	p.infixParseFns[l.MOD] = p.parseInfixExpression
+	p.infixParseFns[l.AND] = p.parseInfixExpression
+	p.infixParseFns[l.OR] = p.parseInfixExpression
+	p.infixParseFns[l.DOT] = p.parseClassFieldsCall
 }
 
 // register all the functions to parse prefix expressions
-func (p *Parser) registerPrefixFns() PrefixParsFns {
-	prefixFns := make(PrefixParsFns)
-	prefixFns[l.FALSE] = p.parseBoolean
-	prefixFns[l.FOR] = p.parseFor
-	prefixFns[l.FUNCTION] = p.parseFunction
-	prefixFns[l.WHILE] = p.parseWhile
-	prefixFns[l.IDENT] = p.parseIdentifier
-	prefixFns[l.IF] = p.parseIf
-	prefixFns[l.INT] = p.parseInteger
-	prefixFns[l.LPAREN] = p.parseGroupExpression
-	prefixFns[l.MINUS] = p.parsePrefixExpression
-	prefixFns[l.NOT] = p.parsePrefixExpression
-	prefixFns[l.TRUE] = p.parseBoolean
-	prefixFns[l.STRING] = p.parseStringLiteral
-	prefixFns[l.DATASTRCUT] = p.ParseArray
-	prefixFns[l.NULLT] = p.ParseNull
-	prefixFns[l.MAP] = p.parseMap
-	prefixFns[l.FLOAT] = p.parseFloat
-	prefixFns[l.THIS] = p.parseClassField
-	prefixFns[l.NEW] = p.parseClassCall
-	return prefixFns
+func (p *Parser) registerPrefixFns() {
+	p.prefixParsFns[l.FALSE] = p.parseBoolean
+	p.prefixParsFns[l.FOR] = p.parseFor
+	p.prefixParsFns[l.FUNCTION] = p.parseFunction
+	p.prefixParsFns[l.WHILE] = p.parseWhile
+	p.prefixParsFns[l.IDENT] = p.parseIdentifier
+	p.prefixParsFns[l.IF] = p.parseIf
+	p.prefixParsFns[l.INT] = p.parseInteger
+	p.prefixParsFns[l.LPAREN] = p.parseGroupExpression
+	p.prefixParsFns[l.MINUS] = p.parsePrefixExpression
+	p.prefixParsFns[l.NOT] = p.parsePrefixExpression
+	p.prefixParsFns[l.TRUE] = p.parseBoolean
+	p.prefixParsFns[l.STRING] = p.parseStringLiteral
+	p.prefixParsFns[l.DATASTRCUT] = p.ParseArray
+	p.prefixParsFns[l.NULLT] = p.ParseNull
+	p.prefixParsFns[l.MAP] = p.parseMap
+	p.prefixParsFns[l.FLOAT] = p.parseFloat
+	p.prefixParsFns[l.THIS] = p.parseClassField
+	p.prefixParsFns[l.NEW] = p.parseClassCall
 }
 
 // register all the functions to parse suffix expressions
-func (p *Parser) registerSuffixFns() SuffixParseFns {
-	suffixFns := make(SuffixParseFns)
-	suffixFns[l.EXPONENT] = p.parseSuffixFn
-	suffixFns[l.PLUS2] = p.parseSuffixFn
-	suffixFns[l.MINUS2] = p.parseSuffixFn
-	return suffixFns
+func (p *Parser) registerSuffixFns() {
+	p.suffixParseFns[l.EXPONENT] = p.parseSuffixFn
+	p.suffixParseFns[l.PLUS2] = p.parseSuffixFn
+	p.suffixParseFns[l.MINUS2] = p.parseSuffixFn
 }

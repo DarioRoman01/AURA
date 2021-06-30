@@ -1,6 +1,8 @@
 package builtins
 
-import obj "aura/src/object"
+import (
+	obj "aura/src/object"
+)
 
 func add(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) == 0 {
@@ -64,4 +66,20 @@ func toLower(args ...obj.Object) obj.Object {
 	}
 
 	return obj.NewMethod(obj.SingletonNUll, obj.LOWER)
+}
+
+func isUpper(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) < 1 {
+		return wrongNumberofArgs("es_mayuscula", len(args), 0)
+	}
+
+	return obj.NewMethod(obj.SingletonNUll, obj.ISUPPER)
+}
+
+func isLower(args ...obj.Object) obj.Object {
+	if len(args) > 1 {
+		return wrongNumberofArgs("es_minuscula", len(args), 0)
+	}
+
+	return obj.NewMethod(obj.SingletonNUll, obj.ISUPPER)
 }

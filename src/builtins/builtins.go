@@ -227,4 +227,6 @@ var BUILTINS = map[string]*obj.Builtin{
 	"mayusculas":     obj.NewBuiltin(toUppper),
 	"minusculas":     obj.NewBuiltin(toLower),
 	"dormir":         obj.NewBuiltin(slep),
+	"es_mayuscula":   obj.NewBuiltin(isUpper),
+	"es_minuscula":   obj.NewBuiltin(isLower),
 }
