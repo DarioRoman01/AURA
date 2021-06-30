@@ -280,3 +280,27 @@ func (p *Parser) parseClassField() ast.Expression {
 
 	return field
 }
+
+func (p *Parser) parseClassCall() ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	call := ast.NewClassCall(*p.currentToken, nil, nil)
+	if !p.expepectedToken(l.IDENT) {
+		return nil
+	}
+
+	call.Class = p.parseIdentifier()
+	if !p.expepectedToken(l.LPAREN) {
+		return nil
+	}
+
+	call.Arguments = p.parseCallArguments()
+	return call
+}
+
+func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
+	call := ast.NewClassFieldCall(*p.currentToken, left, nil)
+	p.checkPeekTokenIsNotNil()
+	p.advanceTokens()
+	call.Field = p.parseExpression(LOWEST)
+	return call
+}

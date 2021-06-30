@@ -460,6 +460,7 @@ func (p *Parser) registerInfixFns() InfixParseFns {
 	inFixFns[l.MOD] = p.parseInfixExpression
 	inFixFns[l.AND] = p.parseInfixExpression
 	inFixFns[l.OR] = p.parseInfixExpression
+	inFixFns[l.DOT] = p.parseClassFieldsCall
 	return inFixFns
 }
 
@@ -483,6 +484,7 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[l.MAP] = p.parseMap
 	prefixFns[l.FLOAT] = p.parseFloat
 	prefixFns[l.THIS] = p.parseClassField
+	prefixFns[l.NEW] = p.parseClassCall
 	return prefixFns
 }
 

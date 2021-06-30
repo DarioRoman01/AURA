@@ -450,26 +450,51 @@ func (cf *ClassFieldExp) Str() string {
 	return buf.String()
 }
 
-/*
+type ClassCall struct {
+	BaseNode
+	Class     Expression
+	Arguments []Expression
+}
 
-var persona = clase {
-	constructor(nombre, edad) {
-		this.nombre = nombre;
-		this.edad = edad;
-	}
-
-	saludar() {
-		escribir("Hola soy ", this.name, " y tengo ", this.age);
+func NewClassCall(token l.Token, class Expression, arguemnts []Expression) *ClassCall {
+	return &ClassCall{
+		BaseNode:  BaseNode{token},
+		Class:     class,
+		Arguments: arguemnts,
 	}
 }
-clase Persona {
-	constructor(name, age) {
-		this.name = name;
-		this.age = age;
+
+func (cc *ClassCall) expressNode() {}
+
+func (cc *ClassCall) Str() string {
+	var buf strings.Builder
+	for idx, arg := range cc.Arguments {
+		if idx == len(cc.Arguments)-1 {
+			buf.WriteString(arg.Str())
+		} else {
+			buf.WriteString(arg.Str() + ", ")
+		}
 	}
 
-	sayHi() {
-		escribir("Hola soy ", this.name, " y tengo ", this.age);
+	return fmt.Sprintf("nuevo %s(%s)", cc.Class.Str(), buf.String())
+}
+
+type ClassFieldCall struct {
+	BaseNode
+	Class Expression
+	Field Expression
+}
+
+func NewClassFieldCall(token l.Token, class Expression, field Expression) *ClassFieldCall {
+	return &ClassFieldCall{
+		BaseNode: BaseNode{token},
+		Class:    class,
+		Field:    field,
 	}
 }
-*/
+
+func (cfc *ClassFieldCall) expressNode() {}
+
+func (cfc *ClassFieldCall) Str() string {
+	return fmt.Sprintf("%s.%s", cfc.Class.Str(), cfc.Field.Str())
+}
