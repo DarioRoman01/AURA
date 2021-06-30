@@ -228,7 +228,7 @@ func (f Function) Str() string {
 
 // represents a function call
 type Call struct {
-	BaseNode               // represents the token of the expresion
+	BaseNode               // extends base node struct
 	Function  Expression   // represents the function to be call
 	Arguments []Expression // represents the arguments given to call the function
 }
@@ -363,4 +363,58 @@ func (m *MapExpression) Str() string {
 	}
 
 	return fmt.Sprintf("mapa{%s}", buf.String())
+}
+
+type ClassExp struct {
+	BaseNode
+	Methods []ClassMethod
+}
+
+func (ClassExp) expressNode() {}
+
+func (c *ClassExp) Str() string {
+	var buf strings.Builder
+	for idx, method := range c.Methods {
+		if idx == len(c.Methods)-1 {
+			buf.WriteString(method.Str())
+		} else {
+			buf.WriteString(method.Str() + " ")
+		}
+	}
+
+	return fmt.Sprintf("%s { %s }", c.TokenLiteral(), buf.String())
+}
+
+type ClassMethod struct {
+	BaseNode
+	Name   *Identifier
+	Params []*Identifier
+	Body   *Block
+}
+
+func (ClassMethod) expressNode() {}
+
+func (cm ClassMethod) Str() string {
+	var buf strings.Builder
+	for idx, param := range cm.Params {
+		if idx == len(cm.Params)-1 {
+			buf.WriteString(param.Str())
+		} else {
+			buf.WriteString(param.Str())
+		}
+	}
+
+	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
+}
+
+type ClassField struct {
+	BaseNode
+	Name  *Identifier
+	Value Expression
+}
+
+func (ClassField) expressNode() {}
+
+func (cf ClassField) Str() string {
+	return fmt.Sprintf("this.%s = %s", cf.Name.Str(), cf.Value.Str())
 }

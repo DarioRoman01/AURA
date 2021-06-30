@@ -10,6 +10,7 @@ const (
 	AND
 	ASSING
 	ARROW
+	CLASS
 	COLON
 	COMMA
 	DATASTRCUT
@@ -40,6 +41,7 @@ const (
 	MINUS  // -
 	MINUS2
 	MINUSASSING
+	NEW
 	NOT // !
 	NOT_EQ
 	MOD
@@ -52,6 +54,7 @@ const (
 	RETURN
 	RPAREN
 	SEMICOLON
+	THIS
 	TIMES // *
 	TIMEASSI
 	STRING
@@ -66,6 +69,7 @@ var Tokens = [...]string{
 	AND:         "&&",
 	ASSING:      "=",
 	ARROW:       "=>",
+	CLASS:       "clase",
 	COLON:       ":",
 	COMMA:       ",",
 	DIVISION:    "/",
@@ -106,6 +110,7 @@ var Tokens = [...]string{
 	MAP:         "mapa",
 	PLUSASSING:  "+=",
 	MINUSASSING: "-=",
+	THIS:        "this",
 	TIMEASSI:    "*=",
 	DIVASSING:   "/=",
 	EXPONENT:    "**",
@@ -143,6 +148,9 @@ func LookUpTokenType(literal string) TokenType {
 		"lista":     DATASTRCUT,
 		"nulo":      NULLT,
 		"mapa":      MAP,
+		"this":      THIS,
+		"clase":     CLASS,
+		"nuevo":     NEW,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {

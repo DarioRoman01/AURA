@@ -187,7 +187,7 @@ func evaluateFor(forLoop *ast.For, env *obj.Enviroment) obj.Object {
 		for iter.Next() != nil {
 			evaluated = Evaluate(forLoop.Body, env)
 			if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
-				// we breal the loop because we have a return statement
+				// we break the loop because we have a return statement
 				return returnVal
 			}
 
@@ -233,7 +233,7 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 // check that the given value is not nil
 func CheckIsNotNil(val interface{}) {
 	if val == nil {
-		panic("expression or stament cannot be nil :(")
+		panic("Error de evaluacion!")
 	}
 }
 
@@ -302,7 +302,7 @@ func evaluateWhileExpression(whileExpression *ast.While, env *obj.Enviroment) ob
 	condition := Evaluate(whileExpression.Condition, env)
 	CheckIsNotNil(condition)
 
-	// we loop an update the condition until is not trythy
+	// we loop an update the condition until the condition is not trythy
 	for isTruthy(condition) {
 		evaluated := Evaluate(whileExpression.Body, env)
 		if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
