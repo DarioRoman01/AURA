@@ -365,14 +365,23 @@ func (m *MapExpression) Str() string {
 	return fmt.Sprintf("mapa{%s}", buf.String())
 }
 
-type ClassExp struct {
+type ClassStatement struct {
 	BaseNode
-	Methods []ClassMethod
+	Name    *Identifier
+	Methods []*ClassMethodExp
 }
 
-func (ClassExp) expressNode() {}
+func NewClassStatement(token l.Token, name *Identifier, methods []*ClassMethodExp) *ClassStatement {
+	return &ClassStatement{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Methods:  methods,
+	}
+}
 
-func (c *ClassExp) Str() string {
+func (c *ClassStatement) stmtNode() {}
+
+func (c *ClassStatement) Str() string {
 	var buf strings.Builder
 	for idx, method := range c.Methods {
 		if idx == len(c.Methods)-1 {
@@ -382,19 +391,28 @@ func (c *ClassExp) Str() string {
 		}
 	}
 
-	return fmt.Sprintf("%s { %s }", c.TokenLiteral(), buf.String())
+	return fmt.Sprintf("clase %s { %s }", c.Name.Str(), buf.String())
 }
 
-type ClassMethod struct {
+type ClassMethodExp struct {
 	BaseNode
 	Name   *Identifier
 	Params []*Identifier
 	Body   *Block
 }
 
-func (ClassMethod) expressNode() {}
+func NewClassMethodExp(token l.Token, name *Identifier, params []*Identifier, body *Block) *ClassMethodExp {
+	return &ClassMethodExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Params:   params,
+		Body:     body,
+	}
+}
 
-func (cm ClassMethod) Str() string {
+func (cm *ClassMethodExp) expressNode() {}
+
+func (cm *ClassMethodExp) Str() string {
 	var buf strings.Builder
 	for idx, param := range cm.Params {
 		if idx == len(cm.Params)-1 {
@@ -407,14 +425,51 @@ func (cm ClassMethod) Str() string {
 	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
 }
 
-type ClassField struct {
+type ClassFieldExp struct {
 	BaseNode
 	Name  *Identifier
 	Value Expression
 }
 
-func (ClassField) expressNode() {}
-
-func (cf ClassField) Str() string {
-	return fmt.Sprintf("this.%s = %s", cf.Name.Str(), cf.Value.Str())
+func NewClassFieldExp(token l.Token, name *Identifier, value Expression) *ClassFieldExp {
+	return &ClassFieldExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Value:    value,
+	}
 }
+
+func (cf *ClassFieldExp) expressNode() {}
+
+func (cf *ClassFieldExp) Str() string {
+	var buf strings.Builder
+	buf.WriteString(fmt.Sprintf("this.%s", cf.Name.Str()))
+	if cf.Value != nil {
+		buf.WriteString(fmt.Sprintf(" = %s", cf.Value.Str()))
+	}
+	return buf.String()
+}
+
+/*
+
+var persona = clase {
+	constructor(nombre, edad) {
+		this.nombre = nombre;
+		this.edad = edad;
+	}
+
+	saludar() {
+		escribir("Hola soy ", this.name, " y tengo ", this.age);
+	}
+}
+clase Persona {
+	constructor(name, age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	sayHi() {
+		escribir("Hola soy ", this.name, " y tengo ", this.age);
+	}
+}
+*/

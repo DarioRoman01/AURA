@@ -159,6 +159,24 @@ func (p *ParserTests) TestIdentifierExpression() {
 	p.testLiteralExpression(expressionStament.Expression, "foobar")
 }
 
+func (p *ParserTests) TestClassStatement() {
+	source := `
+		clase Persona {
+			constructor(nombre, carrera) {
+				this.nombre = nombre;
+				this.carrera = carrera;
+			}
+
+			saludar() {
+				escribir("Hola soy ", this.nombre, " y estudio ", this.carrera)
+			}
+		}
+	`
+	_, program := p.InitParserTests(source)
+	fmt.Println(program.Str())
+	p.Assert().Equal("a", "a")
+}
+
 func (p *ParserTests) TestIntegerExpressions() {
 	source := "5;"
 	parser, program := p.InitParserTests(source)

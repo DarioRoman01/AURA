@@ -287,6 +287,30 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 	return leftExpression
 }
 
+func (p *Parser) parseClassStatement() ast.Stmt {
+	p.checkCurrentTokenIsNotNil()
+	class := ast.NewClassStatement(*p.currentToken, nil, []*ast.ClassMethodExp{})
+	if !p.expepectedToken(l.IDENT) {
+		return nil
+	}
+
+	class.Name = p.parseIdentifier().(*ast.Identifier)
+	if !p.expepectedToken(l.LBRACE) {
+		return nil
+	}
+
+	p.advanceTokens()
+	for p.peekToken.Token_type != l.RBRACE && p.peekToken.Token_type != l.EOF {
+		if expression := p.parseClassMethod(); expression != nil {
+			if method, isMethod := expression.(*ast.ClassMethodExp); isMethod {
+				class.Methods = append(class.Methods, method)
+			}
+		}
+	}
+
+	return class
+}
+
 // parse a expression statement
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 	p.checkCurrentTokenIsNotNil()
@@ -391,6 +415,9 @@ func (p *Parser) parseStament() ast.Stmt {
 	case l.RETURN:
 		return p.parseReturnStatement()
 
+	case l.CLASS:
+		return p.parseClassStatement()
+
 	default:
 		return p.parserExpressionStatement()
 	}
@@ -455,6 +482,7 @@ func (p *Parser) registerPrefixFns() PrefixParsFns {
 	prefixFns[l.NULLT] = p.ParseNull
 	prefixFns[l.MAP] = p.parseMap
 	prefixFns[l.FLOAT] = p.parseFloat
+	prefixFns[l.THIS] = p.parseClassField
 	return prefixFns
 }
 

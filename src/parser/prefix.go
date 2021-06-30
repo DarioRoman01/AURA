@@ -234,3 +234,49 @@ func (p *Parser) parseMap() ast.Expression {
 	p.advanceTokens()
 	return mapExpress
 }
+
+func (p *Parser) parseClassMethod() ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	classMethod := ast.NewClassMethodExp(*p.currentToken, nil, nil, nil)
+	classMethod.Name = p.parseIdentifier().(*ast.Identifier)
+	if !p.expepectedToken(l.LPAREN) {
+		return nil
+	}
+
+	classMethod.Params = p.parseFunctionParameters()
+	if !p.expepectedToken(l.LBRACE) {
+		return nil
+	}
+
+	classMethod.Body = p.parseBlock()
+	p.advanceTokens()
+	return classMethod
+}
+
+func (p *Parser) parseClassField() ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	field := ast.NewClassFieldExp(*p.currentToken, nil, nil)
+	if !p.expepectedToken(l.DOT) {
+		return nil
+	}
+
+	if !p.expepectedToken(l.IDENT) {
+		return nil
+	}
+
+	field.Name = p.parseIdentifier().(*ast.Identifier)
+	if p.peekToken.Token_type != l.ASSING {
+		return field
+	}
+
+	p.advanceTokens()
+	p.advanceTokens()
+	field.Value = p.parseExpression(LOWEST)
+
+	p.checkPeekTokenIsNotNil()
+	if p.peekToken.Token_type == l.SEMICOLON {
+		p.advanceTokens()
+	}
+
+	return field
+}
