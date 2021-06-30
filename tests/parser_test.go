@@ -172,9 +172,14 @@ func (p *ParserTests) TestClassStatement() {
 			}
 		}
 	`
-	_, program := p.InitParserTests(source)
-	fmt.Println(program.Str())
-	p.Assert().Equal("a", "a")
+	parser, program := p.InitParserTests(source)
+	p.Assert().Equal(1, len(program.Staments))
+	p.Assert().Equal(0, len(parser.Errors()))
+
+	p.Assert().IsType(&ast.ClassStatement{}, program.Staments[0].(*ast.ClassStatement))
+	class := program.Staments[0].(*ast.ClassStatement)
+	p.Assert().Equal(class.Name.Value, "Persona")
+	p.Assert().Equal(len(class.Methods), 2)
 }
 
 func (p *ParserTests) TestIntegerExpressions() {

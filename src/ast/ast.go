@@ -418,7 +418,7 @@ func (cm *ClassMethodExp) Str() string {
 		if idx == len(cm.Params)-1 {
 			buf.WriteString(param.Str())
 		} else {
-			buf.WriteString(param.Str())
+			buf.WriteString(param.Str() + ", ")
 		}
 	}
 
