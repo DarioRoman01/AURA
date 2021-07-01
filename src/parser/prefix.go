@@ -265,13 +265,13 @@ func (p *Parser) parseClassField() ast.Expression {
 	}
 
 	field.Name = p.parseIdentifier().(*ast.Identifier)
-	if p.peekToken.Token_type != l.ASSING {
-		return field
-	}
+	// if p.peekToken.Token_type != l.ASSING {
+	// 	return field
+	// }
 
-	p.advanceTokens()
-	p.advanceTokens()
-	field.Value = p.parseExpression(LOWEST)
+	// p.advanceTokens()
+	// p.advanceTokens()
+	// field.Value = p.parseExpression(LOWEST)
 
 	p.checkPeekTokenIsNotNil()
 	if p.peekToken.Token_type == l.SEMICOLON {

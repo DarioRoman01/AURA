@@ -181,6 +181,17 @@ func (p *ParserTests) TestClassStatement() {
 	p.Assert().Equal(len(class.Methods), 1)
 }
 
+func (p *ParserTests) TestClassCall() {
+	source := `
+		var p = nuevo Persona("joao", "informatica");
+		p.saludar();
+	`
+
+	parser, program := p.InitParserTests(source)
+	p.Assert().Equal(0, len(parser.Errors()))
+	p.Assert().Equal(2, len(program.Staments))
+}
+
 func (p *ParserTests) TestIntegerExpressions() {
 	source := "5;"
 	parser, program := p.InitParserTests(source)

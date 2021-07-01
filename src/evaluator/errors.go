@@ -42,6 +42,12 @@ func notAFunction(identifier string) *obj.Error {
 	}
 }
 
+func cannotBeIndexed(ident string) *obj.Error {
+	return &obj.Error{
+		Message: fmt.Sprintf("El objecto %s no puede ser indexado", ident),
+	}
+}
+
 func notAList(identifier string) *obj.Error {
 	return &obj.Error{
 		Message: fmt.Sprintf("No es una lista: %s", identifier),

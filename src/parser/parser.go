@@ -59,6 +59,7 @@ var precedences = map[l.TokenType]Precedence{
 	l.TIMEASSI:    PRODUCT,
 	l.PLUS2:       PRODUCT,
 	l.MINUS2:      PRODUCT,
+	l.DOT:         PREFIX,
 }
 
 // Represents the Parser of the programming lenguage

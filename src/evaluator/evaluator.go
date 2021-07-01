@@ -233,7 +233,7 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 // check that the given value is not nil
 func CheckIsNotNil(val interface{}) {
 	if val == nil {
-		panic("Error de evaluacion!")
+		panic("Error de evaluacion! Se esperaba una expression pero se obtuvo nulo!")
 	}
 }
 
@@ -360,7 +360,7 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 		return &obj.String{Value: string(object.Value[num.Value])}
 
 	default:
-		return notAList(obj.Types[evaluated.Type()])
+		return cannotBeIndexed(obj.Types[evaluated.Type()])
 	}
 }
 
