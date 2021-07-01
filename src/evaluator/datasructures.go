@@ -156,11 +156,13 @@ func evaluateStringMethod(str *obj.String, method *obj.Method) obj.Object {
 			return newError("La funcion contiene solo puede recibir caracteres o cadenas")
 		}
 
-		if strings.Contains(str.Value, val.Value) {
-			return obj.SingletonTRUE
-		}
+		return str.Contains(val.Value)
 
-		return obj.SingletonFALSE
+	case obj.ISUPPER:
+		return str.IsUpper()
+
+	case obj.ISLOWER:
+		return str.IsLower()
 
 	default:
 		return noSuchMethod(method.Inspect(), "texto")

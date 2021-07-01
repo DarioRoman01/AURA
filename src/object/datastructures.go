@@ -121,3 +121,11 @@ func (s *String) IsLower() Object {
 
 	return SingletonFALSE
 }
+
+func (s *String) Contains(val string) Object {
+	if strings.Contains(s.Value, val) {
+		return SingletonTRUE
+	}
+
+	return SingletonFALSE
+}

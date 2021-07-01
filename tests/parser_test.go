@@ -161,12 +161,7 @@ func (p *ParserTests) TestIdentifierExpression() {
 
 func (p *ParserTests) TestClassStatement() {
 	source := `
-		clase Persona {
-			constructor(nombre, carrera) {
-				this.nombre = nombre;
-				this.carrera = carrera;
-			}
-
+		clase Persona(nombre, carrera) {
 			saludar() {
 				escribir("Hola soy ", this.nombre, " y estudio ", this.carrera)
 			}
@@ -179,7 +174,11 @@ func (p *ParserTests) TestClassStatement() {
 	p.Assert().IsType(&ast.ClassStatement{}, program.Staments[0].(*ast.ClassStatement))
 	class := program.Staments[0].(*ast.ClassStatement)
 	p.Assert().Equal(class.Name.Value, "Persona")
-	p.Assert().Equal(len(class.Methods), 2)
+	p.Assert().Equal(2, len(class.Params))
+
+	p.Assert().Equal("nombre", class.Params[0].Value)
+	p.Assert().Equal("carrera", class.Params[1].Value)
+	p.Assert().Equal(len(class.Methods), 1)
 }
 
 func (p *ParserTests) TestIntegerExpressions() {

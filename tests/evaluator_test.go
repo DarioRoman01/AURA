@@ -490,20 +490,33 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `var b = mapa{"a" => 2}; largo(b);`, expected: 1},
 		{source: `var b = mapa{"a" => 2}; tipo(b);`, expected: "mapa"},
 		{source: `var b = mapa{"a" => 2}; tipo(b["a"]);`, expected: "entero"},
+		{source: `var a = "aura"; a:contiene("a");`, expected: true},
+		{source: `var a = "aura"; a:contiene("au");`, expected: true},
+		{source: `var a = "aura"; a:contiene("ra");`, expected: true},
+		{source: `var a = "aura"; a:contiene("ara");`, expected: false},
+		{source: `var a = "aura"; a:contiene("b");`, expected: false},
+		{source: `var a = lista[2,34,45]; a:contiene(2);`, expected: true},
+		{source: `var a = lista[2,34,45]; a:contiene(342);`, expected: false},
 	}
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		if val, isInt := test.expected.(int); isInt {
+		switch val := test.expected.(type) {
+		case int:
 			e.testIntegerObject(evaluated, val)
-		} else {
-			expected := test.expected.(string)
 
+		case string:
 			if str, isStr := evaluated.(*obj.String); isStr {
-				e.testStringObject(str, expected)
+				e.testStringObject(str, val)
 			} else {
-				e.testErrorObject(evaluated, expected)
+				e.testErrorObject(evaluated, val)
 			}
+
+		case bool:
+			e.testBooleanObject(evaluated, val)
+
+		default:
+			panic("Some weird shit happend!")
 		}
 	}
 }

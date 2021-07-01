@@ -368,13 +368,15 @@ func (m *MapExpression) Str() string {
 type ClassStatement struct {
 	BaseNode
 	Name    *Identifier
+	Params  []*Identifier
 	Methods []*ClassMethodExp
 }
 
-func NewClassStatement(token l.Token, name *Identifier, methods []*ClassMethodExp) *ClassStatement {
+func NewClassStatement(token l.Token, params []*Identifier, name *Identifier, methods []*ClassMethodExp) *ClassStatement {
 	return &ClassStatement{
 		BaseNode: BaseNode{token},
 		Name:     name,
+		Params:   params,
 		Methods:  methods,
 	}
 }
@@ -382,6 +384,14 @@ func NewClassStatement(token l.Token, name *Identifier, methods []*ClassMethodEx
 func (c *ClassStatement) stmtNode() {}
 
 func (c *ClassStatement) Str() string {
+	var paramsBuf strings.Builder
+	for idx, param := range c.Params {
+		if idx == len(c.Params)-1 {
+			paramsBuf.WriteString(param.Str())
+		} else {
+			paramsBuf.WriteString(param.Str() + ", ")
+		}
+	}
 	var buf strings.Builder
 	for idx, method := range c.Methods {
 		if idx == len(c.Methods)-1 {
@@ -391,7 +401,12 @@ func (c *ClassStatement) Str() string {
 		}
 	}
 
-	return fmt.Sprintf("clase %s { %s }", c.Name.Str(), buf.String())
+	return fmt.Sprintf(
+		"clase %s (%s) {\n %s \n }",
+		c.Name.Str(),
+		paramsBuf.String(),
+		buf.String(),
+	)
 }
 
 type ClassMethodExp struct {
