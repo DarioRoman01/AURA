@@ -60,6 +60,7 @@ var Types = [...]string{
 	METHOD:     "metodo",
 	DICT:       "mapa",
 	THIS:       "this",
+	CLASS:      "clase",
 }
 
 // Object is an interface for abstract all the structs
@@ -258,20 +259,41 @@ func (m *Method) Inspect() string {
 
 type Class struct {
 	Name    string
-	Fields  map[string]Object
+	Params  []*ast.Identifier
 	Methods map[string]*Def
 }
 
-func NewClass(name string) *Class {
+func (cs *Class) Type() ObjectType { return CLASS }
+func (cs *Class) Inspect() string {
+	return cs.Name
+}
+
+func NewClass(name string, params []*ast.Identifier) *Class {
 	return &Class{
+		Name:    name,
+		Params:  params,
+		Methods: make(map[string]*Def),
+	}
+}
+
+// Represents a class object
+type ClassInstance struct {
+	Name    string            // represents the class name
+	Fields  map[string]Object // represents the class fields
+	Methods map[string]*Def   // represents the class methods
+}
+
+// generates a new class instance
+func NewClassInstance(name string) *ClassInstance {
+	return &ClassInstance{
 		Name:    name,
 		Fields:  make(map[string]Object),
 		Methods: make(map[string]*Def),
 	}
 }
 
-func (c *Class) Type() ObjectType { return CLASS }
-func (c *Class) Inspect() string {
+func (c *ClassInstance) Type() ObjectType { return CLASS }
+func (c *ClassInstance) Inspect() string {
 	var fieldsBuf strings.Builder
 	for _, field := range c.Fields {
 		fieldsBuf.WriteString(field.Inspect())
@@ -290,8 +312,9 @@ func (c *Class) Inspect() string {
 	)
 }
 
+// represents the this object
 type This struct {
-	Class *Class
+	Class *ClassInstance // represents the class instance
 }
 
 func (t *This) Type() ObjectType { return THIS }

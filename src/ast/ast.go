@@ -365,13 +365,15 @@ func (m *MapExpression) Str() string {
 	return fmt.Sprintf("mapa{%s}", buf.String())
 }
 
+// Represents a class statement
 type ClassStatement struct {
-	BaseNode
-	Name    *Identifier
-	Params  []*Identifier
-	Methods []*ClassMethodExp
+	BaseNode                   // extends base node
+	Name     *Identifier       // represents the name of the class
+	Params   []*Identifier     // represents the constructor params
+	Methods  []*ClassMethodExp // represents all the methods in the class
 }
 
+// generates a new class statement instance
 func NewClassStatement(token l.Token, params []*Identifier, name *Identifier, methods []*ClassMethodExp) *ClassStatement {
 	return &ClassStatement{
 		BaseNode: BaseNode{token},
@@ -409,6 +411,7 @@ func (c *ClassStatement) Str() string {
 	)
 }
 
+// Represents the class method
 type ClassMethodExp struct {
 	BaseNode
 	Name   *Identifier
@@ -416,6 +419,7 @@ type ClassMethodExp struct {
 	Body   *Block
 }
 
+// generates new class method expresion
 func NewClassMethodExp(token l.Token, name *Identifier, params []*Identifier, body *Block) *ClassMethodExp {
 	return &ClassMethodExp{
 		BaseNode: BaseNode{token},
@@ -440,12 +444,14 @@ func (cm *ClassMethodExp) Str() string {
 	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
 }
 
+// represents a class field expression
 type ClassFieldExp struct {
-	BaseNode
-	Name  *Identifier
-	Value Expression
+	BaseNode             // extends Base node
+	Name     *Identifier // represents the field or method name
+	Value    Expression  // represents the value of the field
 }
 
+// generates a new class field instance
 func NewClassFieldExp(token l.Token, name *Identifier, value Expression) *ClassFieldExp {
 	return &ClassFieldExp{
 		BaseNode: BaseNode{token},
@@ -465,13 +471,15 @@ func (cf *ClassFieldExp) Str() string {
 	return buf.String()
 }
 
+// represents a class call
 type ClassCall struct {
-	BaseNode
-	Class     Expression
-	Arguments []Expression
+	BaseNode               // extends the BaseNode
+	Class     *Identifier  // represents the class that is call
+	Arguments []Expression // represents the constructor arguments
 }
 
-func NewClassCall(token l.Token, class Expression, arguemnts []Expression) *ClassCall {
+// generates a new class call instance
+func NewClassCall(token l.Token, class *Identifier, arguemnts []Expression) *ClassCall {
 	return &ClassCall{
 		BaseNode:  BaseNode{token},
 		Class:     class,
@@ -494,12 +502,14 @@ func (cc *ClassCall) Str() string {
 	return fmt.Sprintf("nuevo %s(%s)", cc.Class.Str(), buf.String())
 }
 
+// represents a call to a field or method
 type ClassFieldCall struct {
-	BaseNode
-	Class Expression
-	Field Expression
+	BaseNode            // extends the base node
+	Class    Expression // represents the class instance
+	Field    Expression // represents the field that is called
 }
 
+// generates an new class field call instance
 func NewClassFieldCall(token l.Token, class Expression, field Expression) *ClassFieldCall {
 	return &ClassFieldCall{
 		BaseNode: BaseNode{token},

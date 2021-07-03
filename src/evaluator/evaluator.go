@@ -100,6 +100,14 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		CheckIsNotNil(node.Body)
 		return evaluateMap(node, env)
 
+	case *ast.ClassStatement:
+		CheckIsNotNil(node.Name)
+		return evaluateClassStatement(node, env)
+
+	case *ast.ClassCall:
+		CheckIsNotNil(node.Class)
+		return evaluateClassCall(node, env)
+
 	case *ast.LetStatement:
 		CheckIsNotNil(node.Value)
 		value := Evaluate(node.Value, env)
@@ -228,6 +236,38 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 	}
 
 	return notIterable(rangeExpress.Range.Str())
+}
+
+func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) obj.Object {
+	class := obj.NewClass(clasStmt.Name.Value, clasStmt.Params)
+	for _, def := range clasStmt.Methods {
+		class.Methods[def.Name.Value] = obj.NewDef(def.Body, env, def.Params...)
+	}
+	env.SetItem(class.Name, class)
+	return class
+}
+
+func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
+	classStmt, exists := env.GetItem(call.Class.Value)
+	if !exists {
+		return unknownIdentifier(call.Class.Value)
+	}
+
+	if class, isClass := classStmt.(*obj.Class); isClass {
+		classInstance := obj.NewClassInstance(class.Name)
+		classInstance.Methods = class.Methods
+		if len(call.Arguments) != len(class.Params) {
+			return newError("numero incorrector de argumentos para instanciar la clase")
+		}
+
+		for idx, value := range call.Arguments {
+			classInstance.Fields[class.Params[idx].Value] = Evaluate(value, env)
+		}
+
+		return classInstance
+	}
+
+	return notAClass(call.Class.Value)
 }
 
 // check that the given value is not nil

@@ -288,7 +288,7 @@ func (p *Parser) parseClassCall() ast.Expression {
 		return nil
 	}
 
-	call.Class = p.parseIdentifier()
+	call.Class = p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.LPAREN) {
 		return nil
 	}

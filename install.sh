@@ -10,9 +10,9 @@ else
     exit 1
 fi
 
+go build -o aura
 path=(go list -f '{{.Target}}')
 export PATH=$PATH:path
-
 
 if [ -x "$(go install)"]
 then

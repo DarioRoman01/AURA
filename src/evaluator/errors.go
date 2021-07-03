@@ -69,3 +69,7 @@ func noSuchMethod(method, ident string) *obj.Error {
 func notIterable(ident string) *obj.Error {
 	return &obj.Error{Message: fmt.Sprintf("No es un iteralble: %s", ident)}
 }
+
+func notAClass(ident string) *obj.Error {
+	return &obj.Error{Message: fmt.Sprintf("no es una clase %s", ident)}
+}
