@@ -48,7 +48,7 @@ func evaluateListReassigment(call *ast.CallList, list *obj.List, newVal ast.Expr
 	}
 	if num.Value >= len(list.Values) {
 		// the index is grater than the length of the list
-		return newError("Indice fuera de rango")
+		return indexOutOfRange(num.Value, len(list.Values))
 	}
 
 	list.Values[num.Value] = Evaluate(newVal, env)

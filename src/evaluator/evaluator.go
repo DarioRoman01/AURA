@@ -4,7 +4,6 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
-	"fmt"
 	"math"
 	"unicode/utf8"
 )
@@ -106,7 +105,6 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return evaluateClassStatement(node, env)
 
 	case *ast.ClassCall:
-		fmt.Println("Entro aqui")
 		CheckIsNotNil(node.Class)
 		return evaluateClassCall(node, env)
 
@@ -251,9 +249,9 @@ func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) o
 }
 
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
-	classStmt, exists := env.GetItem(call.Class.Value)
-	if !exists {
-		return unknownIdentifier(call.Class.Value)
+	classStmt := evaluateIdentifier(call.Class, env)
+	if _, err := classStmt.(*obj.Error); err {
+		return classStmt
 	}
 
 	if class, isClass := classStmt.(*obj.Class); isClass {

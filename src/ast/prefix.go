@@ -3,6 +3,7 @@ package ast
 import (
 	l "aura/src/lexer"
 	"fmt"
+	"strings"
 )
 
 // Represents a prefix expression like:
@@ -124,4 +125,117 @@ func (n *NullExpression) expressNode() {}
 
 func (n *NullExpression) Str() string {
 	return "nulo"
+}
+
+// represents a class call
+type ClassCall struct {
+	BaseNode               // extends the BaseNode
+	Class     *Identifier  // represents the class that is call
+	Arguments []Expression // represents the constructor arguments
+}
+
+// generates a new class call instance
+func NewClassCall(token l.Token, class *Identifier, arguemnts []Expression) *ClassCall {
+	return &ClassCall{
+		BaseNode:  BaseNode{token},
+		Class:     class,
+		Arguments: arguemnts,
+	}
+}
+
+func (cc *ClassCall) expressNode() {}
+
+func (cc *ClassCall) Str() string {
+	var buf strings.Builder
+	for idx, arg := range cc.Arguments {
+		if idx == len(cc.Arguments)-1 {
+			buf.WriteString(arg.Str())
+		} else {
+			buf.WriteString(arg.Str() + ", ")
+		}
+	}
+
+	return fmt.Sprintf("nuevo %s(%s)", cc.Class.Str(), buf.String())
+}
+
+// represents a call to a field or method
+type ClassFieldCall struct {
+	BaseNode            // extends the base node
+	Class    Expression // represents the class instance
+	Field    Expression // represents the field that is called
+}
+
+// generates an new class field call instance
+func NewClassFieldCall(token l.Token, class Expression, field Expression) *ClassFieldCall {
+	return &ClassFieldCall{
+		BaseNode: BaseNode{token},
+		Class:    class,
+		Field:    field,
+	}
+}
+
+func (cfc *ClassFieldCall) expressNode() {}
+
+func (cfc *ClassFieldCall) Str() string {
+	return fmt.Sprintf("%s.%s", cfc.Class.Str(), cfc.Field.Str())
+}
+
+// Represents the class method
+type ClassMethodExp struct {
+	BaseNode
+	Name   *Identifier
+	Params []*Identifier
+	Body   *Block
+}
+
+// generates new class method expresion
+func NewClassMethodExp(token l.Token, name *Identifier, params []*Identifier, body *Block) *ClassMethodExp {
+	return &ClassMethodExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Params:   params,
+		Body:     body,
+	}
+}
+
+func (cm *ClassMethodExp) expressNode() {}
+
+func (cm *ClassMethodExp) Str() string {
+	var buf strings.Builder
+	for idx, param := range cm.Params {
+		if idx == len(cm.Params)-1 {
+			buf.WriteString(param.Str())
+		} else {
+			buf.WriteString(param.Str() + ", ")
+		}
+	}
+
+	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
+}
+
+// represents a class field expression
+type ClassFieldExp struct {
+	BaseNode             // extends Base node
+	Name     *Identifier // represents the field or method name
+	Value    Expression  // represents the value of the field
+}
+
+// generates a new class field instance
+func NewClassFieldExp(token l.Token, name *Identifier, value Expression) *ClassFieldExp {
+	return &ClassFieldExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Value:    value,
+	}
+}
+
+func (cf *ClassFieldExp) expressNode() {}
+
+func (cf *ClassFieldExp) Str() string {
+	var buf strings.Builder
+	buf.WriteString(fmt.Sprintf("this.%s", cf.Name.Str()))
+	if cf.Value != nil {
+		buf.WriteString(fmt.Sprintf(" = %s", cf.Value.Str()))
+	}
+	return buf.String()
 }
