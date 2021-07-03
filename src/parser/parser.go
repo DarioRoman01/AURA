@@ -309,7 +309,7 @@ func (p *Parser) parseClassStatement() ast.Stmt {
 	}
 
 	p.advanceTokens()
-	for p.peekToken.Token_type != l.RBRACE && p.peekToken.Token_type != l.EOF {
+	for p.peekToken.Token_type != l.RBRACE && p.peekToken.Token_type != l.EOF && p.peekToken.Token_type != l.SEMICOLON {
 		if expression := p.parseClassMethod(); expression != nil {
 			if method, isMethod := expression.(*ast.ClassMethodExp); isMethod {
 				class.Methods = append(class.Methods, method)

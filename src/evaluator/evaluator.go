@@ -106,6 +106,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return evaluateClassStatement(node, env)
 
 	case *ast.ClassCall:
+		fmt.Println("Entro aqui")
 		CheckIsNotNil(node.Class)
 		return evaluateClassCall(node, env)
 
@@ -244,8 +245,9 @@ func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) o
 	for _, def := range clasStmt.Methods {
 		class.Methods[def.Name.Value] = obj.NewDef(def.Body, env, def.Params...)
 	}
+
 	env.SetItem(class.Name, class)
-	return class
+	return obj.SingletonNUll
 }
 
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
@@ -262,7 +264,6 @@ func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
 		}
 
 		for idx, value := range call.Arguments {
-			fmt.Println("Entro aqui")
 			evaluated := Evaluate(value, env)
 			classInstance.Fields[class.Params[idx].Value] = evaluated
 		}
