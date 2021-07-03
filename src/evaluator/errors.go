@@ -73,3 +73,8 @@ func notIterable(ident string) *obj.Error {
 func notAClass(ident string) *obj.Error {
 	return &obj.Error{Message: fmt.Sprintf("no es una clase %s", ident)}
 }
+
+func indexOutOfRange(found, actual int) *obj.Error {
+	msg := fmt.Sprintf("Indice fuera de rango indice: %d, longitud: %d", found, actual)
+	return newError(msg)
+}

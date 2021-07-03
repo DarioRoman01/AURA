@@ -433,10 +433,10 @@ func (e *EvaluatorTests) TestCallList() {
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[-1];", 5},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[-2];", 4},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[-3];", 23},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[-5];", "Indice fuera de rango"},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[-5];", "Indice fuera de rango indice: -5, longitud: 4"},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[3] + mi_lista[0];", 6},
 		{"var mi_lista = lista[1,23,4,5]; mi_lista[1] + mi_lista[2];", 27},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[100];", "Indice fuera de rango"},
+		{"var mi_lista = lista[1,23,4,5]; mi_lista[100];", "Indice fuera de rango indice: 100, longitud: 4"},
 	}
 
 	for _, test := range tests {

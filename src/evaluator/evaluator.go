@@ -4,6 +4,7 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
+	"fmt"
 	"math"
 	"unicode/utf8"
 )
@@ -261,7 +262,9 @@ func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
 		}
 
 		for idx, value := range call.Arguments {
-			classInstance.Fields[class.Params[idx].Value] = Evaluate(value, env)
+			fmt.Println("Entro aqui")
+			evaluated := Evaluate(value, env)
+			classInstance.Fields[class.Params[idx].Value] = evaluated
 		}
 
 		return classInstance
@@ -368,16 +371,18 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 			return &obj.Error{Message: "El indice debe ser un entero"}
 		}
 
-		if num.Value >= len(object.Values) {
-			return &obj.Error{Message: "Indice fuera de rango"}
+		length := len(object.Values)
+		if num.Value >= length {
+			return indexOutOfRange(num.Value, length)
 		}
 
 		if num.Value < 0 {
-			if int(math.Abs(float64(num.Value))) > len(object.Values) {
-				return &obj.Error{Message: "Indice fuera de rango"}
+			if int(math.Abs(float64(num.Value))) > length {
+
+				return indexOutOfRange(num.Value, length)
 			}
 
-			return object.Values[len(object.Values)+num.Value]
+			return object.Values[length+num.Value]
 		}
 
 		return object.Values[num.Value]
@@ -393,8 +398,18 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 			return &obj.Error{Message: "El indice debe ser un entero"}
 		}
 
-		if num.Value >= utf8.RuneCountInString(object.Value) {
-			return &obj.Error{Message: "Indice fuera de rango"}
+		strLen := utf8.RuneCountInString(object.Value)
+		if num.Value >= strLen {
+			return indexOutOfRange(num.Value, strLen)
+		}
+
+		if num.Value < 0 {
+			if int(math.Abs(float64(num.Value))) > strLen {
+
+				return indexOutOfRange(num.Value, strLen)
+			}
+
+			return &obj.String{Value: string(object.Value[strLen+num.Value])}
 		}
 
 		return &obj.String{Value: string(object.Value[num.Value])}
