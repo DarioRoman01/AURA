@@ -4,7 +4,6 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
-	"fmt"
 	"math"
 	"unicode/utf8"
 )
@@ -102,11 +101,10 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return evaluateMap(node, env)
 
 	case *ast.ClassStatement:
-		CheckIsNotNil(node.Name)
 		return evaluateClassStatement(node, env)
 
 	case *ast.ClassCall:
-		CheckIsNotNil(node.Class)
+		CheckIsNotNil(node.Arguments)
 		return evaluateClassCall(node, env)
 
 	case *ast.LetStatement:
@@ -240,25 +238,22 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 }
 
 func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) obj.Object {
-	class := obj.NewClass(clasStmt.Name.Value, clasStmt.Params)
-	env.SetItem(class.Name, class)
-	fmt.Println(env.Store)
-	for _, def := range clasStmt.Methods {
-		class.Methods[def.Name.Value] = obj.NewDef(def.Body, env, def.Params...)
+	class := obj.NewClass(clasStmt.Params)
+	for _, value := range clasStmt.Methods {
+		class.Methods[value.Name.Value] = obj.NewDef(value.Body, env, value.Params...)
 	}
 
-	return obj.SingletonNUll
+	return class
 }
 
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
-	fmt.Println(env.Store)
-	classStmt, exist := env.GetItem(call.Class.Value)
-	if !exist {
-		return unknownIdentifier(call.Class.Value)
+	evaluated := Evaluate(call.Class, env)
+	if _, isErr := evaluated.(*obj.Error); isErr {
+		return evaluated
 	}
 
-	if class, isClass := classStmt.(*obj.Class); isClass {
-		classInstance := obj.NewClassInstance(class.Name)
+	if class, isClass := evaluated.(*obj.Class); isClass {
+		classInstance := obj.NewClassInstance()
 		classInstance.Methods = class.Methods
 		if len(call.Arguments) != len(class.Params) {
 			return newError("numero incorrector de argumentos para instanciar la clase")

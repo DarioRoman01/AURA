@@ -258,19 +258,31 @@ func (m *Method) Inspect() string {
 }
 
 type Class struct {
-	Name    string
 	Params  []*ast.Identifier
 	Methods map[string]*Def
 }
 
-func (cs *Class) Type() ObjectType { return CLASS }
-func (cs *Class) Inspect() string {
-	return cs.Name
+func (c *Class) Type() ObjectType { return CLASS }
+func (c *Class) Inspect() string {
+	var buf strings.Builder
+	for idx, param := range c.Params {
+		if idx == len(c.Params)-1 {
+			buf.WriteString(param.Value)
+		} else {
+			buf.WriteString(param.Value + ", ")
+		}
+	}
+
+	for _, value := range c.Methods {
+		buf.WriteString("\n")
+		buf.WriteString(value.Inspect())
+	}
+
+	return buf.String()
 }
 
-func NewClass(name string, params []*ast.Identifier) *Class {
+func NewClass(params []*ast.Identifier) *Class {
 	return &Class{
-		Name:    name,
 		Params:  params,
 		Methods: make(map[string]*Def),
 	}
@@ -278,15 +290,13 @@ func NewClass(name string, params []*ast.Identifier) *Class {
 
 // Represents a class object
 type ClassInstance struct {
-	Name    string            // represents the class name
 	Fields  map[string]Object // represents the class fields
 	Methods map[string]*Def   // represents the class methods
 }
 
 // generates a new class instance
-func NewClassInstance(name string) *ClassInstance {
+func NewClassInstance() *ClassInstance {
 	return &ClassInstance{
-		Name:    name,
 		Fields:  make(map[string]Object),
 		Methods: make(map[string]*Def),
 	}
@@ -294,22 +304,20 @@ func NewClassInstance(name string) *ClassInstance {
 
 func (c *ClassInstance) Type() ObjectType { return CLASS }
 func (c *ClassInstance) Inspect() string {
-	var fieldsBuf strings.Builder
+	var buf strings.Builder
+	buf.WriteString("clase (")
 	for _, field := range c.Fields {
-		fieldsBuf.WriteString(field.Inspect())
+		buf.WriteString(field.Inspect())
 	}
 
-	var methodBuf strings.Builder
+	buf.WriteString(") ")
+	buf.WriteString("{ \n")
 	for _, method := range c.Methods {
-		methodBuf.WriteString(method.Inspect())
+		buf.WriteString(method.Inspect() + "\n")
 	}
 
-	return fmt.Sprintf(
-		"clase %s, {\n %s \n %s \n}",
-		c.Name,
-		fieldsBuf.String(),
-		methodBuf.String(),
-	)
+	buf.WriteString("}")
+	return buf.String()
 }
 
 // represents the this object
@@ -319,7 +327,7 @@ type This struct {
 
 func (t *This) Type() ObjectType { return THIS }
 func (t *This) Inspect() string {
-	return t.Class.Name
+	return t.Class.Inspect()
 }
 
 // use singleton patern with true false and null

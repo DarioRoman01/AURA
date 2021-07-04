@@ -161,24 +161,19 @@ func (p *ParserTests) TestIdentifierExpression() {
 
 func (p *ParserTests) TestClassStatement() {
 	source := `
-		clase Persona(nombre, carrera) {
+		var Persona = clase(nombre, edad) {
 			saludar() {
-				escribir("Hola soy ", this.nombre, " y estudio ", this.carrera)
+				escribir("Hola soy ", this.nombre, " y estudio ", this.carrera);
 			}
 		}
 	`
 	parser, program := p.InitParserTests(source)
 	p.Assert().Equal(1, len(program.Staments))
 	p.Assert().Equal(0, len(parser.Errors()))
-
-	p.Assert().IsType(&ast.ClassStatement{}, program.Staments[0].(*ast.ClassStatement))
-	class := program.Staments[0].(*ast.ClassStatement)
-	p.Assert().Equal(class.Name.Value, "Persona")
-	p.Assert().Equal(2, len(class.Params))
-
-	p.Assert().Equal("nombre", class.Params[0].Value)
-	p.Assert().Equal("carrera", class.Params[1].Value)
-	p.Assert().Equal(len(class.Methods), 1)
+	class, isClass := program.Staments[0].(*ast.LetStatement).Value.(*ast.ClassStatement)
+	p.Assert().True(isClass)
+	p.Assert().Implements((*ast.Expression)(nil), class)
+	p.Assert().Equal(1, len(class.Methods))
 }
 
 func (p *ParserTests) TestClassCall() {
