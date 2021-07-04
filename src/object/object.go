@@ -307,7 +307,7 @@ func (c *ClassInstance) Inspect() string {
 	var buf strings.Builder
 	buf.WriteString("clase (")
 	for _, field := range c.Fields {
-		buf.WriteString(field.Inspect())
+		buf.WriteString(field.Inspect() + ", ")
 	}
 
 	buf.WriteString(") ")

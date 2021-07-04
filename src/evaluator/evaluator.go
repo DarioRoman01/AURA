@@ -4,6 +4,7 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
+	"fmt"
 	"math"
 	"unicode/utf8"
 )
@@ -112,6 +113,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		value := Evaluate(node.Value, env)
 		CheckIsNotNil(node.Name)
 		env.SetItem(node.Name.Value, value)
+		fmt.Println(env.Store)
 		return obj.SingletonNUll
 
 	case *ast.Identifier:
@@ -247,6 +249,7 @@ func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) o
 }
 
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
+	fmt.Println(env.Store)
 	evaluated := Evaluate(call.Class, env)
 	if _, isErr := evaluated.(*obj.Error); isErr {
 		return evaluated
