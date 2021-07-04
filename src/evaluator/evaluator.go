@@ -4,6 +4,7 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
+	"fmt"
 	"math"
 	"unicode/utf8"
 )
@@ -240,18 +241,20 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 
 func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) obj.Object {
 	class := obj.NewClass(clasStmt.Name.Value, clasStmt.Params)
+	env.SetItem(class.Name, class)
+	fmt.Println(env.Store)
 	for _, def := range clasStmt.Methods {
 		class.Methods[def.Name.Value] = obj.NewDef(def.Body, env, def.Params...)
 	}
 
-	env.SetItem(class.Name, class)
 	return obj.SingletonNUll
 }
 
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
-	classStmt := evaluateIdentifier(call.Class, env)
-	if _, err := classStmt.(*obj.Error); err {
-		return classStmt
+	fmt.Println(env.Store)
+	classStmt, exist := env.GetItem(call.Class.Value)
+	if !exist {
+		return unknownIdentifier(call.Class.Value)
 	}
 
 	if class, isClass := classStmt.(*obj.Class); isClass {

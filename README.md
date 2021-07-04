@@ -20,13 +20,13 @@ escribir(c); // prints 10
 
 ## Types
 ```ts
-var a = 5; // Integer
-var b = 2.5; // float
-var c = "string"; // string
-var d = verdadero; // boolean
-var e = lista[1,2,3] // list
-var f = mapa{1 => "a", 2 => "b"}; // map
-var sd = nulo; // null
+var number = 5; // Integer
+var float = 2.5; // float
+var str = "string"; // string
+var bool = verdadero; // boolean
+var list = lista[1,2,3] // list
+var map = mapa{1 => "a", 2 => "b"}; // map
+var null = nulo; // null
 ```
 
 ### Operators
@@ -186,28 +186,30 @@ escribir("numero encontrado en el indice ", index);
 // output: numero encontrado en el indice 0
 ```
 
-## Installation
+## <h1>Installation</h1>
 for using it you need to have Go install check https://golang.org/ for install Go
 
-first copy the repository and change to the directory created:
+<h3>first copy the repository and change to the directory created:</h3>
+
 ```shell
 $ git clone https://github.com/DarioRoman01/AURA.git && cd AURA
 ```
-download the dependencies:
+
+<h3>download the dependencies:</h3>
+
 ```shell
 $ go mod download
 ```
-check that tests pass:
+
+<h3>check that tests pass:</h3>
+
 ```shell
 $ go test -v ./...
 ```
-compile the package:
-```shell
-$ go build -o aura
-```
 
-if you use mac or linux just run: \
-this will install aura in your system
+<h3>if you use mac or linux just run the install script.
+this will install aura in your system</h3>
+
 ```shell
 $ chmod a+x install.sh
 ``` 
@@ -216,14 +218,36 @@ $ ./install.sh
 ```
 <br>
 
-if you are using windows follow the next steps: \
-You can discover the install path by running the go list command, as in the following example
+<h2>if you are using windows or you want to install aura in other folder follow the next steps:</h2> 
+
+
+<h3>compile aura:</h3>
+
+```
+go build -o aura
+```
+
+<h3>You can discover the install path by running the go list command, as in the following example</h3>
+
 ```shell
 $ go list -f '{{.Target}}'
 ```
 example output: /home/user/Go/bin/aura <br>
 
-Add the Go install directory to your system's shell path
+<h3>you can change the install target by setting the GOBIN variable using the go env command:</h3>
+
+* on linux:
+```shell
+$ go env -w GOBIN=/path/to/your/bin
+```
+* on windows:
+```powershell
+$ go env -w GOBIN=C:\path\to\your\bin
+```
+<br> 
+
+<h3>Add the Go install directory to your system's shell path</h3>
+
 * on linux:
 ```shell
 $ export PATH=$PATH:/path/to/your/install/directory
@@ -236,19 +260,22 @@ $ set PATH=%PATH%;C:\path\to\your\install\directory
 
 <br>
 
-Once you've updated the shell path, run the go install command to compile and install the package.
-then you need to go where the package was install and rename to binary aura to aura.exe
+<h3>Once you've updated the shell path, run the go install command to compile and install the package.
+then you need to go where the package was install and rename to binary aura to aura.exe</h3>
+
 ```shell
 $ go install
 ```
 
-then you can create a file or play with the repl. 
-to play with the repl just run:
+<h3>then you can create a file or play with the repl. 
+to play with the repl just run:</h3>
+
 ```shell
 $ aura
 ```
 
-to use a file you can create a file with the .aura extension and run: \
+<h3>to use a file you can create a file with the .aura extension and run:</h3> 
+
 **Is important to have the .aura extension otherwise the lenguage wont read the file**
 ```shell
 $ aura some/file.aura
