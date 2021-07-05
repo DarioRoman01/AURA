@@ -1,4 +1,4 @@
-var swap = funcion(a, b, arr) {
+funcion swap(a, b, arr) {
     si (a != b) {
         var tpm = arr[a];
         arr[a] = arr[b];
@@ -6,7 +6,7 @@ var swap = funcion(a, b, arr) {
     }
 }
 
-var partition = funcion(elements, end) {
+funcion partition(elements, end) {
     var pivot_index = end;
     var pivot = elements[pivot_index];
     var p_index = 0;
@@ -29,7 +29,7 @@ var partition = funcion(elements, end) {
     regresa p_index;
 }
 
-var quick_sort(elements){
+funcion quick_sort(elements){
     si(largo(elements) != 0) {
         var pi = partition(elements, largo(elements) - 1);
         por(i en rango(pi)) {

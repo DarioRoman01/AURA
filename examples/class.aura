@@ -38,4 +38,9 @@ clase Stack(data) {
     }
 }
 
-
+var s = nuevo Stack(lista[2,34,65,23,39])
+escribir(s.data);
+s.push(45)
+escribir(s.data);
+s.vaciar();
+escribir(s.data);

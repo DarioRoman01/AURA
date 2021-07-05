@@ -63,14 +63,14 @@ These are operators:
 ## Functions
 For declaring a function, you need to use the next syntax:
 ```ts
-var example = funcion(<Argmuent name>, <Argmuent name>) {
+funcion example(<Argmuent name>, <Argmuent name>) {
     regresa <return value>;
 };
 ```
 
 simple function example:
 ```ts
-var add = funcion(a, b) {
+funcion sum(a, b) {
     regresa a + b;
 }
 
@@ -98,16 +98,16 @@ HashMaps are datastructures that help you store data by key => value
 representation
 
 For declaring a HashMap, you need to use the next syntax:
-```ts
-var example = mapa{key => value, key => value, key => value};
+```go
+example := mapa{key => value, key => value, key => value};
 
 // get the value of the given key
 example[key];
 ```
 
 for example:
-```dart
-var mi_mapa = mapa{
+```go
+mi_mapa := mapa{
     "a" => 1,
     "b" => 2,
     "c" => 3,
@@ -125,8 +125,8 @@ mientras(<condition>) {
 ```
 
 for example:
-```ts
-var i = 0;
+```go
+i := 0;
 mientras(i <= 5) {
     escribir("hola mundo");
     i++;
@@ -177,13 +177,13 @@ clase Persona(name, age) {
     }
 }
 
-var p = nuevo Persona("eddy", 24);
+p := nuevo Persona("eddy", 24);
 p.saludar(); // output: hi im eddy i have 24 years old
 ```
 
 with all this lets look a real world example with bynary search:
 ```ts
-var binary_search = funcion(elements, val) {
+funcion binary_search(elements, val) {
     var left = 0;
     var rigth = largo(elements) - 1;
     var mid = 0;
@@ -206,8 +206,8 @@ var binary_search = funcion(elements, val) {
     regresa -1
 }
 
-var numbers = lista[1,4,6,9,10,12,26];
-var index = binary_search(numbers, 1);
+numbers := lista[1,4,6,9,10,12,26];
+index := binary_search(numbers, 1);
 escribir("numero encontrado en el indice ", index);
 // output: numero encontrado en el indice 0
 ```

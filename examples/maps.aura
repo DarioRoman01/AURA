@@ -1,4 +1,4 @@
-var mi_mapa = mapa{
+mi_mapa := mapa{
     "a" => 1, 
     "b" => 2,
     "c" => 3
@@ -10,7 +10,7 @@ mi_mapa["a"] = 24;
 escribir(mi_mapa);
 escribir(largo(mi_mapa));
 
-var existe = funcion(llave, map) {
+funcion existe(llave, map) {
     var valor = map[llave];
     si (valor == nulo) {
         regresa "la llave no existe";
@@ -19,5 +19,5 @@ var existe = funcion(llave, map) {
     }
 }
 
-var resultado = existe("d", mi_mapa);
+resultado := existe("d", mi_mapa);
 escribir(resultado);

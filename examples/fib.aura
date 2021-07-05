@@ -1,4 +1,4 @@
-var fib = funcion(n) {
+funcion fib(n) {
     si(n <= 1) {
         regresa n;
     }

@@ -1,8 +1,8 @@
-var mi_lista = lista[2, 3, 5];
+mi_lista := lista[2, 3, 5];
 escribir(mi_lista);
 
 escribir("mi lista es: ", mi_lista);
-escribir("el largo de mi lista es: ", longitud(mi_lista));
+escribir("el largo de mi lista es: ", largo(mi_lista));
 escribir("el primer valor de mi lista es ", mi_lista[0])
 
 mi_lista:pop();

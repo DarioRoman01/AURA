@@ -1,4 +1,4 @@
-var insertion_sort = funcion(elements) {
+funcion insertion_sort(elements) {
     por(i en rango(1, largo(elements))) {
         var anchor = elements[i];
         var j = i - 1;
@@ -13,8 +13,8 @@ var insertion_sort = funcion(elements) {
     escribir("Array ordernado ", elements)
 }
 
-var main = funcion() {
-    var tests = lista[
+funcion main() {
+    tests := lista[
         lista[11,9,29,7,2,15,28],
         lista[3, 7, 9, 11],
         lista[25, 22, 21, 10],

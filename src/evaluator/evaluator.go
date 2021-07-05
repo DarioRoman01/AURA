@@ -133,7 +133,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 
 	case *ast.Function:
 		CheckIsNotNil(node.Body)
-		return obj.NewDef(node.Body, env, node.Parameters...)
+		return evaluateFunction(node, env)
 
 	case *ast.ImportStatement:
 		CheckIsNotNil(node.Path)
@@ -397,6 +397,16 @@ func evaluateProgram(program ast.Program, env *obj.Enviroment) obj.Object {
 	}
 
 	return result
+}
+
+func evaluateFunction(function *ast.Function, env *obj.Enviroment) obj.Object {
+	if function.Name != nil {
+		def := obj.NewDef(function.Body, env, function.Parameters...)
+		env.SetItem(function.Name.Value, def)
+		return obj.SingletonNUll
+	}
+
+	return obj.NewDef(function.Body, env, function.Parameters...)
 }
 
 // evaluate a while looop expression

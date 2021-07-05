@@ -1,4 +1,4 @@
-var sonPares = funcion(num1, num2) {
+funcion sonPares(num1, num2) {
     si (num1 % 2 == 0 && num2 % 2 == 0) {
         regresa "ambos son pares";
     } si_no {
@@ -6,7 +6,7 @@ var sonPares = funcion(num1, num2) {
     }
 }
 
-var unoEsPar = funcion(num1, num2) {
+funcion unoEsPar(num1, num2) {
     si (num1 % 2 == 0 || num2 % 2 == 0) {
         regresa "almenos uno es par";
     } si_no {
@@ -14,13 +14,13 @@ var unoEsPar = funcion(num1, num2) {
     }
 }
 
-var num = recibir_entero("ingrese un numero: ");
-var num2 = recibir_entero("ingrese el otro numero: ");
+num := recibir_entero("ingrese un numero: ");
+num2 := recibir_entero("ingrese el otro numero: ");
 
-var resultado = sonPares(num, num2);
+resultado := sonPares(num, num2);
 escribir(resultado);
 
-var resultado2 = unoEsPar(num, num2);
+resultado2 := unoEsPar(num, num2);
 escribir(resultado);
 
 

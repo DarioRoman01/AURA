@@ -48,7 +48,12 @@ func (p *Parser) parseFor() ast.Expression {
 // parse a function expression
 func (p *Parser) parseFunction() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	function := ast.NewFunction(*p.currentToken, nil)
+	function := ast.NewFunction(*p.currentToken, nil, nil)
+	if p.peekToken.Token_type == l.IDENT {
+		p.advanceTokens()
+		function.Name = p.parseIdentifier().(*ast.Identifier)
+	}
+
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error -> funcion {}
 		return nil

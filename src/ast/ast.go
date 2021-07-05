@@ -198,14 +198,16 @@ func (i If) Str() string {
 // Represents a function declaration
 type Function struct {
 	BaseNode                 // Extends base node struct
+	Name       *Identifier   // represents the function name
 	Parameters []*Identifier // represents the parameters of the function
 	Body       *Block        // represents the function body
 }
 
 // create a new function instance
-func NewFunction(token l.Token, body *Block, parameters ...*Identifier) *Function {
+func NewFunction(token l.Token, name *Identifier, body *Block, parameters ...*Identifier) *Function {
 	return &Function{
 		BaseNode:   BaseNode{token},
+		Name:       name,
 		Parameters: parameters,
 		Body:       body,
 	}
@@ -223,7 +225,7 @@ func (f Function) Str() string {
 		}
 	}
 
-	return fmt.Sprintf("%s(%s) %s", f.TokenLiteral(), buf.String(), f.Body.Str())
+	return fmt.Sprintf("funcion %s(%s) %s", f.Name.Value, buf.String(), f.Body.Str())
 }
 
 // represents a function call
