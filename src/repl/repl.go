@@ -26,10 +26,10 @@ func printParseErros(errors []string) {
 func clearConsole() {
 	var cmd *exec.Cmd
 
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cls")
-	} else {
+	if runtime.GOOS == "linux" {
 		cmd = exec.Command("clear")
+	} else {
+		cmd = exec.Command("cls")
 	}
 
 	cmd.Stdout = os.Stdout

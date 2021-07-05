@@ -368,12 +368,13 @@ func (m *MapExpression) Str() string {
 // Represents a class statement
 type ClassStatement struct {
 	BaseNode                   // extends base node
+	Name     *Identifier       // represents the class name
 	Params   []*Identifier     // represents the constructor params
 	Methods  []*ClassMethodExp // represents all the methods in the class
 }
 
 // generates a new class statement instance
-func NewClassStatement(token l.Token, params []*Identifier, methods []*ClassMethodExp) *ClassStatement {
+func NewClassStatement(token l.Token, name *Identifier, params []*Identifier, methods []*ClassMethodExp) *ClassStatement {
 	return &ClassStatement{
 		BaseNode: BaseNode{token},
 		Params:   params,
@@ -402,7 +403,8 @@ func (c *ClassStatement) Str() string {
 	}
 
 	return fmt.Sprintf(
-		"clase(%s) {\n %s \n }",
+		"clase %s(%s) {\n %s \n }",
+		c.Name.Value,
 		paramsBuf.String(),
 		buf.String(),
 	)

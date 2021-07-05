@@ -293,7 +293,12 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 
 func (p *Parser) parseClassStatement() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	class := ast.NewClassStatement(*p.currentToken, nil, []*ast.ClassMethodExp{})
+	class := ast.NewClassStatement(*p.currentToken, nil, nil, []*ast.ClassMethodExp{})
+	if !p.expepectedToken(l.IDENT) {
+		return nil
+	}
+
+	class.Name = p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.LPAREN) {
 		return nil
 	}

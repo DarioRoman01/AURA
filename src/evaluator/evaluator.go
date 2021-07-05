@@ -102,7 +102,9 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return evaluateMap(node, env)
 
 	case *ast.ClassStatement:
-		return evaluateClassStatement(node, env)
+		class := obj.NewClass(node.Name, node.Params, node.Methods)
+		env.SetItem(class.Name.Value, class)
+		return obj.SingletonNUll
 
 	case *ast.ClassCall:
 		CheckIsNotNil(node.Arguments)
@@ -239,34 +241,29 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 	return notIterable(rangeExpress.Range.Str())
 }
 
-func evaluateClassStatement(clasStmt *ast.ClassStatement, env *obj.Enviroment) obj.Object {
-	class := obj.NewClass(clasStmt.Params)
-	for _, value := range clasStmt.Methods {
-		class.Methods[value.Name.Value] = obj.NewDef(value.Body, env, value.Params...)
+func extendClassEnviroment(class *obj.Class, args []obj.Object, methods []*ast.ClassMethodExp, env *obj.Enviroment) *obj.Enviroment {
+	classEnv := obj.NewEnviroment(env)
+	for idx, param := range class.Params {
+		classEnv.SetItem(param.Value, args[idx])
 	}
 
-	return class
+	for _, method := range methods {
+		classEnv.SetItem(method.Name.Value, obj.NewDef(method.Body, classEnv, method.Params...))
+	}
+
+	return classEnv
 }
 
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
-	fmt.Println(env.Store)
 	evaluated := Evaluate(call.Class, env)
 	if _, isErr := evaluated.(*obj.Error); isErr {
 		return evaluated
 	}
 
 	if class, isClass := evaluated.(*obj.Class); isClass {
-		classInstance := obj.NewClassInstance()
-		classInstance.Methods = class.Methods
-		if len(call.Arguments) != len(class.Params) {
-			return newError("numero incorrector de argumentos para instanciar la clase")
-		}
-
-		for idx, value := range call.Arguments {
-			evaluated := Evaluate(value, env)
-			classInstance.Fields[class.Params[idx].Value] = evaluated
-		}
-
+		args := evaluateExpression(call.Arguments, env)
+		classEnv := extendClassEnviroment(class, args, class.Methods, env)
+		classInstance := obj.NewClassInstance(class.Name.Value, classEnv)
 		return classInstance
 	}
 

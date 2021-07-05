@@ -1,8 +1,8 @@
-var persona = clase(name, age) {
+clase Persona(name, age) {
     saludar() {
-        escribir("hola soy", name, " y tengo ", age);
+        escribir("Hi im ", name, ", i have ", age, "years old");
     }
 }
 
-var p = nuevo persona("dario", 19);
+var p = nuevo Persona("dario", 19);
 p;

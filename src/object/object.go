@@ -258,8 +258,9 @@ func (m *Method) Inspect() string {
 }
 
 type Class struct {
-	Params  []*ast.Identifier
-	Methods map[string]*Def
+	Name    *ast.Identifier       // represents the class name
+	Params  []*ast.Identifier     // represents the constructor params
+	Methods []*ast.ClassMethodExp // represents all the methods in the class
 }
 
 func (c *Class) Type() ObjectType { return CLASS }
@@ -275,49 +276,37 @@ func (c *Class) Inspect() string {
 
 	for _, value := range c.Methods {
 		buf.WriteString("\n")
-		buf.WriteString(value.Inspect())
+		buf.WriteString(value.Str())
 	}
 
 	return buf.String()
 }
 
-func NewClass(params []*ast.Identifier) *Class {
+func NewClass(name *ast.Identifier, params []*ast.Identifier, methods []*ast.ClassMethodExp) *Class {
 	return &Class{
+		Name:    name,
 		Params:  params,
-		Methods: make(map[string]*Def),
+		Methods: methods,
 	}
 }
 
 // Represents a class object
 type ClassInstance struct {
-	Fields  map[string]Object // represents the class fields
-	Methods map[string]*Def   // represents the class methods
+	Name string
+	Env  *Enviroment
 }
 
 // generates a new class instance
-func NewClassInstance() *ClassInstance {
+func NewClassInstance(name string, env *Enviroment) *ClassInstance {
 	return &ClassInstance{
-		Fields:  make(map[string]Object),
-		Methods: make(map[string]*Def),
+		Name: name,
+		Env:  env,
 	}
 }
 
 func (c *ClassInstance) Type() ObjectType { return CLASS }
 func (c *ClassInstance) Inspect() string {
-	var buf strings.Builder
-	buf.WriteString("clase (")
-	for _, field := range c.Fields {
-		buf.WriteString(field.Inspect() + ", ")
-	}
-
-	buf.WriteString(") ")
-	buf.WriteString("{ \n")
-	for _, method := range c.Methods {
-		buf.WriteString(method.Inspect() + "\n")
-	}
-
-	buf.WriteString("}")
-	return buf.String()
+	return fmt.Sprintf("clase %s", c.Name)
 }
 
 // represents the this object
