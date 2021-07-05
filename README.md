@@ -10,12 +10,16 @@ It is an interpreted language fully built using Go standar libreary.
 ## Syntax example
 
 ## Variables
-```ts
+```go
 var a = 5;
 var b = 5;
 var c = a + b;
 
-escribir(c); // prints 10
+or 
+
+a := 5;
+b := 5;
+c := a + b;
 ```
 
 ## Types

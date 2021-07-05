@@ -363,16 +363,16 @@ func (e *EvaluatorTests) TestListMethods() {
 		source   string
 		expected interface{}
 	}{
-		{"var a = lista[2,3]; a:agregar(4); a:pop();", 4},
-		{"var a = lista[2,3,4,2,12]; a:agregar(17); a:pop();", 17},
-		{"var a = lista[2,3,4,2,12]; a:agregar(4); a:popIndice(1);", 3},
-		{"var a = lista[2,3,4,2,12]; a:agregar(4); a:popIndice(0);", 2},
-		{"var a = lista[2,3]; a:agregar(4); largo(a);", 3},
-		{"var a = lista[2,3]; largo(a);", 2},
-		{"var a = lista[2,3,4,2,12]; a:popIndice(0); largo(a);", 4},
-		{"var a = lista[2,3,4,2,12]; a:popIndice(0); a:contiene(3);", true},
-		{"var a = lista[2,3,4,12]; a:popIndice(0); a:contiene(2);", false},
-		{"var a = lista[2,3,4,2,12]; a:popIndice(0); a:agregar(25); a:contiene(25);", true},
+		{"a := lista[2,3]; a:agregar(4); a:pop();", 4},
+		{"a := lista[2,3,4,2,12]; a:agregar(17); a:pop();", 17},
+		{"a := lista[2,3,4,2,12]; a:agregar(4); a:popIndice(1);", 3},
+		{"a := lista[2,3,4,2,12]; a:agregar(4); a:popIndice(0);", 2},
+		{"a := lista[2,3]; a:agregar(4); largo(a);", 3},
+		{"a := lista[2,3]; largo(a);", 2},
+		{"a := lista[2,3,4,2,12]; a:popIndice(0); largo(a);", 4},
+		{"a := lista[2,3,4,2,12]; a:popIndice(0); a:contiene(3);", true},
+		{"a := lista[2,3,4,12]; a:popIndice(0); a:contiene(2);", false},
+		{"a := lista[2,3,4,2,12]; a:popIndice(0); a:agregar(25); a:contiene(25);", true},
 	}
 
 	for _, test := range tests {
@@ -387,12 +387,12 @@ func (e *EvaluatorTests) TestListMethods() {
 
 func (e *EvaluatorTests) TestForLoop() {
 	tests := []tuple{
-		{`var i = 0; por(n en rango(10)) { i++; }; i;`, 10},
-		{`var i = 0; por(n en rango(3)) { i++; }; i;`, 3},
-		{`var i = 0; por(n en rango(5)) { i++; }; i;`, 5},
-		{`var i = 0; por(n en rango(4)) { i++; }; i;`, 4},
-		{`var i = 0; por(n en rango(5, 10)) {i += n}; i;`, 35},
-		{`var i = 0; var j = "hola"; por(k en j) { i++; }; i;`, 4},
+		{`i := 0; por(n en rango(10)) { i++; }; i;`, 10},
+		{`i := 0; por(n en rango(3)) { i++; }; i;`, 3},
+		{`i := 0; por(n en rango(5)) { i++; }; i;`, 5},
+		{`i := 0; por(n en rango(4)) { i++; }; i;`, 4},
+		{`i := 0; por(n en rango(5, 10)) {i += n}; i;`, 35},
+		{`i := 0; j := "hola"; por(k en j) { i++; }; i;`, 4},
 	}
 
 	for _, test := range tests {
@@ -403,16 +403,16 @@ func (e *EvaluatorTests) TestForLoop() {
 
 func (e *EvaluatorTests) TestReassigment() {
 	tests := []tuple{
-		{"var a = 5; a = 2; a;", 2},
-		{`var a = 20; a = 10; a;`, 10},
-		{"var a = 12; a = 23; a = 25; a;", 25},
-		{"var a = 32; a = 34; a = 5; a;", 5},
-		{"var a = 32; a = 34; a = 6; a;", 6},
-		{`var b = mapa{"a" => 1, "b" => 2}; b["a"] = 5; b["a"]`, 5},
-		{`var b = mapa{"a" => 1, "b" => 2}; b["a"] = 5; b["a"] = 12; b["a"]`, 12},
-		{`var b = mapa{"a" => 1, "b" => 2}; b["c"] = 32; b["c"];`, 32},
-		{`var c = lista[2,3,4]; c[0] = 10; c[0]`, 10},
-		{`var c = lista[2,3,4]; c[0] = 10; c[0] = 23; c[0]`, 23},
+		{"a := 5; a = 2; a;", 2},
+		{`a := 20; a = 10; a;`, 10},
+		{"a := 12; a = 23; a = 25; a;", 25},
+		{"a := 32; a = 34; a = 5; a;", 5},
+		{"a := 32; a = 34; a = 6; a;", 6},
+		{`b := mapa{"a" => 1, "b" => 2}; b["a"] = 5; b["a"]`, 5},
+		{`b := mapa{"a" => 1, "b" => 2}; b["a"] = 5; b["a"] = 12; b["a"]`, 12},
+		{`b := mapa{"a" => 1, "b" => 2}; b["c"] = 32; b["c"];`, 32},
+		{`c := lista[2,3,4]; c[0] = 10; c[0]`, 10},
+		{`c := lista[2,3,4]; c[0] = 10; c[0] = 23; c[0]`, 23},
 	}
 
 	for _, test := range tests {
@@ -426,17 +426,17 @@ func (e *EvaluatorTests) TestCallList() {
 		source   string
 		expected interface{}
 	}{
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[1];", 23},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[0];", 1},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[2];", 4},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[3];", 5},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[-1];", 5},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[-2];", 4},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[-3];", 23},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[-5];", "Indice fuera de rango indice: -5, longitud: 4"},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[3] + mi_lista[0];", 6},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[1] + mi_lista[2];", 27},
-		{"var mi_lista = lista[1,23,4,5]; mi_lista[100];", "Indice fuera de rango indice: 100, longitud: 4"},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[1];", 23},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[0];", 1},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[2];", 4},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[3];", 5},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[-1];", 5},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[-2];", 4},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[-3];", 23},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[-5];", "Indice fuera de rango indice: -5, longitud: 4"},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[3] + mi_lista[0];", 6},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[1] + mi_lista[2];", 27},
+		{"mi_lista := lista[1,23,4,5]; mi_lista[100];", "Indice fuera de rango indice: 100, longitud: 4"},
 	}
 
 	for _, test := range tests {
@@ -451,13 +451,13 @@ func (e *EvaluatorTests) TestCallList() {
 
 func (e *EvaluatorTests) TestOperators() {
 	tests := []tuple{
-		{"var a = 10; a++; a;", 11},
-		{"var a = 10; a+=1; a;", 11},
-		{"var a = 10; a--; a;", 9},
-		{"var a = 10; a-=1; a;", 9},
-		{"var a = 10; a/=2; a;", 5},
-		{"var a = 10; a*=2; a;", 20},
-		{"var a = 10; a**; a;", 100},
+		{"a := 10; a++; a;", 11},
+		{"a := 10; a+=1; a;", 11},
+		{"a := 10; a--; a;", 9},
+		{"a := 10; a-=1; a;", 9},
+		{"a := 10; a/=2; a;", 5},
+		{"a := 10; a*=2; a;", 20},
+		{"a := 10; a**; a;", 100},
 	}
 
 	for _, test := range tests {
@@ -478,7 +478,7 @@ func (e *EvaluatorTests) EvaluateClassEvaluation() {
 				}
 			}
 
-			var p = nuevo Persona("joe", 28);
+			p := nuevo Persona("joe", 28);
 			p.saludar();
 		`,
 			expected: "Hi im joe and i have 28 years old",
@@ -490,7 +490,7 @@ func (e *EvaluatorTests) EvaluateClassEvaluation() {
 				}
 			}
 
-			var p = nuevo Persona("joe", 28);
+			p := nuevo Persona("joe", 28);
 			p.name;
 		`,
 			expected: "joe",
@@ -502,7 +502,7 @@ func (e *EvaluatorTests) EvaluateClassEvaluation() {
 				}
 			}
 
-			var p = nuevo Persona("joe", 28);
+			p := nuevo Persona("joe", 28);
 			p.age;
 		`,
 			expected: 28,
@@ -538,18 +538,18 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `entero("1")`, expected: 1},
 		{source: `entero("hola")`, expected: "No se puede parsear como entero hola"},
 		{source: "texto(12)", expected: "12"},
-		{source: "var a = lista[2,3,4]; largo(a);", expected: 3},
-		{source: "var a = lista[2,3,4]; tipo(a);", expected: "lista"},
-		{source: `var b = mapa{"a" => 2}; largo(b);`, expected: 1},
-		{source: `var b = mapa{"a" => 2}; tipo(b);`, expected: "mapa"},
-		{source: `var b = mapa{"a" => 2}; tipo(b["a"]);`, expected: "entero"},
-		{source: `var a = "aura"; a:contiene("a");`, expected: true},
-		{source: `var a = "aura"; a:contiene("au");`, expected: true},
-		{source: `var a = "aura"; a:contiene("ra");`, expected: true},
-		{source: `var a = "aura"; a:contiene("ara");`, expected: false},
-		{source: `var a = "aura"; a:contiene("b");`, expected: false},
-		{source: `var a = lista[2,34,45]; a:contiene(2);`, expected: true},
-		{source: `var a = lista[2,34,45]; a:contiene(342);`, expected: false},
+		{source: "a := lista[2,3,4]; largo(a);", expected: 3},
+		{source: "a := lista[2,3,4]; tipo(a);", expected: "lista"},
+		{source: `b := mapa{"a" => 2}; largo(b);`, expected: 1},
+		{source: `b := mapa{"a" => 2}; tipo(b);`, expected: "mapa"},
+		{source: `b := mapa{"a" => 2}; tipo(b["a"]);`, expected: "entero"},
+		{source: `a := "aura"; a:contiene("a");`, expected: true},
+		{source: `a := "aura"; a:contiene("au");`, expected: true},
+		{source: `a := "aura"; a:contiene("ra");`, expected: true},
+		{source: `a := "aura"; a:contiene("ara");`, expected: false},
+		{source: `a := "aura"; a:contiene("b");`, expected: false},
+		{source: `a := lista[2,34,45]; a:contiene(2);`, expected: true},
+		{source: `a := lista[2,34,45]; a:contiene(342);`, expected: false},
 	}
 
 	for _, test := range tests {

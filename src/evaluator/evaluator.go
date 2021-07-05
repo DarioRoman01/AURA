@@ -121,6 +121,13 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		env.SetItem(node.Name.Value, value)
 		return obj.SingletonNUll
 
+	case *ast.AssigmentExp:
+		CheckIsNotNil(node.Val)
+		value := Evaluate(node.Val, env)
+		CheckIsNotNil(node.Name)
+		env.SetItem(node.Name.Value, value)
+		return obj.SingletonNUll
+
 	case *ast.Identifier:
 		return evaluateIdentifier(node, env)
 

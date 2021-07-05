@@ -60,6 +60,7 @@ var precedences = map[l.TokenType]Precedence{
 	l.PLUS2:       PRODUCT,
 	l.MINUS2:      PRODUCT,
 	l.DOT:         PREFIX,
+	l.COLONASSING: PREFIX,
 }
 
 // Represents the Parser of the programming lenguage
@@ -472,6 +473,7 @@ func (p *Parser) registerInfixFns() {
 	p.infixParseFns[l.AND] = p.parseInfixExpression
 	p.infixParseFns[l.OR] = p.parseInfixExpression
 	p.infixParseFns[l.DOT] = p.parseClassFieldsCall
+	p.infixParseFns[l.COLONASSING] = p.parseAssigmentExp
 }
 
 // register all the functions to parse prefix expressions

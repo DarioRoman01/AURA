@@ -423,3 +423,22 @@ func (i *ImportStatement) stmtNode() {}
 func (i *ImportStatement) Str() string {
 	return fmt.Sprintf("importar %s", i.Path.Str())
 }
+
+type AssigmentExp struct {
+	BaseNode
+	Name *Identifier
+	Val  Expression
+}
+
+func NewAssigmentExp(token l.Token, name *Identifier, val Expression) *AssigmentExp {
+	return &AssigmentExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Val:      val,
+	}
+}
+
+func (a *AssigmentExp) expressNode() {}
+func (a *AssigmentExp) Str() string {
+	return fmt.Sprintf("%s := %s", a.Name.Value, a.Val.Str())
+}

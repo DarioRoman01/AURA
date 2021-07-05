@@ -12,6 +12,7 @@ const (
 	ARROW
 	CLASS
 	COLON
+	COLONASSING
 	COMMA
 	DATASTRCUT
 	DIVISION
@@ -72,6 +73,7 @@ var Tokens = [...]string{
 	ARROW:       "=>",
 	CLASS:       "clase",
 	COLON:       ":",
+	COLONASSING: ":=",
 	COMMA:       ",",
 	DIVISION:    "/",
 	DOT:         ".",

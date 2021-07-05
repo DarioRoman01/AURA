@@ -99,3 +99,15 @@ func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
 	call.Field = p.parseExpression(LOWEST)
 	return call
 }
+
+func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
+	ident, isIdent := left.(*ast.Identifier)
+	if !isIdent {
+		return nil
+	}
+
+	assigment := ast.NewAssigmentExp(*p.currentToken, ident, nil)
+	p.advanceTokens()
+	assigment.Val = p.parseExpression(LOWEST)
+	return assigment
+}

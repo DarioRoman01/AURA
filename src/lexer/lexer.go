@@ -69,8 +69,6 @@ func (l *Lexer) NextToken() Token {
 		token = NewToken(LBRACKET, l.character)
 	case "]":
 		token = NewToken(RBRACKET, l.character)
-	case ":":
-		token = NewToken(COLON, l.character)
 	case ",":
 		token = NewToken(COMMA, l.character)
 	case "%":
@@ -79,6 +77,13 @@ func (l *Lexer) NextToken() Token {
 		token = NewToken(SEMICOLON, l.character)
 	case ".":
 		token = NewToken(DOT, l.character)
+
+	case ":":
+		if l.peekCharacter() == "=" {
+			token = l.makeTwoCharacterToken(COLONASSING)
+		} else {
+			token = NewToken(COLON, l.character)
+		}
 
 	case "=":
 		if l.peekCharacter() == "=" {
