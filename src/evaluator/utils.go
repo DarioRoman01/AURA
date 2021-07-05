@@ -21,16 +21,18 @@ func makeStringList(str string) []obj.Object {
 
 // import the enviroment of other file parsing and evaluating the other file
 func importEnv(path string) (*obj.Enviroment, *obj.Error) {
-	// check that path exists and its a file
+	// check that path exists
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return nil, newError(fmt.Sprintf("La ruta %s no existe", path))
 	}
 
+	// check that the path is not a dir
 	if fileInfo.IsDir() {
 		return nil, newError("No se indico un archivo!")
 	}
 
+	// check that the file has the .aura extension
 	if filepath.Ext(path) != ".aura" {
 		return nil, newError(fmt.Sprintf(
 			"El archivo %s no es un archivo aura",
@@ -43,6 +45,8 @@ func importEnv(path string) (*obj.Enviroment, *obj.Error) {
 	parser := parser.NewParser(lexer)
 	env := obj.NewEnviroment(nil)
 	program := parser.ParseProgam()
+
+	// the file has syntax erros
 	if len(parser.Errors()) != 0 {
 		return nil, newError(fmt.Sprintf(
 			"el archivo %s contiene errores de syntaxis",

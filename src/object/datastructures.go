@@ -112,7 +112,7 @@ func (s String) IsUpper() Object {
 	return SingletonFALSE
 }
 
-func (s *String) IsLower() Object {
+func (s String) IsLower() Object {
 	for _, char := range s.Value {
 		if !unicode.IsUpper(char) {
 			return SingletonTRUE

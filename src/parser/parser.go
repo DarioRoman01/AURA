@@ -51,7 +51,7 @@ var precedences = map[l.TokenType]Precedence{
 	l.LBRACKET:    CALL,
 	l.OR:          ANDOR,
 	l.ASSING:      ANDOR,
-	l.COLON:       CALL,
+	l.COLON:       PREFIX,
 	l.PLUSASSING:  PRODUCT,
 	l.MINUSASSING: PRODUCT,
 	l.DIVASSING:   PRODUCT,

@@ -347,15 +347,21 @@ func (e *EvaluatorTests) TestMapMethods() {
 func (e *EvaluatorTests) TestStringMethods() {
 	tests := []struct {
 		source   string
-		expected string
+		expected interface{}
 	}{
 		{source: `s := "hola"; s:mayusculas();`, expected: "HOLA"},
 		{source: `s := "HOLA"; s:minusculas();`, expected: "hola"},
+		{source: `s := "hola"; s:contiene("g");`, expected: false},
+		{source: `s := "hola"; s:contiene("h");`, expected: true},
 	}
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		e.testStringObject(evaluated, test.expected)
+		if str, isStr := test.expected.(string); isStr {
+			e.testStringObject(evaluated, str)
+		} else {
+			e.testBooleanObject(evaluated, test.expected.(bool))
+		}
 	}
 }
 

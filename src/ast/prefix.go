@@ -182,10 +182,10 @@ func (cfc *ClassFieldCall) Str() string {
 
 // Represents the class method
 type ClassMethodExp struct {
-	BaseNode
-	Name   *Identifier
-	Params []*Identifier
-	Body   *Block
+	BaseNode               // Extends the base node
+	Name     *Identifier   // represents the method identifier
+	Params   []*Identifier // represents the method params
+	Body     *Block        // represents the method body
 }
 
 // generates new class method expresion

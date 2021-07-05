@@ -121,3 +121,24 @@ func (r *Reassignment) expressNode() {}
 func (r *Reassignment) Str() string {
 	return fmt.Sprintf("%s = %s", r.Identifier.Str(), r.NewVal.Str())
 }
+
+// represents an assigment with the := operator
+type AssigmentExp struct {
+	BaseNode
+	Name *Identifier
+	Val  Expression
+}
+
+// generates a new assigment instance
+func NewAssigmentExp(token l.Token, name *Identifier, val Expression) *AssigmentExp {
+	return &AssigmentExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Val:      val,
+	}
+}
+
+func (a *AssigmentExp) expressNode() {}
+func (a *AssigmentExp) Str() string {
+	return fmt.Sprintf("%s := %s", a.Name.Value, a.Val.Str())
+}

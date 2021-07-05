@@ -255,6 +255,7 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 	return notIterable(rangeExpress.Range.Str())
 }
 
+// extends the class enviroment with the methods and constructor params
 func extendClassEnviroment(class *obj.Class, args []obj.Object, methods []*ast.ClassMethodExp, env *obj.Enviroment) *obj.Enviroment {
 	classEnv := obj.NewEnviroment(env)
 	for idx, param := range class.Params {
@@ -268,6 +269,7 @@ func extendClassEnviroment(class *obj.Class, args []obj.Object, methods []*ast.C
 	return classEnv
 }
 
+// evaluate a call to a new class
 func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
 	evaluated := Evaluate(call.Class, env)
 	if _, isErr := evaluated.(*obj.Error); isErr {
@@ -284,6 +286,7 @@ func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
 	return notAClass(call.Class.Value)
 }
 
+// evaluate a call to a class instance field or method
 func evaluateClassFieldCall(call *ast.ClassFieldCall, env *obj.Enviroment) obj.Object {
 	evaluated := Evaluate(call.Class, env)
 	if _, isErr := evaluated.(*obj.Error); isErr {
@@ -302,6 +305,7 @@ func evaluateClassFieldCall(call *ast.ClassFieldCall, env *obj.Enviroment) obj.O
 	return notAClass(evaluated.Inspect())
 }
 
+// evaluate a class field reassigment
 func evaluateFieldReassigment(call *ast.ClassFieldCall, class *obj.ClassInstance, newVal ast.Expression) obj.Object {
 	ident, isIdent := call.Field.(*ast.Identifier)
 	if !isIdent {
@@ -325,6 +329,7 @@ func CheckIsNotNil(val interface{}) {
 	}
 }
 
+// evaluate an import statement
 func evaluateImportStatement(importStmt *ast.ImportStatement, env *obj.Enviroment) obj.Object {
 	evaluated := Evaluate(importStmt.Path, env)
 	if str, isStr := evaluated.(*obj.String); isStr {
