@@ -308,6 +308,22 @@ func (p *ParserTests) TestFunctionLiteral() {
 	p.testInfixExpression(body.Expression, "x", "+", "y")
 }
 
+func (p *ParserTests) TestFunctionDeclaration() {
+	source := "funcion suma(x, y) { x + y }"
+	parser, program := p.InitParserTests(source)
+	p.testProgramStatements(parser, program, 1)
+	function := (program.Staments[0].(*ast.ExpressionStament)).Expression.(*ast.Function)
+	p.Assert().IsType(&ast.Function{}, function)
+	p.Assert().Equal(2, len(function.Parameters))
+	p.Assert().NotNil(function.Name)
+	p.Assert().Equal("suma", function.Name.Value)
+
+	p.Assert().Equal(1, len(function.Body.Staments))
+	body := function.Body.Staments[0].(*ast.ExpressionStament)
+	p.Assert().NotNil(body.Expression)
+	p.testInfixExpression(body.Expression, "x", "+", "y")
+}
+
 func (p *ParserTests) TestFunctionParameter() {
 	tests := []map[string]interface{}{
 		{

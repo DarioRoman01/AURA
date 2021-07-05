@@ -605,9 +605,9 @@ func (e *EvaluatorTests) TestFunctionEvaluation() {
 
 func (e *EvaluatorTests) TestFunctionCalls() {
 	tests := []tuple{
-		{"var identidad = funcion(x) { x }; identidad(5);", 5},
+		{"funcion identidad(x) { x }; identidad(5);", 5},
 		{`
-			var identidad = funcion(x) {
+			funcion identidad(x) {
 				regresa x;
 			};
 
@@ -615,7 +615,7 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 		`, 5,
 		},
 		{`
-			var doble = funcion(x) {
+			funcion doble(x) {
 				regresa 2 * x;
 			};
 
@@ -623,7 +623,7 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 		`, 10,
 		},
 		{`
-			var suma = funcion(x, y) {
+			funcion suma(x, y) {
 				regresa x + y;
 			};
 
@@ -631,7 +631,7 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 		`, 11,
 		},
 		{`
-			var suma = funcion(x, y) {
+			funcion suma(x, y) {
 				regresa x + y;
 			};
 
@@ -681,7 +681,7 @@ func (e *EvaluatorTests) TestStringConcatenation() {
 		{source: `"foo" + "bar";`, expected: "foobar"},
 		{source: `"hello," + " " + "world!";`, expected: "hello, world!"},
 		{source: `
-			var saludo = funcion(nombre) {
+			funcion saludo(nombre) {
 				regresa "Hola " + nombre + "!";
 			};
 
