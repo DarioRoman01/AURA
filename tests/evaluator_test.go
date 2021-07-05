@@ -574,6 +574,17 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 	}
 }
 
+func (e *EvaluatorTests) TestImportStatement() {
+	source := `
+		importar "../examples/func.aura"
+		var result = sum(2,3)
+		result
+	`
+
+	evaluated := e.evaluateTests(source)
+	e.testIntegerObject(evaluated, 5)
+}
+
 func (e *EvaluatorTests) testErrorObject(evlauated obj.Object, expected string) {
 	e.IsType(&obj.Error{}, evlauated.(*obj.Error))
 	err := evlauated.(*obj.Error)
