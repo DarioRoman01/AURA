@@ -278,6 +278,7 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 		{"var a = 5 * 5; a", 25},
 		{"var a = 5; var b = a; b;", 5},
 		{"var a = 5; var b = a; var c = a + b + 5; c;", 15},
+		{"a := 5; b := a; c := a + b + 5; c;", 15},
 	}
 
 	for _, test := range tests {
@@ -288,11 +289,11 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 
 func (e *EvaluatorTests) TestWhileLoop() {
 	tests := []tuple{
-		{`var i = 0; mientras(i <= 10) { i++; }; i;`, 11},
-		{`var i = 0; mientras(i <= 3) { i++; }; i;`, 4},
-		{`var i = 0; mientras(i <= 5) { i++; }; i;`, 6},
-		{`var i = 0; mientras(i <= 4) { i++; }; i;`, 5},
-		{`var i = 0; mientras(i <= 1) { i++; }; i;`, 2},
+		{`i := 0; mientras(i <= 10) { i++; }; i;`, 11},
+		{`i := 0; mientras(i <= 3) { i++; }; i;`, 4},
+		{`i := 0; mientras(i <= 5) { i++; }; i;`, 6},
+		{`i := 0; mientras(i <= 4) { i++; }; i;`, 5},
+		{`i := 0; mientras(i <= 1) { i++; }; i;`, 2},
 	}
 
 	for _, test := range tests {
@@ -306,10 +307,10 @@ func (e *EvaluatorTests) TestMaps() {
 		source   string
 		expected interface{}
 	}{
-		{`var m = mapa{"a" => 1, "b" => 2}; m["a"]`, 1},
-		{`var m = mapa{"a" => 1, "b" => 2}; m["b"]`, 2},
-		{`var m = mapa{1 => "hola", 2 => "mundo"}; m[1]`, "hola"},
-		{`var m = mapa{1 => "hola", 2 => " mundo"}; m[1] + m[2]`, "hola mundo"},
+		{`m := mapa{"a" => 1, "b" => 2}; m["a"]`, 1},
+		{`m := mapa{"a" => 1, "b" => 2}; m["b"]`, 2},
+		{`m := mapa{1 => "hola", 2 => "mundo"}; m[1]`, "hola"},
+		{`m := mapa{1 => "hola", 2 => " mundo"}; m[1] + m[2]`, "hola mundo"},
 	}
 
 	for _, test := range tests {
@@ -327,10 +328,10 @@ func (e *EvaluatorTests) TestMapMethods() {
 		source   string
 		expected interface{}
 	}{
-		{`var m = mapa{"a" => 1, "b" => 2}; m:contiene("a");`, true},
-		{`var m = mapa{"a" => 1, "b" => 2}; m:contiene("b");`, true},
-		{`var m = mapa{"a" => 1, "b" => 2}; m:contiene("d");`, false},
-		{`var m = mapa{"a" => 1, "b" => 2}; m:valores();`, []int{1, 2}},
+		{`m := mapa{"a" => 1, "b" => 2}; m:contiene("a");`, true},
+		{`m := mapa{"a" => 1, "b" => 2}; m:contiene("b");`, true},
+		{`m := mapa{"a" => 1, "b" => 2}; m:contiene("d");`, false},
+		{`m := mapa{"a" => 1, "b" => 2}; m:valores();`, []int{1, 2}},
 	}
 
 	for _, test := range tests {
@@ -348,8 +349,8 @@ func (e *EvaluatorTests) TestStringMethods() {
 		source   string
 		expected string
 	}{
-		{source: `var s = "hola"; s:mayusculas();`, expected: "HOLA"},
-		{source: `var s = "HOLA"; s:minusculas();`, expected: "hola"},
+		{source: `s := "hola"; s:mayusculas();`, expected: "HOLA"},
+		{source: `s := "HOLA"; s:minusculas();`, expected: "hola"},
 	}
 
 	for _, test := range tests {
@@ -577,7 +578,7 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 func (e *EvaluatorTests) TestImportStatement() {
 	source := `
 		importar "../examples/func.aura"
-		var result = sum(2,3)
+		result := sum(2,3)
 		result
 	`
 
@@ -656,12 +657,12 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 			source:   `funcion() { regresa "aura is awesome"; }()`,
 			expected: "aura is awesome",
 		},
-		{source: `var a = "hello"; a += " world!"; a;`, expected: "hello world!"},
+		{source: `a := "hello"; a += " world!"; a;`, expected: "hello world!"},
 		{
-			source:   `var a = "G"; por(i en rango(3)) { a += "o"; }; a += "al!"; a;`,
+			source:   `a := "G"; por(i en rango(3)) { a += "o"; }; a += "al!"; a;`,
 			expected: "Goooal!",
 		},
-		{source: `var a = ""; por(i en "Hello aura") { a += i }; a;`, expected: "Hello aura"},
+		{source: `a := ""; por(i en "Hello aura") { a += i }; a;`, expected: "Hello aura"},
 	}
 
 	for _, test := range tests {
