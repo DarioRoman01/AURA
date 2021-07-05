@@ -1,11 +1,44 @@
-clase Persona(name, age) {
-    saludar() {
-        escribir("Hi im ", name, ", i have ", age, " years old");
+clase Stack(data) {
+    peek() {
+        si (largo(data) == 0) {
+            regresa nulo;
+        }
+
+        regresa data[-1];
+    }
+
+    push(val) {
+        data:agregar(val);
+    }
+
+    vacio() {
+        si(largo(data)==0) {
+            regresa verdadero;
+        } 
+
+        regresa falso;
+    }
+
+    popuwu() {
+        si( largo(data) == 0 ) {
+            regresa nulo;
+        }
+
+        regresa data:pop();
+    }
+
+    size() {
+        regresa largo(data);
+    }
+
+    vaciar() {
+        mientras(largo(data) > 0) {
+            data:pop();
+        }
     }
 }
 
-var p = nuevo Persona("dario", 19);
-p.saludar();
-p.name = "oscar";
-p.age = 25;
-p.saludar();
+var s = nuevo Stack(lista[2,34,65,23,39])
+escribir(s.data);
+s.popuwu();
+escribir(s.size());

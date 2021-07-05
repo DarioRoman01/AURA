@@ -26,7 +26,7 @@ var partition = funcion(elements, end) {
         }
     } 
 
-    return p_index;
+    regresa p_index;
 }
 
 var quick_sort(elements){

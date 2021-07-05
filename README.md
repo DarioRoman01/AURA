@@ -157,6 +157,15 @@ por(i en "Hello world") {
 
 ## Clases
 you can create clases with following syntax:
+```dart
+clase ClassName(<constructor params>) {
+    method() {
+        // method body
+    }
+}
+```
+
+for example:
 ```ts
 clase Persona(name, age) {
     saludar() {
