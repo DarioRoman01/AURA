@@ -4,7 +4,6 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
-	"fmt"
 	"math"
 	"unicode/utf8"
 )
@@ -115,7 +114,6 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		value := Evaluate(node.Value, env)
 		CheckIsNotNil(node.Name)
 		env.SetItem(node.Name.Value, value)
-		fmt.Println(env.Store)
 		return obj.SingletonNUll
 
 	case *ast.Identifier:

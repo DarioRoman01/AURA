@@ -382,7 +382,7 @@ func NewClassStatement(token l.Token, name *Identifier, params []*Identifier, me
 	}
 }
 
-func (c *ClassStatement) expressNode() {}
+func (c *ClassStatement) stmtNode() {}
 
 func (c *ClassStatement) Str() string {
 	var paramsBuf strings.Builder
