@@ -78,3 +78,7 @@ func indexOutOfRange(found, actual int) *obj.Error {
 	msg := fmt.Sprintf("Indice fuera de rango indice: %d, longitud: %d", found, actual)
 	return newError(msg)
 }
+
+func noSuchField(class string, ident string) *obj.Error {
+	return newError(fmt.Sprintf("la clase %s no tiene la propiedad %s", class, ident))
+}

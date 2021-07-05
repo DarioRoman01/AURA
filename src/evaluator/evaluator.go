@@ -109,6 +109,11 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		CheckIsNotNil(node.Arguments)
 		return evaluateClassCall(node, env)
 
+	case *ast.ClassFieldCall:
+		CheckIsNotNil(node.Class)
+		CheckIsNotNil(node.Field)
+		return evaluateClassFieldCall(node, env)
+
 	case *ast.LetStatement:
 		CheckIsNotNil(node.Value)
 		value := Evaluate(node.Value, env)
@@ -266,6 +271,40 @@ func evaluateClassCall(call *ast.ClassCall, env *obj.Enviroment) obj.Object {
 	}
 
 	return notAClass(call.Class.Value)
+}
+
+func evaluateClassFieldCall(call *ast.ClassFieldCall, env *obj.Enviroment) obj.Object {
+	evaluated := Evaluate(call.Class, env)
+	if _, isErr := evaluated.(*obj.Error); isErr {
+		return evaluated
+	}
+
+	if class, isClass := evaluated.(*obj.ClassInstance); isClass {
+		evaluated := Evaluate(call.Field, class.Env)
+		if _, isErr := evaluated.(*obj.Error); isErr {
+			return evaluated
+		}
+
+		return evaluated
+	}
+
+	return notAClass(evaluated.Inspect())
+}
+
+func evaluateFieldReassigment(call *ast.ClassFieldCall, class *obj.ClassInstance, newVal ast.Expression) obj.Object {
+	ident, isIdent := call.Field.(*ast.Identifier)
+	if !isIdent {
+		return newError("Una funcion no puede ser reasignada")
+	}
+
+	_, exists := class.Env.GetItem(ident.Value)
+	if !exists {
+		return noSuchField(class.Name, ident.Value)
+	}
+
+	evaluated := Evaluate(newVal, class.Env)
+	class.Env.SetItem(ident.Value, evaluated)
+	return obj.SingletonNUll
 }
 
 // check that the given value is not nil

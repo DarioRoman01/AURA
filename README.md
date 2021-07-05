@@ -155,6 +155,19 @@ por(i en "Hello world") {
 }
 ```
 
+## Clases
+you can create clases with following syntax:
+```ts
+clase Persona(name, age) {
+    saludar() {
+        escribir("hi im ", name, " i have ", age, " years old")
+    }
+}
+
+var p = nuevo Persona("eddy", 24);
+p.saludar(); // output: hi im eddy i have 24 years old
+```
+
 with all this lets look a real world example with bynary search:
 ```ts
 var binary_search = funcion(elements, val) {

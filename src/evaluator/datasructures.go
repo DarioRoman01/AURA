@@ -69,6 +69,18 @@ func evaluateReassigment(reassigment *ast.Reassignment, env *obj.Enviroment) obj
 	case *ast.Identifier:
 		return evaluateVarReassigment(exp, reassigment.NewVal, env)
 
+	case *ast.ClassFieldCall:
+		evaluated := Evaluate(exp.Class, env)
+		if _, isErr := evaluated.(*obj.Error); isErr {
+			return evaluated
+		}
+
+		if class, isClass := evaluated.(*obj.ClassInstance); isClass {
+			return evaluateFieldReassigment(exp, class, reassigment.NewVal)
+		}
+
+		return notAClass(evaluated.Inspect())
+
 	case *ast.CallList:
 		evaluated := Evaluate(exp.ListIdent, env)
 
