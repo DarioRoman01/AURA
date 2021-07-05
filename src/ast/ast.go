@@ -409,3 +409,17 @@ func (c *ClassStatement) Str() string {
 		buf.String(),
 	)
 }
+
+type ImportStatement struct {
+	BaseNode
+	Path Expression
+}
+
+func NewImportStatement(token l.Token, path Expression) *ImportStatement {
+	return &ImportStatement{BaseNode: BaseNode{token}, Path: path}
+}
+
+func (i *ImportStatement) stmtNode() {}
+func (i *ImportStatement) Str() string {
+	return fmt.Sprintf("importar %s", i.Path.Str())
+}

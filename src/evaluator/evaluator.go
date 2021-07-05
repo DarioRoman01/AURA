@@ -128,6 +128,10 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		CheckIsNotNil(node.Body)
 		return obj.NewDef(node.Body, env, node.Parameters...)
 
+	case *ast.ImportStatement:
+		CheckIsNotNil(node.Path)
+		return evaluateImportStatement(node, env)
+
 	case *ast.Call:
 		function := Evaluate(node.Function, env)
 		CheckIsNotNil(node.Arguments)
@@ -312,6 +316,21 @@ func CheckIsNotNil(val interface{}) {
 	if val == nil {
 		panic("Error de evaluacion! Se esperaba una expression pero se obtuvo nulo!")
 	}
+}
+
+func evaluateImportStatement(importStmt *ast.ImportStatement, env *obj.Enviroment) obj.Object {
+	evaluated := Evaluate(importStmt.Path, env)
+	if str, isStr := evaluated.(*obj.String); isStr {
+		fileEnv, err := importEnv(str.Value)
+		if err != nil {
+			return err
+		}
+
+		env.Outer = fileEnv
+		return obj.SingletonNUll
+	}
+
+	return newError("La direccion para import un archivo debe ser un string")
 }
 
 // evluate all the statements in a bock expression

@@ -212,30 +212,3 @@ func (cm *ClassMethodExp) Str() string {
 
 	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
 }
-
-// represents a class field expression
-type ClassFieldExp struct {
-	BaseNode             // extends Base node
-	Name     *Identifier // represents the field or method name
-	Value    Expression  // represents the value of the field
-}
-
-// generates a new class field instance
-func NewClassFieldExp(token l.Token, name *Identifier, value Expression) *ClassFieldExp {
-	return &ClassFieldExp{
-		BaseNode: BaseNode{token},
-		Name:     name,
-		Value:    value,
-	}
-}
-
-func (cf *ClassFieldExp) expressNode() {}
-
-func (cf *ClassFieldExp) Str() string {
-	var buf strings.Builder
-	buf.WriteString(fmt.Sprintf("this.%s", cf.Name.Str()))
-	if cf.Value != nil {
-		buf.WriteString(fmt.Sprintf(" = %s", cf.Value.Str()))
-	}
-	return buf.String()
-}

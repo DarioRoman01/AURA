@@ -253,26 +253,6 @@ func (p *Parser) parseClassMethod() ast.Expression {
 	return classMethod
 }
 
-func (p *Parser) parseClassField() ast.Expression {
-	p.checkCurrentTokenIsNotNil()
-	field := ast.NewClassFieldExp(*p.currentToken, nil, nil)
-	if !p.expepectedToken(l.DOT) {
-		return nil
-	}
-
-	if !p.expepectedToken(l.IDENT) {
-		return nil
-	}
-
-	field.Name = p.parseIdentifier().(*ast.Identifier)
-	p.checkPeekTokenIsNotNil()
-	if p.peekToken.Token_type == l.SEMICOLON {
-		p.advanceTokens()
-	}
-
-	return field
-}
-
 func (p *Parser) parseClassCall() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	call := ast.NewClassCall(*p.currentToken, nil, nil)
@@ -287,4 +267,12 @@ func (p *Parser) parseClassCall() ast.Expression {
 
 	call.Arguments = p.parseCallArguments()
 	return call
+}
+
+func (p *Parser) parseImportStatement() ast.Stmt {
+	p.checkCurrentTokenIsNotNil()
+	importStmt := ast.NewImportStatement(*p.currentToken, nil)
+	p.advanceTokens()
+	importStmt.Path = p.parseExpression(LOWEST)
+	return importStmt
 }

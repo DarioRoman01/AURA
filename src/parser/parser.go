@@ -427,6 +427,9 @@ func (p *Parser) parseStament() ast.Stmt {
 	case l.CLASS:
 		return p.parseClassStatement()
 
+	case l.IMPORT:
+		return p.parseImportStatement()
+
 	default:
 		return p.parserExpressionStatement()
 	}
@@ -489,7 +492,6 @@ func (p *Parser) registerPrefixFns() {
 	p.prefixParsFns[l.NULLT] = p.ParseNull
 	p.prefixParsFns[l.MAP] = p.parseMap
 	p.prefixParsFns[l.FLOAT] = p.parseFloat
-	p.prefixParsFns[l.THIS] = p.parseClassField
 	p.prefixParsFns[l.NEW] = p.parseClassCall
 }
 

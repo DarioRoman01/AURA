@@ -62,6 +62,7 @@ const (
 	WHILE
 	NULLT
 	MAP
+	IMPORT
 )
 
 // String representation of all tokens
@@ -114,6 +115,7 @@ var Tokens = [...]string{
 	TIMEASSI:    "*=",
 	DIVASSING:   "/=",
 	EXPONENT:    "**",
+	IMPORT:      "importar",
 }
 
 // Represents a Token in the programmig lenguage
@@ -151,6 +153,7 @@ func LookUpTokenType(literal string) TokenType {
 		"this":      THIS,
 		"clase":     CLASS,
 		"nuevo":     NEW,
+		"importar":  IMPORT,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {
