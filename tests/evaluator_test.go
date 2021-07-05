@@ -466,6 +466,59 @@ func (e *EvaluatorTests) TestOperators() {
 	}
 }
 
+func (e *EvaluatorTests) EvaluateClassEvaluation() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{source: `
+			clase Persona(name, age) {
+				saludar() {
+					regresar formatear("Hi im ", name, ", and i have ", age, " year old" )
+				}
+			}
+
+			var p = nuevo Persona("joe", 28);
+			p.saludar();
+		`,
+			expected: "Hi im joe and i have 28 years old",
+		},
+		{source: `
+			clase Persona(name, age) {
+				saludar() {
+					regresar formatear("Hi im ", name, ", and i have ", age, " year old" )
+				}
+			}
+
+			var p = nuevo Persona("joe", 28);
+			p.name;
+		`,
+			expected: "joe",
+		},
+		{source: `
+			clase Persona(name, age) {
+				saludar() {
+					regresar formatear("Hi im ", name, ", and i have ", age, " year old" )
+				}
+			}
+
+			var p = nuevo Persona("joe", 28);
+			p.age;
+		`,
+			expected: 28,
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if str, isStr := test.expected.(string); isStr {
+			e.testStringObject(evaluated, str)
+		} else {
+			e.testIntegerObject(evaluated, test.expected.(int))
+		}
+	}
+}
+
 func (e *EvaluatorTests) TestBuiltinFunctions() {
 	tests := []struct {
 		source   string

@@ -148,6 +148,35 @@ func RecibirEntero(args ...obj.Object) obj.Object {
 
 }
 
+func format(args ...obj.Object) obj.Object {
+	var buff strings.Builder
+
+	for _, arg := range args {
+		switch node := arg.(type) {
+
+		case *obj.String:
+			buff.WriteString(node.Inspect())
+
+		case *obj.Number:
+			buff.WriteString(node.Inspect())
+
+		case *obj.List:
+			buff.WriteString(node.Inspect())
+
+		case *obj.Bool:
+			buff.WriteString(node.Inspect())
+
+		case *obj.Map:
+			buff.WriteString(node.Inspect())
+
+		default:
+			return unsoportedArgumentType("escribir", obj.Types[node.Type()])
+		}
+	}
+
+	return &obj.String{Value: buff.String()}
+}
+
 // same as python range function
 func rango(args ...obj.Object) obj.Object {
 	switch len(args) {
@@ -229,4 +258,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"dormir":         obj.NewBuiltin(slep),
 	"es_mayuscula":   obj.NewBuiltin(isUpper),
 	"es_minuscula":   obj.NewBuiltin(isLower),
+	"formatear":      obj.NewBuiltin(format),
 }
