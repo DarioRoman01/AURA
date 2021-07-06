@@ -266,7 +266,7 @@ func (e *EvaluatorTests) TestErrorhandling() {
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		e.Assert().IsType(&obj.Error{}, evaluated.(*obj.Error))
+		e.Assert().IsType(&obj.Error{}, evaluated)
 		evaluatedError := evaluated.(*obj.Error)
 		e.Assert().Equal(test.expected, evaluatedError.Message)
 	}
@@ -595,7 +595,10 @@ func (e *EvaluatorTests) TestImportStatement() {
 }
 
 func (e *EvaluatorTests) testErrorObject(evlauated obj.Object, expected string) {
-	e.IsType(&obj.Error{}, evlauated.(*obj.Error))
+	if !e.IsType(&obj.Error{}, evlauated) {
+		e.T().FailNow()
+	}
+
 	err := evlauated.(*obj.Error)
 	e.Equal(expected, err.Message)
 }
@@ -603,7 +606,9 @@ func (e *EvaluatorTests) testErrorObject(evlauated obj.Object, expected string) 
 func (e *EvaluatorTests) TestFunctionEvaluation() {
 	source := "funcion(x) { x + 2; };"
 	evaluated := e.evaluateTests(source)
-	e.IsType(&obj.Def{}, evaluated.(*obj.Def))
+	if !e.IsType(&obj.Def{}, evaluated) {
+		e.T().FailNow()
+	}
 
 	function := evaluated.(*obj.Def)
 	e.Equal(1, len(function.Parameters))
@@ -675,9 +680,7 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 
 	for _, test := range tests {
 		evluated := e.evaluateTests(test.source)
-		e.IsType(&obj.String{}, evluated.(*obj.String))
-		stringObj := evluated.(*obj.String)
-		e.Equal(test.expected, stringObj.Value)
+		e.testStringObject(evluated, test.expected)
 	}
 }
 
@@ -706,7 +709,10 @@ func (e *EvaluatorTests) TestStringConcatenation() {
 }
 
 func (e *EvaluatorTests) testStringObject(evaluated obj.Object, expected string) {
-	e.IsType(&obj.String{}, evaluated.(*obj.String))
+	if !e.IsType(&obj.String{}, evaluated) {
+		e.T().FailNow()
+	}
+
 	str := evaluated.(*obj.String)
 	e.Equal(expected, str.Value)
 }
@@ -729,7 +735,7 @@ func (e *EvaluatorTests) TestStringComparison() {
 }
 
 func (e *EvaluatorTests) testNullObject(eval obj.Object) {
-	e.Assert().Equal(obj.SingletonNUll, eval.(*obj.Null))
+	e.Assert().Equal(obj.SingletonNUll, eval)
 }
 
 func (e *EvaluatorTests) evaluateTests(source string) obj.Object {
@@ -743,43 +749,63 @@ func (e *EvaluatorTests) evaluateTests(source string) obj.Object {
 }
 
 func (e *EvaluatorTests) testBooleanObject(object obj.Object, expected bool) {
-	e.Assert().IsType(&obj.Bool{}, object.(*obj.Bool))
+	if !e.Assert().IsType(&obj.Bool{}, object) {
+		e.T().FailNow()
+	}
+
 	evaluated := object.(*obj.Bool)
 	e.Assert().Equal(expected, evaluated.Value)
 }
 
 func (e *EvaluatorTests) testIntArrayObject(object obj.Object, expected []int) {
-	e.Assert().IsType(&obj.List{}, object.(*obj.List))
+	if !e.Assert().IsType(&obj.List{}, object) {
+		e.T().FailNow()
+	}
+
 	evaluated := object.(*obj.List)
 	e.Assert().Equal(len(expected), len(evaluated.Values))
 
 	objList := evaluated.Values
 	for i := 0; i < len(expected); i++ {
-		e.Assert().IsType(&obj.Number{}, objList[i].(*obj.Number))
+		if !e.Assert().IsType(&obj.Number{}, objList[i]) {
+			e.T().FailNow()
+		}
+
 		e.Assert().Equal(expected[i], objList[i].(*obj.Number).Value)
 	}
 }
 
 func (e *EvaluatorTests) testStringArrayObject(object obj.Object, expected []string) {
-	e.Assert().IsType(&obj.List{}, object.(*obj.List))
+	if !e.Assert().IsType(&obj.List{}, object) {
+		e.T().FailNow()
+	}
 	evaluated := object.(*obj.List)
 	e.Assert().Equal(len(expected), len(evaluated.Values))
 
 	objList := evaluated.Values
 	for i := 0; i < len(expected); i++ {
-		e.Assert().IsType(&obj.String{}, objList[i].(*obj.String))
+		if !e.Assert().IsType(&obj.String{}, objList[i]) {
+			e.T().FailNow()
+		}
+
 		e.Assert().Equal(expected[i], objList[i].(*obj.String).Value)
 	}
 }
 
 func (e *EvaluatorTests) testIntegerObject(evaluated obj.Object, expected int) {
-	e.Assert().IsType(&obj.Number{}, evaluated.(*obj.Number))
+	if !e.Assert().IsType(&obj.Number{}, evaluated) {
+		e.T().FailNow()
+	}
+
 	eval := evaluated.(*obj.Number)
 	e.Assert().Equal(expected, eval.Value)
 }
 
 func (e *EvaluatorTests) testFloatObject(evaluated obj.Object, expected float64) {
-	e.Assert().IsType(&obj.Float{}, evaluated.(*obj.Float))
+	if !e.Assert().IsType(&obj.Float{}, evaluated) {
+		e.T().FailNow()
+	}
+
 	val := evaluated.(*obj.Float)
 	e.Assert().Equal(expected, val.Value)
 }
