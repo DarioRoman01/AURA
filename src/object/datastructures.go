@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"unicode"
 )
 
 // Represents an Array
@@ -66,7 +65,7 @@ func (m *Map) Inspect() string {
 		buff = append(buff, str)
 	}
 
-	return fmt.Sprintf("[%s]", strings.Join(buff, ", "))
+	return fmt.Sprintf("{%s}", strings.Join(buff, ", "))
 }
 
 // get the value associeted with the given key if exists
@@ -102,21 +101,17 @@ type String struct {
 func (s *String) Type() ObjectType { return STRINGTYPE }
 func (s *String) Inspect() string  { return s.Value }
 
-func (s String) IsUpper() Object {
-	for _, char := range s.Value {
-		if unicode.IsUpper(char) {
-			return SingletonTRUE
-		}
+func (s *String) IsUpper() Object {
+	if strings.ToUpper(s.Value) == s.Value {
+		return SingletonTRUE
 	}
 
 	return SingletonFALSE
 }
 
-func (s String) IsLower() Object {
-	for _, char := range s.Value {
-		if !unicode.IsUpper(char) {
-			return SingletonTRUE
-		}
+func (s *String) IsLower() Object {
+	if strings.ToLower(s.Value) == s.Value {
+		return SingletonTRUE
 	}
 
 	return SingletonFALSE

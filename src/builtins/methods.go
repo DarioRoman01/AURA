@@ -69,7 +69,7 @@ func toLower(args ...obj.Object) obj.Object {
 }
 
 func isUpper(args ...obj.Object) obj.Object {
-	if len(args) > 1 || len(args) < 1 {
+	if len(args) != 0 {
 		return wrongNumberofArgs("es_mayuscula", len(args), 0)
 	}
 
@@ -77,9 +77,9 @@ func isUpper(args ...obj.Object) obj.Object {
 }
 
 func isLower(args ...obj.Object) obj.Object {
-	if len(args) > 1 {
+	if len(args) != 0 {
 		return wrongNumberofArgs("es_minuscula", len(args), 0)
 	}
 
-	return obj.NewMethod(obj.SingletonNUll, obj.ISUPPER)
+	return obj.NewMethod(obj.SingletonNUll, obj.ISLOWER)
 }

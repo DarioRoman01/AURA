@@ -1,0 +1,58 @@
+funcion swap(a, b, arr) {
+    si (a != b) {
+        tpm := arr[a]
+        arr[a] = arr[b]
+        arr[b] = tmp
+    }
+}
+
+funcion partition(elements, end) {
+    pivot_index := end
+    pivot := elements[pivot_index]
+    p_index := 0
+
+    mientras(elements[p_index] != pivot) {
+        mientras(elements[pivot_index] < pivot) {
+            p_index++
+        }
+
+        i := p_index
+        mientras(elements[i] > pivot) {
+            i++
+        }
+
+        si(i > p_index) {
+            swap(p_index, i, elements)
+        }
+    } 
+
+    regresa p_index
+}
+
+funcion quick_sort(elements) {
+    si(largo(elements) != 0) {
+        pi := partition(elements, largo(elements) - 1)
+        por(i en rango(pi)) {
+            partition(elements, pi - i)
+        }
+    }
+
+    regresa elements
+}
+
+funcion main() {
+    tests := lista[
+        lista[11,9,29,7,2,15,28],
+        lista[3, 7, 9, 11],
+        lista[25, 22, 21, 10],
+        lista[29, 15, 28],
+        lista[6]
+    ]
+    
+    por(elementos en tests) {
+        ordernado := quick_sort(elementos)
+        escribir(formatear("sorted array: {}", ordernado))
+    }
+}
+
+main();

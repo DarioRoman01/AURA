@@ -7,4 +7,3 @@ escribir("el primer valor de mi lista es ", mi_lista[0])
 
 mi_lista:pop();
 escribir(mi_lista);
-mi_lista:agregar(4);

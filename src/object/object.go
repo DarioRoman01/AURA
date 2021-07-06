@@ -164,14 +164,14 @@ func (b *Builtin) Inspect() string  { return "builtin function" }
 // Represents a escope in the programming lengauge
 type Enviroment struct {
 	Store map[string]Object // repesents the store of all variables
-	Outer *Enviroment       // represents a posible outer scope
+	outer *Enviroment       // represents a posible outer scope
 }
 
 // return a new enviroment instance
 func NewEnviroment(outer *Enviroment) *Enviroment {
 	return &Enviroment{
 		Store: make(map[string]Object),
-		Outer: outer,
+		outer: outer,
 	}
 }
 
@@ -180,8 +180,8 @@ func (e *Enviroment) GetItem(key string) (Object, bool) {
 	val, exists := e.Store[key]
 	if !exists {
 		// we check if there is an outer env and call the same method to find the object
-		if e.Outer != nil {
-			return e.Outer.GetItem(key)
+		if e.outer != nil {
+			return e.outer.GetItem(key)
 		}
 
 		return nil, false
@@ -197,6 +197,10 @@ func (e *Enviroment) SetItem(key string, val Object) {
 // delete an item form the enviroment
 func (e *Enviroment) DelItem(key string) {
 	delete(e.Store, key)
+}
+
+func (e *Enviroment) SetOuter(env *Enviroment) {
+	e.outer = env
 }
 
 // repesents an iterator object

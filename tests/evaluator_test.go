@@ -353,6 +353,10 @@ func (e *EvaluatorTests) TestStringMethods() {
 		{source: `s := "HOLA"; s:minusculas();`, expected: "hola"},
 		{source: `s := "hola"; s:contiene("g");`, expected: false},
 		{source: `s := "hola"; s:contiene("h");`, expected: true},
+		{source: `s := "h"; s:es_mayuscula();`, expected: false},
+		{source: `s := "H"; s:es_mayuscula();`, expected: true},
+		{source: `s := "h"; s:es_minuscula();`, expected: true},
+		{source: `s := "H"; s:es_minuscula();`, expected: false},
 	}
 
 	for _, test := range tests {

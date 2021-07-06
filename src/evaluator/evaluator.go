@@ -255,7 +255,7 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 	return notIterable(rangeExpress.Range.Str())
 }
 
-// extends the class enviroment with the methods and constructor params
+// extends the class enviroment with the methods and constructor arguments
 func extendClassEnviroment(class *obj.Class, args []obj.Object, methods []*ast.ClassMethodExp, env *obj.Enviroment) *obj.Enviroment {
 	classEnv := obj.NewEnviroment(env)
 	for idx, param := range class.Params {
@@ -338,7 +338,7 @@ func evaluateImportStatement(importStmt *ast.ImportStatement, env *obj.Enviromen
 			return err
 		}
 
-		env.Outer = fileEnv
+		env.SetOuter(fileEnv)
 		return obj.SingletonNUll
 	}
 
@@ -396,7 +396,9 @@ func evaluateProgram(program ast.Program, env *obj.Enviroment) obj.Object {
 
 		if returnObj, isReturn := result.(*obj.Return); isReturn {
 			return returnObj.Value
-		} else if err, isError := result.(*obj.Error); isError {
+		}
+
+		if err, isError := result.(*obj.Error); isError {
 			return err
 		}
 	}
@@ -404,13 +406,16 @@ func evaluateProgram(program ast.Program, env *obj.Enviroment) obj.Object {
 	return result
 }
 
+// evaluate a function a expression
 func evaluateFunction(function *ast.Function, env *obj.Enviroment) obj.Object {
 	if function.Name != nil {
+		// if the name is not nil we have a named function like func main() {}
 		def := obj.NewDef(function.Body, env, function.Parameters...)
 		env.SetItem(function.Name.Value, def)
 		return obj.SingletonNUll
 	}
 
+	// we have an anonimous function like x := func(a, b) {}
 	return obj.NewDef(function.Body, env, function.Parameters...)
 }
 
@@ -443,7 +448,7 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 		evaluated := Evaluate(call.Index, env)
 		num, isNumber := evaluated.(*obj.Number)
 		if !isNumber {
-			return &obj.Error{Message: "El indice debe ser un entero"}
+			return newError("el indice debe ser un enetero")
 		}
 
 		length := len(object.Values)
@@ -453,7 +458,6 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 
 		if num.Value < 0 {
 			if int(math.Abs(float64(num.Value))) > length {
-
 				return indexOutOfRange(num.Value, length)
 			}
 
@@ -470,7 +474,7 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 		evaluated := Evaluate(call.Index, env)
 		num, isNumber := evaluated.(*obj.Number)
 		if !isNumber {
-			return &obj.Error{Message: "El indice debe ser un entero"}
+			return newError("El indice debe ser un entero")
 		}
 
 		strLen := utf8.RuneCountInString(object.Value)
@@ -480,7 +484,6 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 
 		if num.Value < 0 {
 			if int(math.Abs(float64(num.Value))) > strLen {
-
 				return indexOutOfRange(num.Value, strLen)
 			}
 

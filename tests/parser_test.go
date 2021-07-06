@@ -388,7 +388,7 @@ func (p *ParserTests) TestInfixExpressions() {
 	for i, stamment := range program.Staments {
 		stament := stamment.(*ast.ExpressionStament)
 		p.Assert().NotNil(stament.Expression)
-		p.Assert().IsType(&ast.Infix{}, stament.Expression.(*ast.Infix))
+		p.Assert().IsType(&ast.Infix{}, stament.Expression)
 		p.testInfixExpression(
 			stament.Expression,
 			expectedOperators[i].Left,

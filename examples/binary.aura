@@ -22,5 +22,5 @@ funcion binary_search(elements, val) {
 }
 
 var numbers = lista[1,4,6,9,10,12,26];
-var index = binary_search(numbers, 4);
+var index = binary_search(numbers, 12);
 escribir("numero encontrado en el indice ", index);

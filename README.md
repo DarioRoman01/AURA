@@ -28,8 +28,9 @@ var number = 5; // Integer
 var float = 2.5; // float
 var str = "string"; // string
 var bool = verdadero; // boolean
-var list = lista[1,2,3] // list
+var list = lista[1,2,3]; // list
 var map = mapa{1 => "a", 2 => "b"}; // map
+var class = nuevo SomeClass(); //class
 var null = nulo; // null
 ```
 
@@ -80,8 +81,8 @@ escribir(add(5,8)); // output: 13
 ## Lists
 List allows you to group a list of data, 
 lists are escential in any programming lengauge
-```ts
-var mi_lista = lista[2, 3, 4, "hello", "world"];
+```go
+mi_lista := lista[2, 3, 4, "hello", "world"];
 mi_lista[0]; // output: 2
 ```
 

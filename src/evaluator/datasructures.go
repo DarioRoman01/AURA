@@ -19,7 +19,7 @@ func evaluateMap(mapa *ast.MapExpression, env *obj.Enviroment) obj.Object {
 
 		if err := mapObj.SetValues(key, val); err != nil {
 			// duplicated keys
-			return newError("no se permiten llaves duplicadas")
+			return newError(err.Error())
 		}
 	}
 
