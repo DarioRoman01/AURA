@@ -557,6 +557,8 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `a := "aura"; a:contiene("b");`, expected: false},
 		{source: `a := lista[2,34,45]; a:contiene(2);`, expected: true},
 		{source: `a := lista[2,34,45]; a:contiene(342);`, expected: false},
+		{source: `formatear("hola soy {}", "dario");`, expected: "hola soy dario"},
+		{source: `formatear("hi im {}, i am {} years old", "dario", 19);`, expected: "hi im dario, i am 19 years old"},
 	}
 
 	for _, test := range tests {

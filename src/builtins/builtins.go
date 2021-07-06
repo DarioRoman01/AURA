@@ -148,33 +148,24 @@ func RecibirEntero(args ...obj.Object) obj.Object {
 
 }
 
-func format(args ...obj.Object) obj.Object {
-	var buff strings.Builder
+func formatrArgs(args ...obj.Object) obj.Object {
+	if len(args) <= 1 {
+		return wrongNumberofArgs("format", 0, 100)
+	}
 
-	for _, arg := range args {
-		switch node := arg.(type) {
-
-		case *obj.String:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Number:
-			buff.WriteString(node.Inspect())
-
-		case *obj.List:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Bool:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Map:
-			buff.WriteString(node.Inspect())
-
-		default:
-			return unsoportedArgumentType("escribir", obj.Types[node.Type()])
+	str, isStr := args[0].(*obj.String)
+	if !isStr {
+		return &obj.Error{
+			Message: "el primer argumento para formatear debe ser un string",
 		}
 	}
 
-	return &obj.String{Value: buff.String()}
+	val := str.Value
+	for i := 1; i < len(args); i++ {
+		val = strings.Replace(val, "{}", args[i].Inspect(), 1)
+	}
+
+	return &obj.String{Value: val}
 }
 
 // same as python range function
@@ -258,5 +249,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"dormir":         obj.NewBuiltin(slep),
 	"es_mayuscula":   obj.NewBuiltin(isUpper),
 	"es_minuscula":   obj.NewBuiltin(isLower),
-	"formatear":      obj.NewBuiltin(format),
+	"formatear":      obj.NewBuiltin(formatrArgs),
 }

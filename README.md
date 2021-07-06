@@ -170,10 +170,10 @@ clase ClassName(<constructor params>) {
 ```
 
 for example:
-```ts
+```go
 clase Persona(name, age) {
     saludar() {
-        escribir("hi im ", name, " i have ", age, " years old")
+        escribir(formatear("hi im {}, I am {} years old", name, age));
     }
 }
 
@@ -182,15 +182,15 @@ p.saludar(); // output: hi im eddy i have 24 years old
 ```
 
 with all this lets look a real world example with bynary search:
-```ts
+```go
 funcion binary_search(elements, val) {
-    var left = 0;
-    var rigth = largo(elements) - 1;
-    var mid = 0;
+    left := 0;
+    rigth := largo(elements) - 1;
+    mid := 0;
 
     mientras(left <= rigth) {
         mid = (left + rigth) / 2;
-        var mid_number = elements[mid];
+        mid_number := elements[mid];
 
         si (mid_number == val) {
             regresa mid;
@@ -207,9 +207,9 @@ funcion binary_search(elements, val) {
 }
 
 numbers := lista[1,4,6,9,10,12,26];
-index := binary_search(numbers, 1);
+index := binary_search(numbers, 4);
 escribir("numero encontrado en el indice ", index);
-// output: numero encontrado en el indice 0
+// output: numero encontrado en el indice 1
 ```
 
 ## <h1>Installation</h1>
