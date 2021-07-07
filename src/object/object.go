@@ -205,13 +205,14 @@ func (e *Enviroment) SetOuter(env *Enviroment) {
 
 // repesents an iterator object
 type Iterator struct {
-	Current Object   // represents the current object
-	List    []Object // represents the values in the iter
+	Current Object      // represents the current object
+	List    []Object    // represents the values in the iter
+	Env     *Enviroment // represents the iterator enviroment
 }
 
 // return a new iterator instance
-func NewIterator(current Object, values []Object) *Iterator {
-	return &Iterator{Current: current, List: values}
+func NewIterator(current Object, values []Object, env *Enviroment) *Iterator {
+	return &Iterator{Current: current, List: values, Env: env}
 }
 
 // return the next value in the iter if there is any
@@ -223,7 +224,6 @@ func (i *Iterator) Next() Object {
 
 	val := i.Current
 	i.List = i.List[1:]
-
 	if len(i.List) != 0 {
 		i.Current = i.List[0]
 	}

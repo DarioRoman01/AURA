@@ -210,14 +210,14 @@ func evaluateFor(forLoop *ast.For, env *obj.Enviroment) obj.Object {
 		// the evaluate iter function
 		val := forLoop.Condition.(*ast.RangeExpression).Variable.(*ast.Identifier).Value
 		for iter.Next() != nil {
-			evaluated = Evaluate(forLoop.Body, env)
+			evaluated = Evaluate(forLoop.Body, iter.Env)
 			if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
 				// we break the loop because we have a return statement
 				return returnVal
 			}
 
 			// we update the variable in the expression
-			env.Store[val] = iter.Current
+			iter.Env.SetItem(val, iter.Current)
 		}
 		return obj.SingletonNUll
 	}
@@ -239,16 +239,16 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 
 	if list, isList := Evaluate(rangeExpress.Range, env).(*obj.List); isList {
 		// if the iter is a list we make a iterable with the list
-		iter := obj.NewIterator(list.Values[0], list.Values)
-		env.SetItem(val.Value, iter.List[0])
+		iter := obj.NewIterator(list.Values[0], list.Values, obj.NewEnviroment(env))
+		iter.Env.SetItem(val.Value, iter.List[0])
 		return iter
 	}
 
 	if str, isStr := Evaluate(rangeExpress.Range, env).(*obj.String); isStr {
 		// if the iter is a string we make a iterable with all the string characters
 		list := makeStringList(str.Value)
-		iter := obj.NewIterator(list[0], list)
-		env.SetItem(val.Value, iter.List[0])
+		iter := obj.NewIterator(list[0], list, obj.NewEnviroment(env))
+		iter.Env.SetItem(val.Value, iter.List[0])
 		return iter
 	}
 
