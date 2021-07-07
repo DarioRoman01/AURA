@@ -373,7 +373,7 @@ func evaluateExpression(expressions []ast.Expression, env *obj.Enviroment) []obj
 
 // check if given identifier exists in the enviroment
 func evaluateIdentifier(node *ast.Identifier, env *obj.Enviroment) obj.Object {
-	value, exists := env.GetItem(node.Value)
+	object, exists := env.GetItem(node.Value)
 	if !exists {
 		// check if the identifier is a builtin function
 		builtint, exists := b.BUILTINS[node.Value]
@@ -385,7 +385,7 @@ func evaluateIdentifier(node *ast.Identifier, env *obj.Enviroment) obj.Object {
 		return builtint
 	}
 
-	return value
+	return object
 }
 
 // evaluate program node

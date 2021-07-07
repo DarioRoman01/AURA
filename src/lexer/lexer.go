@@ -167,6 +167,10 @@ func (l *Lexer) NextToken() Token {
 		literal := l.readString()
 		token = NewToken(STRING, literal)
 
+	case "'":
+		literal := l.readString()
+		token = NewToken(STRING, literal)
+
 	default:
 		token = NewToken(ILLEGAL, l.character)
 	}
@@ -229,7 +233,7 @@ func (l *Lexer) readString() string {
 	l.readCharacter()
 	initialPosition := l.position
 
-	for l.character != `"` && l.read_position <= utf8.RuneCountInString(l.source) {
+	for l.character != `"` && l.character != "'" && l.read_position <= utf8.RuneCountInString(l.source) {
 		l.readCharacter()
 	}
 
