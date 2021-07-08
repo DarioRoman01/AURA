@@ -38,12 +38,14 @@ func clearConsole() {
 	}
 }
 
+// Start the repl
 func StartRpl() {
 	scanner := bufio.NewScanner(os.Stdin)
+	writer := bufio.NewWriter(os.Stdout)
 	var scanned []string
 
-	fmt.Println("✨ Bienvenido a Aura✨")
-	fmt.Println("escribe un comando para comenzar: ")
+	writer.WriteString("✨ Bienvenido a Aura✨\n")
+	writer.WriteString("escribe un comando para comenzar: \n")
 
 	for {
 		defer func() {
@@ -53,7 +55,9 @@ func StartRpl() {
 			}
 		}()
 
-		fmt.Print(">>> ")
+		writer.WriteString(">>> ")
+		writer.Flush()
+
 		scanner.Scan()
 		source := scanner.Text()
 
@@ -83,8 +87,8 @@ func StartRpl() {
 		}
 
 		if evaluated != nil && evaluated != obj.SingletonNUll {
-			fmt.Println(evaluated.Inspect())
-
+			writer.WriteString(evaluated.Inspect() + "\n")
+			writer.Flush()
 			if _, isError := evaluated.(*obj.Error); isError {
 				scanned = scanned[:len(scanned)-1] // delete error in scanned array
 			}

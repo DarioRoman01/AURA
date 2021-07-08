@@ -13,6 +13,7 @@ import (
 
 // use singleton pattern for the scanner
 var scanner = bufio.NewScanner(os.Stdin)
+var writer = bufio.NewWriter(os.Stdout)
 
 // return an error indicating the the builtin has wrong number of args
 func wrongNumberofArgs(funcName string, found, actual int) *obj.Error {
@@ -71,12 +72,16 @@ func Escribir(args ...obj.Object) obj.Object {
 		case *obj.Map:
 			buff.WriteString(node.Inspect())
 
+		case *obj.Class:
+			buff.WriteString(node.Inspect())
+
 		default:
 			return unsoportedArgumentType("escribir", obj.Types[node.Type()])
 		}
 	}
 
-	fmt.Println(buff.String())
+	defer writer.Flush()
+	writer.WriteString(buff.String() + "\n")
 	return obj.SingletonNUll
 }
 
@@ -181,7 +186,7 @@ func rango(args ...obj.Object) obj.Object {
 		return makeTreArgList(args[0], args[1], args[2])
 
 	default:
-		return wrongNumberofArgs("rango", len(args), 2)
+		return wrongNumberofArgs("rango", len(args), 3)
 	}
 }
 
