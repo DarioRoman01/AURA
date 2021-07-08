@@ -240,6 +240,7 @@ func (p *Parser) parseMap() ast.Expression {
 	return mapExpress
 }
 
+// parse a class method
 func (p *Parser) parseClassMethod() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	classMethod := ast.NewClassMethodExp(*p.currentToken, nil, nil, nil)
@@ -258,6 +259,7 @@ func (p *Parser) parseClassMethod() ast.Expression {
 	return classMethod
 }
 
+// parse a call to instanciate a new class
 func (p *Parser) parseClassCall() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	call := ast.NewClassCall(*p.currentToken, nil, nil)
@@ -274,6 +276,7 @@ func (p *Parser) parseClassCall() ast.Expression {
 	return call
 }
 
+// parse an imper statement
 func (p *Parser) parseImportStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
 	importStmt := ast.NewImportStatement(*p.currentToken, nil)

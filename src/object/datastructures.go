@@ -101,6 +101,7 @@ type String struct {
 func (s *String) Type() ObjectType { return STRINGTYPE }
 func (s *String) Inspect() string  { return s.Value }
 
+// check if the string is upper case
 func (s *String) IsUpper() Object {
 	if strings.ToUpper(s.Value) == s.Value {
 		return SingletonTRUE
@@ -109,6 +110,7 @@ func (s *String) IsUpper() Object {
 	return SingletonFALSE
 }
 
+// check if the string is lower case
 func (s *String) IsLower() Object {
 	if strings.ToLower(s.Value) == s.Value {
 		return SingletonTRUE
@@ -117,6 +119,7 @@ func (s *String) IsLower() Object {
 	return SingletonFALSE
 }
 
+// check if the string contains another string
 func (s *String) Contains(val string) Object {
 	if strings.Contains(s.Value, val) {
 		return SingletonTRUE

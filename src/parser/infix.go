@@ -92,6 +92,7 @@ func (p *Parser) parseRangeExpression() ast.Expression {
 	return rangeExpress
 }
 
+// parse a class field or method call
 func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
 	call := ast.NewClassFieldCall(*p.currentToken, left, nil)
 	p.checkPeekTokenIsNotNil()
@@ -100,6 +101,8 @@ func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
 	return call
 }
 
+// parse an assigment expression like
+//		x := 5;
 func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
 	ident, isIdent := left.(*ast.Identifier)
 	if !isIdent {

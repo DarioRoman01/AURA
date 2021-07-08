@@ -292,6 +292,7 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 	return leftExpression
 }
 
+// parse a class statement
 func (p *Parser) parseClassStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
 	class := ast.NewClassStatement(*p.currentToken, nil, nil, []*ast.ClassMethodExp{})

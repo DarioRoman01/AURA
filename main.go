@@ -41,6 +41,7 @@ func ReadFile(path string) {
 		// and the evaluator
 		if r := recover(); r != nil {
 			fmt.Printf("Error: %s", r)
+			return
 		}
 	}()
 

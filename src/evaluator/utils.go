@@ -40,11 +40,13 @@ func importEnv(path string) (*obj.Enviroment, *obj.Error) {
 		))
 	}
 
+	// read the file
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, newError(fmt.Sprintf("No se leer el archivo %s", filepath.Base(path)))
 	}
 
+	// parse and evaluate the file
 	lexer := lexer.NewLexer(string(content))
 	parser := parser.NewParser(lexer)
 	env := obj.NewEnviroment(nil)

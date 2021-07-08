@@ -261,6 +261,7 @@ func (m *Method) Inspect() string {
 	return fmt.Sprintf(":%d(%s)", m.MethodType, m.Value.Inspect())
 }
 
+// represets the class object
 type Class struct {
 	Name    *ast.Identifier       // represents the class name
 	Params  []*ast.Identifier     // represents the constructor params
@@ -294,10 +295,10 @@ func NewClass(name *ast.Identifier, params []*ast.Identifier, methods []*ast.Cla
 	}
 }
 
-// Represents a class object
+// Represents a class instance object
 type ClassInstance struct {
-	Name string
-	Env  *Enviroment
+	Name string      // represents the class instance name
+	Env  *Enviroment // represents the scope of the class
 }
 
 // generates a new class instance
@@ -311,16 +312,6 @@ func NewClassInstance(name string, env *Enviroment) *ClassInstance {
 func (c *ClassInstance) Type() ObjectType { return CLASS }
 func (c *ClassInstance) Inspect() string {
 	return fmt.Sprintf("clase %s", c.Name)
-}
-
-// represents the this object
-type This struct {
-	Class *ClassInstance // represents the class instance
-}
-
-func (t *This) Type() ObjectType { return THIS }
-func (t *This) Inspect() string {
-	return t.Class.Inspect()
 }
 
 // use singleton patern with true false and null
