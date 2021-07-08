@@ -75,7 +75,7 @@ funcion sum(a, b) {
     regresa a + b;
 }
 
-escribir(add(5,8)); // output: 13
+escribir(sum(5,8)); // output: 13
 ```
 
 ## Lists
