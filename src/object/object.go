@@ -95,10 +95,12 @@ func (b *Bool) Inspect() string {
 }
 
 // represent the null object
-type Null struct{}
+type Null struct {
+	Val interface{}
+}
 
 func (n *Null) Type() ObjectType { return NULL }
-func (n *Null) Inspect() string  { return "" }
+func (n *Null) Inspect() string  { return "nulo" }
 
 // represent the return object
 type Return struct {
@@ -318,6 +320,6 @@ func (c *ClassInstance) Inspect() string {
 var (
 	SingletonTRUE  = &Bool{Value: true}
 	SingletonFALSE = &Bool{Value: false}
-	SingletonNUll  = &Null{} //  this null is for functions that dont return anything
-	NullVAlue      = &Null{} // this null is the null value
+	SingletonNUll  = &Null{nil} //  this null is for functions that dont return anything
+	NullVAlue      = &Null{1}   // this null is the null value
 )
