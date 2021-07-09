@@ -83,3 +83,19 @@ func isLower(args ...obj.Object) obj.Object {
 
 	return obj.NewMethod(obj.SingletonNUll, obj.ISLOWER)
 }
+
+func mapList(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("map", len(args), 0)
+	}
+
+	if fn, isFn := args[0].(*obj.Def); isFn {
+		if len(fn.Parameters) != 1 {
+			return &obj.Error{Message: "La funcion para map solo puede recibir un argumento"}
+		}
+
+		return obj.NewMethod(fn, obj.MAP)
+	}
+
+	return &obj.Error{Message: "se requiere una funcion para map"}
+}

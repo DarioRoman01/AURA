@@ -124,6 +124,15 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 
 		return obj.SingletonFALSE
 
+	case obj.MAP:
+		var newList obj.List
+		fn := method.Value.(*obj.Def)
+		for _, val := range list.Values {
+			newList.Values = append(newList.Values, applyFunction(fn, []obj.Object{val}))
+		}
+
+		return &newList
+
 	default:
 		return noSuchMethod(method.Inspect(), "list")
 	}

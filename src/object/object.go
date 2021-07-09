@@ -34,6 +34,7 @@ type MethodsTypes int
 const (
 	Lhead MethodsTypes = iota
 	POP
+	MAP
 	APPEND
 	REMOVE
 	CONTAIS

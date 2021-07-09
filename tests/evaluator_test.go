@@ -384,6 +384,7 @@ func (e *EvaluatorTests) TestListMethods() {
 		{"a := lista[2,3,4,2,12]; a:popIndice(0); a:contiene(3);", true},
 		{"a := lista[2,3,4,12]; a:popIndice(0); a:contiene(2);", false},
 		{"a := lista[2,3,4,2,12]; a:popIndice(0); a:agregar(25); a:contiene(25);", true},
+		{"a := lista[1,2,3]; a = a:map(|x| => { x++; }); a[0];", 2},
 	}
 
 	for _, test := range tests {

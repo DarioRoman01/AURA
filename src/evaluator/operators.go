@@ -169,7 +169,6 @@ func evaluateStringInfixExpression(operator string, left obj.Object, rigth obj.O
 	switch operator {
 	case "+":
 		return &obj.String{Value: leftVal + rigthVal}
-
 	case "+=":
 		left.(*obj.String).Value += rigthVal
 		return left
@@ -177,6 +176,10 @@ func evaluateStringInfixExpression(operator string, left obj.Object, rigth obj.O
 		return toBooleanObject(leftVal == rigthVal)
 	case "!=":
 		return toBooleanObject(leftVal != rigthVal)
+	case ">":
+		return toBooleanObject(leftVal > rigthVal)
+	case "<":
+		return toBooleanObject(leftVal < rigthVal)
 	default:
 		return unknownInfixOperator(
 			obj.Types[left.Type()],

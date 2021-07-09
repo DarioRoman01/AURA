@@ -278,4 +278,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"es_minuscula":   obj.NewBuiltin(isLower),
 	"formatear":      obj.NewBuiltin(formatrArgs),
 	"escribirF":      obj.NewBuiltin(printF),
+	"map":            obj.NewBuiltin(mapList),
 }
