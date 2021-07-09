@@ -1,8 +1,11 @@
-clase Persona(name, age) {
-    saludar() {
-        regresa formatear("Hi im {} and i have {} years old", name, age)
-    }
-}
+nums := lista[2,3,4,6,23,54,23,6,2];
 
-p := nuevo Persona("joe", 28);
-p.saludar();
+nums = nums:map(|x| => {
+    si(x % 2 == 0) {
+        x++;
+    } si_no {
+        x--;
+    }
+});
+
+nums:porCada(|x| => escribirF("x es: {}", x));

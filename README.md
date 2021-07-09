@@ -92,7 +92,7 @@ mi_lista:agregar(5);   // add 5 to the list
 mi_lista:pop();        // pop the last item and return it
 mi_lista:popIndice(0); // remove by index and return it
 mi_lista:map(|x| =>  x++; ); // increments one all the values in the array
-mi_lista:porCada(|x| => escribir(x));
+mi_lista:porCada(|x| => escribir(x)); // prints every element in the list
 ```
 
 

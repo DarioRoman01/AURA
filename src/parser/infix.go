@@ -122,11 +122,15 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 		return nil
 	}
 
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
+	if p.peekToken.Token_type == l.LBRACE {
+		p.advanceTokens()
+		arrowFunc.Body = p.parseBlock()
+	} else {
+		p.advanceTokens()
+		exp := p.parserExpressionStatement()
+		arrowFunc.Body = &ast.Block{Staments: []ast.Stmt{exp}}
 	}
 
-	arrowFunc.Body = p.parseBlock()
 	return arrowFunc
 }
 
