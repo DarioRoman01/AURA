@@ -24,14 +24,13 @@ func (l *LexerTests) loadTokens(length int, source string) []lexer.Token {
 }
 
 func (l *LexerTests) TestIllegalToken() {
-	source := "¡¿@|&"
+	source := "¡¿@&"
 	tokens := l.loadTokens(utf8.RuneCountInString(source), source)
 
 	expectedTokens := []lexer.Token{
 		{Token_type: lexer.ILLEGAL, Literal: "¡"},
 		{Token_type: lexer.ILLEGAL, Literal: "¿"},
 		{Token_type: lexer.ILLEGAL, Literal: "@"},
-		{Token_type: lexer.ILLEGAL, Literal: "|"},
 		{Token_type: lexer.ILLEGAL, Literal: "&"},
 	}
 
