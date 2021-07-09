@@ -75,7 +75,7 @@ funcion sum(a, b) {
     regresa a + b;
 }
 
-escribir(sum(5,8)); // output: 13
+escribir(add(5,8)); // output: 13
 ```
 
 ## Lists
@@ -174,12 +174,12 @@ for example:
 ```go
 clase Persona(name, age) {
     saludar() {
-        escribir(formatear("hi im {}, I am {} years old", name, age));
+        escribirF("hi im {} and i have {} years old", name, age);
     }
 }
 
 p := nuevo Persona("eddy", 24);
-p.saludar(); // output: hi im eddy i have 24 years old
+p.saludar(); // output: hi im eddy and i have 24 years old
 ```
 
 with all this lets look a real world example with bynary search:

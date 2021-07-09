@@ -1,7 +1,7 @@
 funcion insertion_sort(elements) {
     por(i en rango(1, largo(elements))) {
-        var anchor = elements[i];
-        var j = i - 1;
+        anchor := elements[i];
+        j := i - 1;
         mientras(j >= 0 && anchor < elements[j]) {
             elements[j + 1] = elements[j];
             j--;
@@ -10,7 +10,7 @@ funcion insertion_sort(elements) {
         elements[j + 1] = anchor;
     }
 
-    escribir("Array ordernado ", elements)
+    escribirF("Array ordernado {}", elements)
 }
 
 funcion main() {

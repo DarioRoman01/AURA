@@ -6,6 +6,6 @@ funcion fib(n) {
     regresa fib(n - 1) + fib(n - 2);
 }
 
-var numero = recibir_entero("Ingrese un numero para calcular su fibonacci: ")
-var resultado = fib(numero);
+numero := recibir_entero("Ingrese un numero para calcular su fibonacci: ")
+resultado := fib(numero);
 escribir(resultado);
