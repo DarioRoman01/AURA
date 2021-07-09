@@ -82,7 +82,7 @@ escribir(add(5,8)); // output: 13
 List allows you to group a list of data, 
 lists are escential in any programming lengauge
 ```go
-mi_lista := lista[2, 3, 4, "hello", "world"];
+mi_lista := lista[2, 3, 4];
 mi_lista[0]; // output: 2
 ```
 
@@ -91,6 +91,8 @@ Also list have methods:
 mi_lista:agregar(5);   // add 5 to the list
 mi_lista:pop();        // pop the last item and return it
 mi_lista:popIndice(0); // remove by index and return it
+mi_lista:map(|x| =>  x++; ); // increments one all the values in the array
+mi_lista:porCada(|x| => escribir(x));
 ```
 
 
