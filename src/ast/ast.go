@@ -454,11 +454,3 @@ func (a *ArrowFunc) Str() string {
 	}
 	return fmt.Sprintf("|%s| => {\n%s\n}", buf.String(), a.Body.Str())
 }
-
-// funcion(){}
-
-// 	a := |a, b| => {
-//		regresa a + b;
-//	}
-
-// a:map((v) => { v.str() });

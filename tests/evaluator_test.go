@@ -79,6 +79,23 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 			expected: []int{45, 65, 34, 7},
 		},
 		{
+			source: `
+			x := lista[45,65,34,7];
+			x = x:map(|v| => { texto(v); });
+			x;
+			`,
+			expected: []string{"45", "65", "34", "7"},
+		},
+		{
+			source: `
+			i := 0;
+			x := lista[45,65,34,7];
+			x:porCada(|v| => { i += v; });
+			i;
+			`,
+			expected: 151,
+		},
+		{
 			source:   `lista["h", "o", "la"];`,
 			expected: []string{"h", "o", "la"},
 		},
@@ -90,10 +107,15 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 
 	for _, test := range tests {
 		evaluated := e.evaluateTests(test.source)
-		if list, isStrList := test.expected.([]string); isStrList {
-			e.testStringArrayObject(evaluated, list)
-		} else {
-			e.testIntArrayObject(evaluated, test.expected.([]int))
+		switch t := test.expected.(type) {
+		case []string:
+			e.testStringArrayObject(evaluated, t)
+
+		case []int:
+			e.testIntArrayObject(evaluated, t)
+
+		default:
+			e.testIntegerObject(evaluated, test.expected.(int))
 		}
 	}
 }

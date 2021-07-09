@@ -35,6 +35,7 @@ const (
 	Lhead MethodsTypes = iota
 	POP
 	MAP
+	FOREACH
 	APPEND
 	REMOVE
 	CONTAIS

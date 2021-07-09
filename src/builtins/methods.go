@@ -86,7 +86,7 @@ func isLower(args ...obj.Object) obj.Object {
 
 func mapList(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) == 0 {
-		return wrongNumberofArgs("map", len(args), 0)
+		return wrongNumberofArgs("map", len(args), 1)
 	}
 
 	if fn, isFn := args[0].(*obj.Def); isFn {
@@ -98,4 +98,20 @@ func mapList(args ...obj.Object) obj.Object {
 	}
 
 	return &obj.Error{Message: "se requiere una funcion para map"}
+}
+
+func forEach(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("porCada", len(args), 1)
+	}
+
+	if fn, isFn := args[0].(*obj.Def); isFn {
+		if len(fn.Parameters) != 1 {
+			return &obj.Error{Message: "La funcion para map solo puede recibir un argumento"}
+		}
+
+		return obj.NewMethod(fn, obj.FOREACH)
+	}
+
+	return &obj.Error{Message: "se requiere una funcion para porCada"}
 }

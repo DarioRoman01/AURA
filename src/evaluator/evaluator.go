@@ -147,7 +147,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		CheckIsNotNil(node.Arguments)
 		args := evaluateExpression(node.Arguments, env)
 		CheckIsNotNil(function)
-		return applyFunction(function, args)
+		return applyFunction(function, args...)
 
 	case *ast.StringLiteral:
 		return &obj.String{Value: node.Value}
@@ -158,7 +158,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 }
 
 // generates a new function object
-func applyFunction(fn obj.Object, args []obj.Object) obj.Object {
+func applyFunction(fn obj.Object, args ...obj.Object) obj.Object {
 	switch function := fn.(type) {
 	case *obj.Def:
 		extendedEnviron := extendFunctionEnviroment(function, args)

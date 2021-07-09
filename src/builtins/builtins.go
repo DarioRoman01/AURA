@@ -279,4 +279,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"formatear":      obj.NewBuiltin(formatrArgs),
 	"escribirF":      obj.NewBuiltin(printF),
 	"map":            obj.NewBuiltin(mapList),
+	"porCada":        obj.NewBuiltin(forEach),
 }
