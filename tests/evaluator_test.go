@@ -81,7 +81,7 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 		{
 			source: `
 			x := lista[45,65,34,7];
-			x = x:map(|v| => { texto(v); });
+			x = x:map(|v| => texto(v));
 			x;
 			`,
 			expected: []string{"45", "65", "34", "7"},
@@ -90,7 +90,7 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 			source: `
 			i := 0;
 			x := lista[45,65,34,7];
-			x:porCada(|v| => { i += v; });
+			x:porCada(|v| => i += v);
 			i;
 			`,
 			expected: 151,
@@ -116,8 +116,24 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 			expected: []string{"h", "o", "la"},
 		},
 		{
+			source: `
+			x := lista["h", "o", "la"];
+			x = x:filtrar(|v| => (v == "h") || (v == "o"));
+			x;
+			`,
+			expected: []string{"h", "o"},
+		},
+		{
 			source:   `lista["a", "u", "r", "a"];`,
 			expected: []string{"a", "u", "r", "a"},
+		},
+		{
+			source: `
+			x := lista["a", "u", "r", "a"];
+			x = x:contar(|v| => v == 'a');
+			x;
+			`,
+			expected: 2,
 		},
 	}
 

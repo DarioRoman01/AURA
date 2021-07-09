@@ -13,12 +13,12 @@ funcion partition(elements, end) {
 
     mientras(elements[p_index] != pivot) {
         mientras(elements[pivot_index] < pivot) {
-            p_index++
+            p_index++;
         }
 
         i := p_index
         mientras(elements[i] > pivot) {
-            i++
+            i++;
         }
 
         si(i > p_index) {
@@ -46,10 +46,10 @@ funcion main() {
         lista[29, 15, 28],
         lista[6]
     ]
-    
+
     tests:porCada(|test| => {
         quick_sort(test);
-        escribir("sorted: ", test)
+        escribir("sorted: ", test);
     });
 }
 
