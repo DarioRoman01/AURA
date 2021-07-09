@@ -1,0 +1,8 @@
+clase Persona(name, age) {
+    saludar() {
+        regresa formatear("Hi im {} and i have {} years old", name, age)
+    }
+}
+
+p := nuevo Persona("joe", 28);
+p.saludar();

@@ -477,7 +477,7 @@ func (e *EvaluatorTests) TestOperators() {
 	}
 }
 
-func (e *EvaluatorTests) EvaluateClassEvaluation() {
+func (e *EvaluatorTests) TestClassEvaluation() {
 	tests := []struct {
 		source   string
 		expected interface{}
@@ -485,7 +485,7 @@ func (e *EvaluatorTests) EvaluateClassEvaluation() {
 		{source: `
 			clase Persona(name, age) {
 				saludar() {
-					regresar formatear("Hi im ", name, ", and i have ", age, " year old" )
+					regresa formatear("Hi im {} and i have {} years old", name, age);
 				}
 			}
 
@@ -497,7 +497,7 @@ func (e *EvaluatorTests) EvaluateClassEvaluation() {
 		{source: `
 			clase Persona(name, age) {
 				saludar() {
-					regresar formatear("Hi im ", name, ", and i have ", age, " year old" )
+					regresa formatear("Hi im {} and i have {} years old", name, age);
 				}
 			}
 
@@ -509,7 +509,7 @@ func (e *EvaluatorTests) EvaluateClassEvaluation() {
 		{source: `
 			clase Persona(name, age) {
 				saludar() {
-					regresar formatear("Hi im ", name, ", and i have ", age, " year old" )
+					regresa formatear("Hi im {} and i have {} years old", name, age);
 				}
 			}
 
