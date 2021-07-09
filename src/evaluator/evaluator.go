@@ -105,6 +105,9 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		env.SetItem(class.Name.Value, class)
 		return obj.SingletonNUll
 
+	case *ast.ArrowFunc:
+		return obj.NewDef(node.Body, env, node.Params...)
+
 	case *ast.ClassCall:
 		CheckIsNotNil(node.Arguments)
 		return evaluateClassCall(node, env)

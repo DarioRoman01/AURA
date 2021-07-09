@@ -427,3 +427,38 @@ func (i *ImportStatement) stmtNode() {}
 func (i *ImportStatement) Str() string {
 	return fmt.Sprintf("importar %s", i.Path.Str())
 }
+
+type ArrowFunc struct {
+	BaseNode
+	Params []*Identifier
+	Body   *Block
+}
+
+func NewArrowFunc(token l.Token, params []*Identifier, body *Block) *ArrowFunc {
+	return &ArrowFunc{
+		BaseNode: BaseNode{token},
+		Params:   params,
+		Body:     body,
+	}
+}
+
+func (a *ArrowFunc) expressNode() {}
+func (a *ArrowFunc) Str() string {
+	var buf strings.Builder
+	for idx, param := range a.Params {
+		if idx == len(a.Params)-1 {
+			buf.WriteString(param.Str())
+		} else {
+			buf.WriteString(param.Str() + ", ")
+		}
+	}
+	return fmt.Sprintf("|%s| => {\n%s\n}", buf.String(), a.Body.Str())
+}
+
+// funcion(){}
+
+// 	a := |a, b| => {
+//		regresa a + b;
+//	}
+
+// a:map((v) => { v.str() });

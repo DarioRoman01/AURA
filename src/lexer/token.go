@@ -10,6 +10,7 @@ const (
 	AND
 	ASSING
 	ARROW
+	BAR
 	CLASS
 	COLON
 	COLONASSING
@@ -71,6 +72,7 @@ var Tokens = [...]string{
 	AND:         "&&",
 	ASSING:      "=",
 	ARROW:       "=>",
+	BAR:         "|",
 	CLASS:       "clase",
 	COLON:       ":",
 	COLONASSING: ":=",

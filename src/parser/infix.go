@@ -114,3 +114,45 @@ func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
 	assigment.Val = p.parseExpression(LOWEST)
 	return assigment
 }
+
+func (p *Parser) parseArrowFunc() ast.Expression {
+	arrowFunc := ast.NewArrowFunc(*p.currentToken, make([]*ast.Identifier, 0), nil)
+	arrowFunc.Params = p.parseArrowValues()
+	if !p.expepectedToken(l.ARROW) {
+		return nil
+	}
+
+	if !p.expepectedToken(l.LBRACE) {
+		return nil
+	}
+
+	arrowFunc.Body = p.parseBlock()
+	return arrowFunc
+}
+
+func (p *Parser) parseArrowValues() []*ast.Identifier {
+	var values []*ast.Identifier
+	if p.peekToken.Token_type == l.BAR {
+		p.advanceTokens()
+		return values
+	}
+
+	p.advanceTokens()
+	if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
+		values = append(values, ident)
+	}
+
+	if p.peekToken.Token_type == l.COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
+			values = append(values, ident)
+		}
+	}
+
+	if !p.expepectedToken(l.BAR) {
+		return make([]*ast.Identifier, 0)
+	}
+
+	return values
+}

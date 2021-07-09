@@ -121,7 +121,7 @@ func (l *Lexer) NextToken() Token {
 		if l.peekCharacter() == "|" {
 			token = l.makeTwoCharacterToken(OR)
 		} else {
-			token = NewToken(ILLEGAL, l.character)
+			token = NewToken(BAR, l.character)
 		}
 
 	case "&":
