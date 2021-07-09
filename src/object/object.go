@@ -35,6 +35,8 @@ const (
 	Lhead MethodsTypes = iota
 	POP
 	MAP
+	COUNT
+	FILTER
 	FOREACH
 	APPEND
 	REMOVE

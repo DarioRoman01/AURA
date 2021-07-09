@@ -36,8 +36,6 @@ funcion quick_sort(elements) {
             partition(elements, pi - i)
         }
     }
-
-    regresa elements
 }
 
 funcion main() {
@@ -49,10 +47,10 @@ funcion main() {
         lista[6]
     ]
     
-    por(elementos en tests) {
-        ordernado := quick_sort(elementos)
-        escribir(formatear("sorted array: {}", ordernado))
-    }
+    tests:porCada(|test| => {
+        quick_sort(test);
+        escribir("sorted: ", test)
+    });
 }
 
 main();

@@ -96,6 +96,22 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 			expected: 151,
 		},
 		{
+			source: `
+			x := lista[45,65,34,7, 8];
+			x = x:filtrar(|v| => v % 2 == 0);
+			x;
+			`,
+			expected: []int{34, 8},
+		},
+		{
+			source: `
+			x := lista[45,65,34,7, 8];
+			x = x:contar(|v| => v % 2 == 0);
+			x;
+			`,
+			expected: 2,
+		},
+		{
 			source:   `lista["h", "o", "la"];`,
 			expected: []string{"h", "o", "la"},
 		},

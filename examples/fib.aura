@@ -1,4 +1,4 @@
-funcion fib(n) {
+fib := |n| => {
     si(n <= 1) {
         regresa n;
     }

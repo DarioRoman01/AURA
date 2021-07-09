@@ -115,3 +115,35 @@ func forEach(args ...obj.Object) obj.Object {
 
 	return &obj.Error{Message: "se requiere una funcion para porCada"}
 }
+
+func filter(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("porCada", len(args), 1)
+	}
+
+	if fn, isFn := args[0].(*obj.Def); isFn {
+		if len(fn.Parameters) != 1 {
+			return &obj.Error{Message: "La funcion para map solo puede recibir un argumento"}
+		}
+
+		return obj.NewMethod(fn, obj.FILTER)
+	}
+
+	return &obj.Error{Message: "se requiere una funcion para filtrar"}
+}
+
+func count(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("contar", len(args), 1)
+	}
+
+	if fn, isFn := args[0].(*obj.Def); isFn {
+		if len(fn.Parameters) != 1 {
+			return &obj.Error{Message: "La funcion para contar solo puede recibir un argumento"}
+		}
+
+		return obj.NewMethod(fn, obj.COUNT)
+	}
+
+	return &obj.Error{Message: "se requiere una funcion para contar"}
+}

@@ -280,4 +280,6 @@ var BUILTINS = map[string]*obj.Builtin{
 	"escribirF":      obj.NewBuiltin(printF),
 	"map":            obj.NewBuiltin(mapList),
 	"porCada":        obj.NewBuiltin(forEach),
+	"filtrar":        obj.NewBuiltin(filter),
+	"contar":         obj.NewBuiltin(count),
 }

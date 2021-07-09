@@ -21,9 +21,7 @@ funcion main() {
         lista[29, 15, 28]
     ]
 
-    por(elemento en tests) {
-        insertion_sort(elemento)
-    }
+    tests:porCada(|test| => insertion_sort(test));
 }
 
 main()

@@ -140,6 +140,30 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 		}
 		return obj.SingletonNUll
 
+	case obj.FILTER:
+		var newList obj.List
+		fn := method.Value.(*obj.Def)
+		for _, val := range list.Values {
+			eval := applyFunction(fn, val)
+			if eval == obj.SingletonTRUE {
+				newList.Values = append(newList.Values, val)
+			}
+		}
+
+		return &newList
+
+	case obj.COUNT:
+		var count obj.Number
+		fn := method.Value.(*obj.Def)
+		for _, val := range list.Values {
+			eval := applyFunction(fn, val)
+			if eval == obj.SingletonTRUE {
+				count.Value++
+			}
+		}
+
+		return &count
+
 	default:
 		return noSuchMethod(method.Inspect(), "list")
 	}
