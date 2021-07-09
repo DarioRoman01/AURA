@@ -173,6 +173,28 @@ func formatrArgs(args ...obj.Object) obj.Object {
 	return &obj.String{Value: val}
 }
 
+func printF(args ...obj.Object) obj.Object {
+	if len(args) <= 1 {
+		return wrongNumberofArgs("format", 0, 100)
+	}
+
+	str, isStr := args[0].(*obj.String)
+	if !isStr {
+		return &obj.Error{
+			Message: "el primer argumento para formatear debe ser un string",
+		}
+	}
+
+	val := str.Value
+	for i := 1; i < len(args); i++ {
+		val = strings.Replace(val, "{}", args[i].Inspect(), 1)
+	}
+
+	defer writer.Flush()
+	writer.WriteString(val + "\n")
+	return obj.SingletonNUll
+}
+
 // same as python range function
 func rango(args ...obj.Object) obj.Object {
 	switch len(args) {
@@ -255,4 +277,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"es_mayuscula":   obj.NewBuiltin(isUpper),
 	"es_minuscula":   obj.NewBuiltin(isLower),
 	"formatear":      obj.NewBuiltin(formatrArgs),
+	"escribirF":      obj.NewBuiltin(printF),
 }

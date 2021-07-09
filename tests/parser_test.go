@@ -37,11 +37,8 @@ func (p *ParserTests) InitParserTests(source string) (*parser.Parser, *ast.Progr
 func (p *ParserTests) TestParseProgram() {
 	source := "var x = 5;"
 	_, program := p.InitParserTests(source)
-
 	p.Assert().NotNil(program)
-
 	p.Assert().IsType(&ast.Program{}, program)
-
 	p.Assert().Implements((*ast.ASTNode)(nil), program)
 }
 
