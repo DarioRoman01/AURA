@@ -282,4 +282,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"porCada":        obj.NewBuiltin(forEach),
 	"filtrar":        obj.NewBuiltin(filter),
 	"contar":         obj.NewBuiltin(count),
+	"separar":        obj.NewBuiltin(split),
 }

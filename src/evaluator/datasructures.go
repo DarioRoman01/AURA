@@ -216,6 +216,10 @@ func evaluateStringMethod(str *obj.String, method *obj.Method) obj.Object {
 	case obj.ISLOWER:
 		return str.IsLower()
 
+	case obj.SPLIT:
+		separator := method.Value.(*obj.String)
+		return str.Split(separator.Value)
+
 	default:
 		return noSuchMethod(method.Inspect(), "texto")
 	}

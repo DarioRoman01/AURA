@@ -147,3 +147,15 @@ func count(args ...obj.Object) obj.Object {
 
 	return &obj.Error{Message: "se requiere una funcion para contar"}
 }
+
+func split(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("separar", len(args), 1)
+	}
+
+	if str, isStr := args[0].(*obj.String); isStr {
+		return obj.NewMethod(str, obj.SPLIT)
+	}
+
+	return unsoportedArgumentType("separar", obj.Types[args[0].Type()])
+}

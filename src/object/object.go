@@ -47,6 +47,7 @@ const (
 	LOWER
 	ISUPPER
 	ISLOWER
+	SPLIT
 )
 
 // string representation of the types

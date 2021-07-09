@@ -129,6 +129,14 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 		},
 		{
 			source: `
+			x := "a u r a";
+			x = x:separar(" ");
+			x;
+			`,
+			expected: []string{"a", "u", "r", "a"},
+		},
+		{
+			source: `
 			x := lista["a", "u", "r", "a"];
 			x = x:contar(|v| => v == 'a');
 			x;
@@ -711,6 +719,7 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 		`, 30,
 		},
 		{"funcion(x) { x }(5)", 5},
+		{"|x| => {x}(5)", 5},
 	}
 
 	for _, test := range tests {
