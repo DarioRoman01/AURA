@@ -703,18 +703,12 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 		`, 10,
 		},
 		{`
-			funcion suma(x, y) {
-				regresa x + y;
-			};
-
+			funcion suma(x, y) => x + y;
 			suma(3, 8);
 		`, 11,
 		},
 		{`
-			funcion suma(x, y) {
-				regresa x + y;
-			};
-
+			funcion suma(x, y) => x + y;
 			suma(5 + 5, suma(10, 10));
 		`, 30,
 		},
@@ -760,10 +754,7 @@ func (e *EvaluatorTests) TestStringConcatenation() {
 		{source: `"foo" + "bar";`, expected: "foobar"},
 		{source: `"hello," + " " + "world!";`, expected: "hello, world!"},
 		{source: `
-			funcion saludo(nombre) {
-				regresa "Hola " + nombre + "!";
-			};
-
+			funcion saludo(nombre) => "Hola " + nombre + "!";
 			saludo("David");
 		`,
 			expected: "Hola David!",

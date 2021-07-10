@@ -60,12 +60,22 @@ func (p *Parser) parseFunction() ast.Expression {
 	}
 
 	function.Parameters = p.parseFunctionParameters()
-	if !p.expepectedToken(l.LBRACE) {
-		// syntax error -> funcion() there is on body
+	switch {
+	case p.peekToken.Token_type == l.LBRACE:
+		p.advanceTokens()
+		function.Body = p.parseBlock()
+
+	case p.peekToken.Token_type == l.ARROW:
+		p.advanceTokens()
+		p.advanceTokens()
+		exp := p.parserExpressionStatement()
+		function.Body = &ast.Block{Staments: []ast.Stmt{exp}}
+
+	default:
+		p.expectedTokenError(l.LBRACE)
 		return nil
 	}
 
-	function.Body = p.parseBlock()
 	return function
 }
 

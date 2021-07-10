@@ -75,7 +75,16 @@ funcion sum(a, b) {
     regresa a + b;
 }
 
-escribir(add(5,8)); // output: 13
+escribir(sum(5,8)); // output: 13
+```
+
+also there is anonymous functions:
+```rust
+sum := |a, b| => {
+    regresa a + b;
+};
+
+escrbir(sum(a, b));
 ```
 
 ## Lists
@@ -91,7 +100,7 @@ Also list have methods:
 mi_lista:agregar(5);   // add 5 to the list
 mi_lista:pop();        // pop the last item and return it
 mi_lista:popIndice(0); // remove by index and return it
-mi_lista:map(|x| =>  x++; ); // increments one all the values in the array
+mi_lista:map(|x| => x += 1); // increments one all the values in the array
 mi_lista:porCada(|x| => escribir(x)); // prints every element in the list
 mi_lista:filtrar(|x| => x % 2 == 0); // filter all the elements that are divisible by two
 ```
