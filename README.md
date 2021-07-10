@@ -7,11 +7,6 @@ in spanish that is very simple to use. Also is an expressions based lenguage so 
 
 It is an interpreted language fully built using Go standar libreary.
 
-
-## Filosophy
-like i said before this lenguage is inspiried mostly on javascript
-
-
 ## Syntax example
 
 ## Variables
@@ -92,7 +87,7 @@ mi_lista[0]; // output: 2
 ```
 
 Also list have methods:
-```js
+```rust
 mi_lista:agregar(5);   // add 5 to the list
 mi_lista:pop();        // pop the last item and return it
 mi_lista:popIndice(0); // remove by index and return it

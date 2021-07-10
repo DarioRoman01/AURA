@@ -3,6 +3,7 @@ package evaluator
 import (
 	obj "aura/src/object"
 	"fmt"
+	"reflect"
 )
 
 // evluate infix expressions between objects
@@ -28,10 +29,10 @@ func evaluateInfixExpression(operator string, left obj.Object, right obj.Object)
 		return evaluateBoolInfixExpression(operator, left.(*obj.Bool), right.(*obj.Bool))
 
 	case operator == "==":
-		return toBooleanObject(left == right)
+		return toBooleanObject(reflect.DeepEqual(left, right))
 
 	case operator == "!=":
-		return toBooleanObject(left != right)
+		return toBooleanObject(!reflect.DeepEqual(left, right))
 
 	case left.Type() != right.Type():
 		return typeMismatchError(
