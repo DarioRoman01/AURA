@@ -32,7 +32,7 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 func (p *Parser) parseCall(function ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	call := ast.NewCall(*p.currentToken, function)
-	call.Arguments = p.parseCallArguments()
+	call.Arguments = p.parseExpressions(l.RPAREN)
 	return call
 }
 
@@ -117,7 +117,7 @@ func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
 
 func (p *Parser) parseArrowFunc() ast.Expression {
 	arrowFunc := ast.NewArrowFunc(*p.currentToken, make([]*ast.Identifier, 0), nil)
-	arrowFunc.Params = p.parseArrowValues()
+	arrowFunc.Params = p.parseIdentifiers(l.BAR)
 	if !p.expepectedToken(l.ARROW) {
 		return nil
 	}
@@ -132,31 +132,4 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 	}
 
 	return arrowFunc
-}
-
-func (p *Parser) parseArrowValues() []*ast.Identifier {
-	var values []*ast.Identifier
-	if p.peekToken.Token_type == l.BAR {
-		p.advanceTokens()
-		return values
-	}
-
-	p.advanceTokens()
-	if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
-		values = append(values, ident)
-	}
-
-	if p.peekToken.Token_type == l.COMMA {
-		p.advanceTokens()
-		p.advanceTokens()
-		if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
-			values = append(values, ident)
-		}
-	}
-
-	if !p.expepectedToken(l.BAR) {
-		return make([]*ast.Identifier, 0)
-	}
-
-	return values
 }

@@ -190,11 +190,10 @@ func (p *Parser) parseBlock() *ast.Block {
 	return blockStament
 }
 
-// ParseArrayValues will parse all the values in array expressions
-func (p *Parser) ParseArrayValues() []ast.Expression {
+func (p *Parser) parseExpressions(delimiter l.TokenType) []ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	var values []ast.Expression
-	if p.peekToken.Token_type == l.RBRACKET {
+	if p.peekToken.Token_type == delimiter {
 		p.advanceTokens()
 		return values
 	}
@@ -212,42 +211,11 @@ func (p *Parser) ParseArrayValues() []ast.Expression {
 		}
 	}
 
-	if !p.expepectedToken(l.RBRACKET) {
+	if !p.expepectedToken(delimiter) {
 		return make([]ast.Expression, 0)
 	}
 
 	return values
-}
-
-// parse all the arguments when a function is call
-func (p *Parser) parseCallArguments() []ast.Expression {
-	var args []ast.Expression
-	p.checkPeekTokenIsNotNil()
-	if p.peekToken.Token_type == l.RPAREN {
-		// there is no arguemnts
-		p.advanceTokens()
-		return args
-	}
-
-	p.advanceTokens()
-	if expression := p.parseExpression(LOWEST); expression != nil {
-		args = append(args, expression)
-	}
-
-	// we loop until we dont have commas. this means whe parse all the values
-	for p.peekToken.Token_type == l.COMMA {
-		p.advanceTokens()
-		p.advanceTokens()
-		if expression := p.parseExpression(LOWEST); expression != nil {
-			args = append(args, expression)
-		}
-	}
-
-	if !p.expepectedToken(l.RPAREN) {
-		return make([]ast.Expression, 0)
-	}
-
-	return args
 }
 
 // parse a expression based on the given precedence
@@ -305,7 +273,7 @@ func (p *Parser) parseClassStatement() ast.Stmt {
 		return nil
 	}
 
-	class.Params = p.parseFunctionParameters()
+	class.Params = p.parseIdentifiers(l.RPAREN)
 	if !p.expepectedToken(l.LBRACE) {
 		return nil
 	}
@@ -334,36 +302,6 @@ func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 	}
 
 	return expressionStament
-}
-
-// parse all the parameters of the function expresison
-func (p *Parser) parseFunctionParameters() []*ast.Identifier {
-	var params []*ast.Identifier
-	p.checkPeekTokenIsNotNil()
-	if p.peekToken.Token_type == l.RPAREN {
-		// there is no parameters
-		p.advanceTokens()
-		return params
-	}
-
-	p.advanceTokens()
-	identifier := ast.NewIdentifier(*p.currentToken, p.currentToken.Literal)
-	params = append(params, identifier)
-
-	// we loop until we dont have commas. this means we parse all the parameters
-	for p.peekToken.Token_type == l.COMMA {
-		p.advanceTokens()
-		p.advanceTokens()
-		identifier = ast.NewIdentifier(*p.currentToken, p.currentToken.Literal)
-		params = append(params, identifier)
-	}
-
-	if !p.expepectedToken(l.RPAREN) {
-		// syntax error
-		return make([]*ast.Identifier, 0)
-	}
-
-	return params
 }
 
 // parse a suffix function
@@ -399,6 +337,33 @@ func (p *Parser) parseLetSatement() ast.Stmt {
 	}
 
 	return stament
+}
+
+func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
+	var values []*ast.Identifier
+	if p.peekToken.Token_type == delimiter {
+		p.advanceTokens()
+		return values
+	}
+
+	p.advanceTokens()
+	if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
+		values = append(values, ident)
+	}
+
+	for p.peekToken.Token_type == l.COMMA {
+		p.advanceTokens()
+		p.advanceTokens()
+		if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
+			values = append(values, ident)
+		}
+	}
+
+	if !p.expepectedToken(delimiter) {
+		return make([]*ast.Identifier, 0)
+	}
+
+	return values
 }
 
 // parse a return stament

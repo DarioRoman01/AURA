@@ -59,7 +59,7 @@ func (p *Parser) parseFunction() ast.Expression {
 		return nil
 	}
 
-	function.Parameters = p.parseFunctionParameters()
+	function.Parameters = p.parseIdentifiers(l.RPAREN)
 	switch {
 	case p.peekToken.Token_type == l.LBRACE:
 		p.advanceTokens()
@@ -217,7 +217,7 @@ func (p *Parser) ParseArray() ast.Expression {
 		return nil
 	}
 
-	arr.Values = p.ParseArrayValues()
+	arr.Values = p.parseExpressions(l.RBRACKET)
 	return arr
 }
 
@@ -259,7 +259,7 @@ func (p *Parser) parseClassMethod() ast.Expression {
 		return nil
 	}
 
-	classMethod.Params = p.parseFunctionParameters()
+	classMethod.Params = p.parseIdentifiers(l.RPAREN)
 	if !p.expepectedToken(l.LBRACE) {
 		return nil
 	}
@@ -282,7 +282,7 @@ func (p *Parser) parseClassCall() ast.Expression {
 		return nil
 	}
 
-	call.Arguments = p.parseCallArguments()
+	call.Arguments = p.parseExpressions(l.RPAREN)
 	return call
 }
 
