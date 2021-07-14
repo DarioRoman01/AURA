@@ -448,56 +448,64 @@ func evaluateCallList(call *ast.CallList, env *obj.Enviroment) obj.Object {
 	switch object := evaluated.(type) {
 
 	case *obj.List:
-		evaluated := Evaluate(call.Index, env)
-		num, isNumber := evaluated.(*obj.Number)
-		if !isNumber {
-			return newError("el indice debe ser un enetero")
-		}
-
-		length := len(object.Values)
-		if num.Value >= length {
-			return indexOutOfRange(num.Value, length)
-		}
-
-		if num.Value < 0 {
-			if int(math.Abs(float64(num.Value))) > length {
-				return indexOutOfRange(num.Value, length)
-			}
-
-			return object.Values[length+num.Value]
-		}
-
-		return object.Values[num.Value]
+		return evaluateListCall(object, call, env)
 
 	case *obj.Map:
 		evaluated := Evaluate(call.Index, env)
 		return object.Get(evaluated.Inspect())
 
 	case *obj.String:
-		evaluated := Evaluate(call.Index, env)
-		num, isNumber := evaluated.(*obj.Number)
-		if !isNumber {
-			return newError("El indice debe ser un entero")
-		}
-
-		strLen := utf8.RuneCountInString(object.Value)
-		if num.Value >= strLen {
-			return indexOutOfRange(num.Value, strLen)
-		}
-
-		if num.Value < 0 {
-			if int(math.Abs(float64(num.Value))) > strLen {
-				return indexOutOfRange(num.Value, strLen)
-			}
-
-			return &obj.String{Value: string(object.Value[strLen+num.Value])}
-		}
-
-		return &obj.String{Value: string(object.Value[num.Value])}
+		return evaluateStringCall(object, call, env)
 
 	default:
 		return cannotBeIndexed(obj.Types[evaluated.Type()])
 	}
+}
+
+func evaluateListCall(list *obj.List, call *ast.CallList, env *obj.Enviroment) obj.Object {
+	evaluated := Evaluate(call.Index, env)
+	num, isNumber := evaluated.(*obj.Number)
+	if !isNumber {
+		return newError("el indice debe ser un enetero")
+	}
+
+	length := len(list.Values)
+	if num.Value >= length {
+		return indexOutOfRange(num.Value, length)
+	}
+
+	if num.Value < 0 {
+		if int(math.Abs(float64(num.Value))) > length {
+			return indexOutOfRange(num.Value, length)
+		}
+
+		return list.Values[length+num.Value]
+	}
+
+	return list.Values[num.Value]
+}
+
+func evaluateStringCall(str *obj.String, call *ast.CallList, env *obj.Enviroment) obj.Object {
+	evaluated := Evaluate(call.Index, env)
+	num, isNumber := evaluated.(*obj.Number)
+	if !isNumber {
+		return newError("El indice debe ser un entero")
+	}
+
+	strLen := utf8.RuneCountInString(str.Value)
+	if num.Value >= strLen {
+		return indexOutOfRange(num.Value, strLen)
+	}
+
+	if num.Value < 0 {
+		if int(math.Abs(float64(num.Value))) > strLen {
+			return indexOutOfRange(num.Value, strLen)
+		}
+
+		return &obj.String{Value: string(str.Value[strLen+num.Value])}
+	}
+
+	return &obj.String{Value: string(str.Value[num.Value])}
 }
 
 // evaluate an if expression
