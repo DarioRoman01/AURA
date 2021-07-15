@@ -1,40 +1,37 @@
 funcion swap(a, b, arr) {
     si (a != b) {
-        tpm := arr[a]
-        arr[a] = arr[b]
-        arr[b] = tmp
+        tpm := arr[a];
+        arr[a] = arr[b];
+        arr[b] = tmp;
     }
 }
 
-funcion partition(elements, end) {
-    pivot_index := end
+funcion partition(elements, start, end) {
+    pivot_index := start
     pivot := elements[pivot_index]
-    p_index := 0
 
-    mientras(elements[p_index] != pivot) {
-        mientras(elements[pivot_index] < pivot) {
-            p_index++;
+    mientras(start < end) {
+        mientras(start < largo(elements) && elements[start] <= pivot) {
+            start += 1;
         }
 
-        i := p_index
-        mientras(elements[i] > pivot) {
-            i++;
+        mientras(elements[end] > pivot) {
+            end -= 1;
         }
 
-        si(i > p_index) {
-            swap(p_index, i, elements)
+        si(start < end) {
+            swap(start, end, elements);
         }
     } 
 
-    regresa p_index
+    regresa end;
 }
 
-funcion quick_sort(elements) {
-    si(largo(elements) != 0) {
-        pi := partition(elements, largo(elements) - 1)
-        por(i en rango(pi)) {
-            partition(elements, pi - i)
-        }
+funcion quick_sort(elements, start, end) {
+    si(start < end) {
+        pi := partition(elements, start, end);
+        quick_sort(elements, start, pi - 1);
+        quick_sort(elements, pi+ 1, end);
     }
 }
 
@@ -48,7 +45,7 @@ funcion main() {
     ]
 
     tests:porCada(|test| => {
-        quick_sort(test);
+        quick_sort(elements, 0, largo(elements)-1)
         escribir("sorted: ", test);
     });
 }
