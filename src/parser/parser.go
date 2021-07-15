@@ -190,6 +190,8 @@ func (p *Parser) parseBlock() *ast.Block {
 	return blockStament
 }
 
+// parse a slice of expressions. this function will be normally use to parse
+// array values or values in a function call.
 func (p *Parser) parseExpressions(delimiter l.TokenType) []ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	var values []ast.Expression
@@ -242,7 +244,7 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 	}
 
 	// we loop until the precedence is lowest than the next precedence
-	for !(p.peekToken.Token_type == l.SEMICOLON) && precedence < p.peekPrecedence() {
+	for p.peekToken.Token_type != l.SEMICOLON && precedence < p.peekPrecedence() {
 		// we check if there is any function to parse an infix expression
 		infixParseFn, exist := p.infixParseFns[p.peekToken.Token_type]
 		if !exist {
@@ -339,6 +341,8 @@ func (p *Parser) parseLetSatement() ast.Stmt {
 	return stament
 }
 
+// parse an array of identifiers. this function will be use be use to parse params
+// of a function or class constructors
 func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 	var values []*ast.Identifier
 	if p.peekToken.Token_type == delimiter {

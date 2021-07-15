@@ -54,6 +54,7 @@ func (p *Parser) parseCallList(valueList ast.Expression) ast.Expression {
 func (p *Parser) parseReassigment(ident ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	reassignment := ast.NewReassignment(*p.currentToken, ident, nil)
+	p.checkPeekTokenIsNotNil()
 	p.advanceTokens()
 	reassignment.NewVal = p.parseExpression(LOWEST)
 	return reassignment

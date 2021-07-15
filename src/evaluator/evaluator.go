@@ -106,6 +106,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return obj.SingletonNUll
 
 	case *ast.ArrowFunc:
+		CheckIsNotNil(node.Body)
 		return obj.NewDef(node.Body, env, node.Params...)
 
 	case *ast.ClassCall:
@@ -345,7 +346,7 @@ func evaluateImportStatement(importStmt *ast.ImportStatement, env *obj.Enviromen
 		return obj.SingletonNUll
 	}
 
-	return newError("La direccion para import un archivo debe ser un string")
+	return newError("La direccion para importar un archivo debe ser un string")
 }
 
 // evluate all the statements in a bock expression
