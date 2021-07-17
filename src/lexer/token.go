@@ -22,6 +22,7 @@ const (
 	ELSE
 	EOF
 	EQ
+	EXCEPT
 	EXPONENT
 	FALSE
 	FLOAT
@@ -59,6 +60,7 @@ const (
 	THIS
 	TIMES // *
 	TIMEASSI
+	TRY
 	STRING
 	TRUE
 	WHILE
@@ -82,6 +84,7 @@ var Tokens = [...]string{
 	ELSE:        "si_no",
 	EOF:         "final del archivo",
 	EQ:          "==",
+	EXCEPT:      "excepto",
 	FALSE:       "falso",
 	FLOAT:       "flotante",
 	FUNCTION:    "funcion",
@@ -116,6 +119,7 @@ var Tokens = [...]string{
 	PLUSASSING:  "+=",
 	MINUSASSING: "-=",
 	THIS:        "this",
+	TRY:         "intenta",
 	TIMEASSI:    "*=",
 	DIVASSING:   "/=",
 	EXPONENT:    "**",
@@ -158,6 +162,8 @@ func LookUpTokenType(literal string) TokenType {
 		"clase":     CLASS,
 		"nuevo":     NEW,
 		"importar":  IMPORT,
+		"intentar":  TRY,
+		"excepto":   EXCEPT,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {

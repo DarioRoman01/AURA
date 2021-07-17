@@ -454,3 +454,29 @@ func (a *ArrowFunc) Str() string {
 	}
 	return fmt.Sprintf("|%s| => {\n%s\n}", buf.String(), a.Body.Str())
 }
+
+// represents a try catch expression
+type TryExp struct {
+	BaseNode             // extends base node
+	Try      *Block      // represents the try block
+	Param    *Identifier // represents the error param
+	Catch    *Block      // represents the catch block
+}
+
+// Genereates a new try catch instance
+func NewTry(token l.Token, try *Block, param *Identifier, catch *Block) *TryExp {
+	return &TryExp{
+		BaseNode: BaseNode{token},
+		Try:      try,
+		Param:    param,
+		Catch:    catch,
+	}
+}
+
+func (t *TryExp) expressNode() {}
+func (t TryExp) Str() string {
+	return fmt.Sprintf(
+		"intenta { %s } excepto(%s) { %s }",
+		t.Try.Str(), t.Param.Str(), t.Catch.Str(),
+	)
+}

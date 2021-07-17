@@ -294,3 +294,33 @@ func (p *Parser) parseImportStatement() ast.Stmt {
 	importStmt.Path = p.parseExpression(LOWEST)
 	return importStmt
 }
+
+func (p *Parser) parseTryExp() ast.Expression {
+	try := ast.NewTry(*p.currentToken, nil, nil, nil)
+	if !p.expepectedToken(l.LBRACE) {
+		return nil
+	}
+
+	try.Try = p.parseBlock()
+	if !p.expepectedToken(l.EXCEPT) {
+		return nil
+	}
+	if !p.expepectedToken(l.LPAREN) {
+		return nil
+	}
+	if !p.expepectedToken(l.IDENT) {
+		return nil
+	}
+
+	try.Param = p.parseIdentifier().(*ast.Identifier)
+	if !p.expepectedToken(l.RPAREN) {
+		return nil
+	}
+
+	if !p.expepectedToken(l.LBRACE) {
+		return nil
+	}
+
+	try.Catch = p.parseBlock()
+	return try
+}
