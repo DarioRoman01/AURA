@@ -142,6 +142,30 @@ func (p *ParserTests) TestReturnStatement() {
 	}
 }
 
+func (p *ParserTests) TestTryExp() {
+	source := `
+		intentar {
+			x := entero("a");
+		} excepto(error) {
+			escribir("hubo un error");
+		}
+	`
+	parser, program := p.InitParserTests(source)
+	p.Assert().Equal(0, len(parser.Errors()))
+	p.Assert().Equal(1, len(program.Staments))
+	p.Assert().IsType(&ast.ExpressionStament{}, program.Staments[0].(*ast.ExpressionStament))
+	stmt := program.Staments[0].(*ast.ExpressionStament)
+	if !p.Assert().IsType(&ast.TryExp{}, stmt.Expression) {
+		p.T().FailNow()
+	}
+
+	try := stmt.Expression.(*ast.TryExp)
+	p.Assert().NotNil(try.Catch)
+	p.Assert().NotNil(try.Try)
+	p.Assert().NotNil(try.Param)
+	p.Assert().Equal("error", try.Param.Value)
+}
+
 func (p *ParserTests) TestIdentifierExpression() {
 	source := "foobar;"
 	parser, program := p.InitParserTests(source)
