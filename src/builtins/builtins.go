@@ -53,31 +53,8 @@ func Longitud(args ...obj.Object) obj.Object {
 // same as println function
 func Escribir(args ...obj.Object) obj.Object {
 	var buff strings.Builder
-
 	for _, arg := range args {
-		switch node := arg.(type) {
-
-		case *obj.String:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Number:
-			buff.WriteString(node.Inspect())
-
-		case *obj.List:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Bool:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Map:
-			buff.WriteString(node.Inspect())
-
-		case *obj.Class:
-			buff.WriteString(node.Inspect())
-
-		default:
-			return unsoportedArgumentType("escribir", obj.Types[node.Type()])
-		}
+		buff.WriteString(arg.Inspect())
 	}
 
 	defer writer.Flush()

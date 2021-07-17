@@ -1,6 +1,1 @@
-funcion sum(a, b) {
-    regresa a + b;
-}
-
-resultado := sum(2,3)
-escribir(resultado);
+funcion sum(a, b) => a + b;

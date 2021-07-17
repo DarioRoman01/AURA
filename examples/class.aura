@@ -44,3 +44,4 @@ s.push(45)
 escribir(s.data);
 s.vaciar();
 escribir(s.data);
+escribir(s.peek());
