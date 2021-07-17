@@ -105,6 +105,11 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		env.SetItem(class.Name.Value, class)
 		return obj.SingletonNUll
 
+	case *ast.TryExp:
+		CheckIsNotNil(node.Try)
+		CheckIsNotNil(node.Catch)
+		return evaluateTryExcept(node, env)
+
 	case *ast.ArrowFunc:
 		CheckIsNotNil(node.Body)
 		return obj.NewDef(node.Body, env, node.Params...)
@@ -524,6 +529,23 @@ func evaluateIfExpression(ifExpression *ast.If, env *obj.Enviroment) obj.Object 
 		// if the condition is not truthy and the alternative
 		// is not nil we evaluate the alternative
 		return Evaluate(ifExpression.Alternative, env)
+	}
+
+	return obj.SingletonNUll
+}
+
+func evaluateTryExcept(try *ast.TryExp, env *obj.Enviroment) obj.Object {
+	eval := Evaluate(try.Try, env)
+	if _, isErr := eval.(*obj.Error); isErr {
+		return Evaluate(try.Catch, env)
+	}
+
+	if returnVal, isReturn := eval.(*obj.Return); isReturn {
+		if _, isErr := returnVal.Value.(*obj.Error); isErr {
+			return Evaluate(try.Catch, env)
+		}
+
+		return returnVal
 	}
 
 	return obj.SingletonNUll

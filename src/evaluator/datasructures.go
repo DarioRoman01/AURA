@@ -145,7 +145,7 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 		fn := method.Value.(*obj.Def)
 		for _, val := range list.Values {
 			eval := applyFunction(fn, val)
-			if eval == obj.SingletonTRUE {
+			if isTruthy(eval) {
 				newList.Values = append(newList.Values, val)
 			}
 		}
@@ -157,7 +157,7 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 		fn := method.Value.(*obj.Def)
 		for _, val := range list.Values {
 			eval := applyFunction(fn, val)
-			if eval == obj.SingletonTRUE {
+			if isTruthy(eval) {
 				count.Value++
 			}
 		}

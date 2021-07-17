@@ -722,6 +722,81 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 	}
 }
 
+func (e *EvaluatorTests) TestTryExcept() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{
+			source: `
+			funcion parse(x) {
+				intentar {
+					x := entero(x);
+					regresa x;
+				} excepto(e) {
+					regresa "no se pudo parsear"
+				}
+			}
+			parse("5");
+			`,
+			expected: 5,
+		},
+		{
+			source: `
+			funcion parse(x) {
+				intentar {
+					x := entero(x);
+					regresa x;
+				} excepto(e) {
+					regresa "no se pudo parsear"
+				}
+			}
+			parse("25")
+			`,
+			expected: 25,
+		},
+		{
+			source: `
+			funcion parse(x) {
+				intentar {
+					x := entero(x);
+					regresa x;
+				} excepto(e) {
+					regresa "no se pudo parsear"
+				}
+
+				
+			}
+			parse("h")
+			`,
+			expected: "no se pudo parsear",
+		},
+		{
+			source: `
+			funcion parse(x) {
+				intentar {
+					x := entero(x);
+					regresa x;
+				} excepto(e) {
+					regresa "no se pudo parsear"
+				}
+			}
+			parse("hello world")
+			`,
+			expected: "no se pudo parsear",
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if str, isStr := test.expected.(string); isStr {
+			e.testStringObject(evaluated, str)
+		} else {
+			e.testIntegerObject(evaluated, test.expected.(int))
+		}
+	}
+}
+
 func (e *EvaluatorTests) TestStringEvaluation() {
 	tests := []struct {
 		source   string
