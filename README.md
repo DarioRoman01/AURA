@@ -7,304 +7,57 @@ in spanish that is very simple to use. Also is an expressions based lenguage so 
 
 It is an interpreted language fully built using Go standar libreary.
 
-## Syntax example
-
-## Variables
-```go
-var a = 5;
-var b = 5;
-var c = a + b;
-
-or 
-
-a := 5;
-b := 5;
-c := a + b;
-```
-
-## Types
-```ts
-var number = 5; // Integer
-var float = 2.5; // float
-var str = "string"; // string
-var bool = verdadero; // boolean
-var list = lista[1,2,3]; // list
-var map = mapa{1 => "a", 2 => "b"}; // map
-var class = nuevo SomeClass(); //class
-var null = nulo; // null
-```
-
-### Operators
-
-These are operators:
-| Operator             | Symbol |
-|----------------------|--------|
-| Plus                 |    +   |
-| Increment            |   ++   |
-| Add assigment        |   +=   |
-| Minus                |    -   |
-| Decrement            |    --  |
-| Subtract assigment   |   -=   |
-| Multiplication       |    *   |
-| Exponential          |   **   |
-| Multiply assigment   |   *=   |
-| Division             |    /   |
-| Division assigment   |   /=   |
-| Modulus              |    %   |
-| Equal                |   ==   |
-| Not Equal            |   !=   |
-| Not                  |    !   |
-| Less than            |    <   |
-| Greater than         |    >   |
-| Less or equal than   |   <=   |
-| Greater or equal than|   >=   |
-| And                  |   &&   |
-| Or                   |  \|\|  |
-
-## Functions
-For declaring a function, you need to use the next syntax:
-```ts
-funcion example(<Argmuent name>, <Argmuent name>) {
-    regresa <return value>;
-};
-```
-
-simple function example:
-```ts
-funcion sum(a, b) {
-    regresa a + b;
-}
-
-escribir(sum(5,8)); // output: 13
-```
-
-also there is anonymous functions:
+## Code Snippet
 ```rust
-sum := |a, b| => {
-    regresa a + b;
-};
+// insertion sort implementation in aura
 
-escrbir(sum(a, b));
-```
-
-## Lists
-List allows you to group a list of data, 
-lists are escential in any programming lengauge
-```go
-mi_lista := lista[2, 3, 4];
-mi_lista[0]; // output: 2
-```
-
-Also list have methods:
-```rust
-mi_lista:agregar(5);   // add 5 to the list
-mi_lista:pop();        // pop the last item and return it
-mi_lista:popIndice(0); // remove by index and return it
-mi_lista:map(|x| => x += 1); // increments one all the values in the array
-mi_lista:porCada(|x| => escribir(x)); // prints every element in the list
-mi_lista:filtrar(|x| => x % 2 == 0); // filter all the elements that are divisible by two
-```
-
-
-## HashMaps
-HashMaps are datastructures that help you store data by key => value
-representation
-
-For declaring a HashMap, you need to use the next syntax:
-```go
-example := mapa{key => value, key => value, key => value};
-
-// get the value of the given key
-example[key];
-```
-
-for example:
-```go
-mi_mapa := mapa{
-    "a" => 1,
-    "b" => 2,
-    "c" => 3,
-}
-
-mi_mapa["a"] // output: 1
-```
-
-## Loops
-WhileLoop syntax:
-```ts
-mientras(<condition>) {
-    // code to be execute
-}
-```
-
-for example:
-```go
-i := 0;
-mientras(i <= 5) {
-    escribir("hola mundo");
-    i++;
-}
-```
-
-For loop syntax:
-```ts
-por(i en <iterable>) {
-    // code to be execute
-}
-```
-
-for example:
-```ts
-por(i en rango(5)) {
-    escribir("hola mundo");
-}
-```
-
-you can also can iterate lists and strings:
-```ts
-var mi_lista = lista[2,3,4];
-por(i en mi_lista) {
-    escribir(i);
-}
-
-por(i en "Hello world") {
-    escribir(i);
-}
-```
-
-## Clases
-you can create clases with following syntax:
-```dart
-clase ClassName(<constructor params>) {
-    method() {
-        // method body
-    }
-}
-```
-
-for example:
-```go
-clase Persona(name, age) {
-    saludar() {
-        escribirF("hi im {} and i have {} years old", name, age);
-    }
-}
-
-p := nuevo Persona("eddy", 24);
-p.saludar(); // output: hi im eddy and i have 24 years old
-```
-
-with all this lets look a real world example with bynary search:
-```go
-funcion binary_search(elements, val) {
-    left := 0;
-    rigth := largo(elements) - 1;
-    mid := 0;
-
-    mientras(left <= rigth) {
-        mid = (left + rigth) / 2;
-        mid_number := elements[mid];
-
-        si (mid_number == val) {
-            regresa mid;
+funcion insertion_sort(elements) {
+    por(i en rango(1, largo(elements))) {
+        anchor := elements[i];
+        j := i - 1;
+        mientras(j >= 0 && anchor < elements[j]) {
+            elements[j + 1] = elements[j];
+            j--;
         }
 
-        si (mid_number < val) {
-            left = mid + 1;
-        } si_no {
-            rigth = mid - 1;
-        }
+        elements[j + 1] = anchor;
     }
 
-    regresa -1
+    escribirF("Array ordernado {}", elements)
 }
 
-numbers := lista[1,4,6,9,10,12,26];
-index := binary_search(numbers, 4);
-escribir("numero encontrado en el indice ", index);
-// output: numero encontrado en el indice 1
+funcion main() {
+    tests := lista[
+        lista[11,9,29,7,2,15,28],
+        lista[3, 7, 9, 11],
+        lista[25, 22, 21, 10],
+        lista[29, 15, 28]
+    ];
+
+    tests:porCada(|test| => insertion_sort(test));
+}
 ```
 
 ## <h1>Installation</h1>
-for using it you need to have Go install check https://golang.org/ for install Go
+1. ### Go to Realeses and download the version that prefer **if you are using windows you need to download the .exe file**
 
-<h3>first copy the repository and change to the directory created:</h3>
+2. <h3>move the binary to a folder of your preference for example:</h3>
 
-```shell
-$ git clone https://github.com/DarioRoman01/AURA.git && cd AURA
-```
+    ```shell
+    mv aura /home/user/bin/aura
+    ```
 
-<h3>download the dependencies:</h3>
+3. <h3>Then you have to set aura in your path:</h3>
 
-```shell
-$ go mod download
-```
+    * on linux:
+    ```shell
+    export PATH=$PATH:/path/to/your/install/directory
+    ``` 
 
-<h3>check that tests pass:</h3>
-
-```shell
-$ go test -v ./...
-```
-
-<h3>if you use mac or linux just run the install script.
-this will install aura in your system</h3>
-
-```shell
-$ chmod a+x install.sh
-``` 
-```shell
-$ ./install.sh
-```
-<br>
-
-<h2>if you are using windows or you want to install aura in other folder follow the next steps:</h2> 
-
-
-<h3>compile aura:</h3>
-
-```shell
-go build -o aura
-```
-
-<h3>You can discover the install path by running the go list command, as in the following example</h3>
-
-```shell
-$ go list -f '{{.Target}}'
-```
-example output: /home/user/Go/bin/aura <br>
-
-<h3>you can change the install target by setting the GOBIN variable using the go env command:</h3>
-
-* on linux:
-```shell
-$ go env -w GOBIN=/path/to/your/bin
-```
-* on windows:
-```powershell
-$ go env -w GOBIN=C:\path\to\your\bin
-```
-<br> 
-
-<h3>Add the Go install directory to your system's shell path</h3>
-
-* on linux:
-```shell
-$ export PATH=$PATH:/path/to/your/install/directory
-```
-
-* on windows:
-```powershell
-$ set PATH=%PATH%;C:\path\to\your\install\directory
-```
-
-<br>
-
-<h3>Once you've updated the shell path, run the go install command to compile and install the package.
-then you need to go where the package was install and rename to binary aura to aura.exe</h3>
-
-```shell
-$ go install
-```
+    * on windows:
+    ```powershell
+    set PATH=%PATH%;C:\path\to\your\install\directory
+    ```
 
 <h3>then you can create a file or play with the repl. 
 to play with the repl just run:</h3>
