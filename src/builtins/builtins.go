@@ -4,6 +4,7 @@ import (
 	obj "aura/src/object"
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -217,6 +218,24 @@ func Tipo(args ...obj.Object) obj.Object {
 	return &obj.String{Value: obj.Types[args[0].Type()]}
 }
 
+// return the absolute value of the given number
+func abs(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("abs", len(args), 1)
+	}
+
+	switch node := args[0].(type) {
+	case *obj.Number:
+		return &obj.Number{Value: int(math.Abs(float64(node.Value)))}
+
+	case *obj.Float:
+		return &obj.Float{Value: math.Abs(node.Value)}
+
+	default:
+		return unsoportedArgumentType("abs", obj.Types[args[0].Type()])
+	}
+}
+
 // input function to recibe input from console
 func input(scan *bufio.Scanner) string {
 	scan.Scan()
@@ -260,4 +279,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"filtrar":        obj.NewBuiltin(filter),
 	"contar":         obj.NewBuiltin(count),
 	"separar":        obj.NewBuiltin(split),
+	"abs":            obj.NewBuiltin(abs),
 }

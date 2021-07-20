@@ -626,6 +626,11 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `a := lista[2,34,45]; a:contiene(342);`, expected: false},
 		{source: `formatear("hola soy {}", "dario");`, expected: "hola soy dario"},
 		{source: `formatear("hi im {}, i am {} years old", "dario", 19);`, expected: "hi im dario, i am 19 years old"},
+		{source: `abs(-1)`, expected: 1},
+		{source: "abs(1)", expected: 1},
+		{source: "abs(-2.5)", expected: 2.5},
+		{source: "abs(2.5)", expected: 2.5},
+		{source: `abs("h")`, expected: "argumento para abs no valido, se recibio texto"},
 	}
 
 	for _, test := range tests {
@@ -643,6 +648,9 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 
 		case bool:
 			e.testBooleanObject(evaluated, val)
+
+		case float64:
+			e.testFloatObject(evaluated, val)
 
 		default:
 			panic("Some weird shit happend!")
