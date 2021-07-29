@@ -175,19 +175,20 @@ func (p *Parser) expectedTokenError(tokenType l.TokenType) {
 // parseBlock will parse a block expression
 func (p *Parser) parseBlock() *ast.Block {
 	p.checkCurrentTokenIsNotNil()
-	blockStament := ast.NewBlock(*p.currentToken)
+	token := *p.currentToken
+	stmts := make([]ast.Stmt, 0)
 	p.advanceTokens()
 
 	// we iterate until we find a } token
 	for !(p.currentToken.Token_type == l.RBRACE) && !(p.currentToken.Token_type == l.EOF) {
 		if stament := p.parseStament(); stament != nil {
-			blockStament.Staments = append(blockStament.Staments, stament)
+			stmts = append(stmts, stament)
 		}
 
 		p.advanceTokens()
 	}
 
-	return blockStament
+	return ast.NewBlock(token, stmts...)
 }
 
 // parse a slice of expressions. this function will be normally use to parse
@@ -265,45 +266,46 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 // parse a class statement
 func (p *Parser) parseClassStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	class := ast.NewClassStatement(*p.currentToken, nil, nil, []*ast.ClassMethodExp{})
+	token := *p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		return nil
 	}
 
-	class.Name = p.parseIdentifier().(*ast.Identifier)
+	name := p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.LPAREN) {
 		return nil
 	}
 
-	class.Params = p.parseIdentifiers(l.RPAREN)
+	params := p.parseIdentifiers(l.RPAREN)
 	if !p.expepectedToken(l.LBRACE) {
 		return nil
 	}
 
 	p.advanceTokens()
+	methods := make([]*ast.ClassMethodExp, 0)
 	for p.currentToken.Token_type != l.RBRACE && p.currentToken.Token_type != l.EOF {
 		if expression := p.parseClassMethod(); expression != nil {
 			if method, isMethod := expression.(*ast.ClassMethodExp); isMethod {
-				class.Methods = append(class.Methods, method)
+				methods = append(methods, method)
 			}
 		}
 	}
 
-	return class
+	return ast.NewClassStatement(token, name, params, methods)
 }
 
 // parse a expression statement
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 	p.checkCurrentTokenIsNotNil()
-	expressionStament := ast.NewExpressionStament(*p.currentToken, nil)
-	expressionStament.Expression = p.parseExpression(LOWEST)
+	token := *p.currentToken
+	exp := p.parseExpression(LOWEST)
 
 	p.checkPeekTokenIsNotNil()
 	if p.peekToken.Token_type == l.SEMICOLON {
 		p.advanceTokens()
 	}
 
-	return expressionStament
+	return ast.NewExpressionStament(token, exp)
 }
 
 // parse a suffix function
@@ -320,25 +322,25 @@ func (p *Parser) ParseNull() ast.Expression {
 // parse a let statement
 func (p *Parser) parseLetSatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	stament := ast.NewLetStatement(*p.currentToken, nil, nil)
+	token := *p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		return nil
 	}
 
-	stament.Name = p.parseIdentifier().(*ast.Identifier)
+	name := p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.ASSING) {
 		// syntax error. we dont allow this -> var name 5;
 		return nil
 	}
 
 	p.advanceTokens()
-	stament.Value = p.parseExpression(LOWEST)
+	value := p.parseExpression(LOWEST)
 	p.checkPeekTokenIsNotNil()
 	if p.peekToken.Token_type == l.SEMICOLON {
 		p.advanceTokens()
 	}
 
-	return stament
+	return ast.NewLetStatement(token, name, value)
 }
 
 // parse an array of identifiers. this function will be use be use to parse params

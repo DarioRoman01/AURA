@@ -379,6 +379,7 @@ type ClassStatement struct {
 func NewClassStatement(token l.Token, name *Identifier, params []*Identifier, methods []*ClassMethodExp) *ClassStatement {
 	return &ClassStatement{
 		BaseNode: BaseNode{token},
+		Name:     name,
 		Params:   params,
 		Methods:  methods,
 	}

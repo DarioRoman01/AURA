@@ -193,7 +193,10 @@ func (p *ParserTests) TestClassStatement() {
 	p.Assert().Equal(0, len(parser.Errors()))
 	class, isClass := program.Staments[0].(*ast.ClassStatement)
 
-	p.Assert().True(isClass)
+	if !p.Assert().True(isClass) {
+		p.T().FailNow()
+	}
+
 	p.Assert().Implements((*ast.Stmt)(nil), class)
 	p.Assert().Equal("persona", class.Name.Value)
 
