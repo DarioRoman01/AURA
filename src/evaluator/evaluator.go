@@ -135,7 +135,7 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		value := Evaluate(node.Val, env)
 		CheckIsNotNil(node.Name)
 		env.SetItem(node.Name.Value, value)
-		return obj.SingletonNUll
+		return value
 
 	case *ast.Identifier:
 		return evaluateIdentifier(node, env)
@@ -534,14 +534,17 @@ func evaluateIfExpression(ifExpression *ast.If, env *obj.Enviroment) obj.Object 
 	return obj.SingletonNUll
 }
 
+// evaluate a try excpet expression
 func evaluateTryExcept(try *ast.TryExp, env *obj.Enviroment) obj.Object {
 	eval := Evaluate(try.Try, env)
-	if _, isErr := eval.(*obj.Error); isErr {
+	if err, isErr := eval.(*obj.Error); isErr {
+		env.SetItem(try.Param.Value, err)
 		return Evaluate(try.Catch, env)
 	}
 
 	if returnVal, isReturn := eval.(*obj.Return); isReturn {
-		if _, isErr := returnVal.Value.(*obj.Error); isErr {
+		if err, isErr := returnVal.Value.(*obj.Error); isErr {
+			env.SetItem(try.Param.Value, err)
 			return Evaluate(try.Catch, env)
 		}
 
