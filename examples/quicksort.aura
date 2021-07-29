@@ -1,6 +1,6 @@
 funcion swap(a, b, arr) {
     si (a != b) {
-        tpm := arr[a];
+        tmp := arr[a];
         arr[a] = arr[b];
         arr[b] = tmp;
     }
@@ -22,8 +22,10 @@ funcion partition(elements, start, end) {
         si(start < end) {
             swap(start, end, elements);
         }
-    } 
 
+    } 
+    
+    swap(pivot_index, end, elements)
     regresa end;
 }
 
@@ -31,8 +33,10 @@ funcion quick_sort(elements, start, end) {
     si(start < end) {
         pi := partition(elements, start, end);
         quick_sort(elements, start, pi - 1);
-        quick_sort(elements, pi+ 1, end);
+        quick_sort(elements, pi + 1, end);
     }
+
+    regresa elements
 }
 
 funcion main() {
@@ -42,12 +46,14 @@ funcion main() {
         lista[25, 22, 21, 10],
         lista[29, 15, 28],
         lista[6]
-    ]
+    ];
 
     tests:porCada(|test| => {
-        quick_sort(elements, 0, largo(elements)-1)
-        escribir("sorted: ", test);
-    });
+        quick_sort(test, 0, largo(test)-1);
+        escribirF("Ordenado: {}", test)
+    })
+
+    escribir(x);
 }
 
 main();

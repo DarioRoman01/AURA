@@ -196,10 +196,12 @@ func (p *Parser) parseGroupExpression() ast.Expression {
 // parse a prefix expression
 func (p *Parser) parsePrefixExpression() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	prefixExpression := ast.NewPrefix(*p.currentToken, p.currentToken.Literal, nil)
+	token := *p.currentToken
+	operator := p.currentToken.Literal
+
 	p.advanceTokens()
-	prefixExpression.Rigth = p.parseExpression(PREFIX)
-	return prefixExpression
+	rigth := p.parseExpression(PREFIX)
+	return ast.NewPrefix(token, operator, rigth)
 }
 
 // parse a string literal
@@ -211,20 +213,20 @@ func (p *Parser) parseStringLiteral() ast.Expression {
 // parse a array expression
 func (p *Parser) ParseArray() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	arr := ast.NewArray(*p.currentToken, nil)
+	token := *p.currentToken
 	if !p.expepectedToken(l.LBRACKET) {
 		// syntax error -> lista 2,3,4,5
 		return nil
 	}
-
-	arr.Values = p.parseExpressions(l.RBRACKET)
-	return arr
+	values := p.parseExpressions(l.RBRACKET)
+	return ast.NewArray(token, values...)
 }
 
 // parse a map expression
 func (p *Parser) parseMap() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	mapExpress := ast.NewMapExpression(*p.currentToken, []*ast.KeyValue{})
+	token := *p.currentToken
+	keyValues := make([]*ast.KeyValue, 0)
 	if !p.expepectedToken(l.LBRACE) {
 		// syntax error: missing left brace
 		return nil
@@ -233,7 +235,7 @@ func (p *Parser) parseMap() ast.Expression {
 	p.advanceTokens()
 	keyVal := p.parseKeyValues()
 	if keyVal != nil {
-		mapExpress.Body = append(mapExpress.Body, keyVal)
+		keyValues = append(keyValues, keyVal)
 	}
 
 	// we loop untile we dont have commas. this means we parse all the key value pairs.
@@ -242,31 +244,31 @@ func (p *Parser) parseMap() ast.Expression {
 		p.advanceTokens()
 		keyVal := p.parseKeyValues()
 		if keyVal != nil {
-			mapExpress.Body = append(mapExpress.Body, keyVal)
+			keyValues = append(keyValues, keyVal)
 		}
 
 	}
 	p.advanceTokens()
-	return mapExpress
+	return ast.NewMapExpression(token, keyValues)
 }
 
 // parse a class method
 func (p *Parser) parseClassMethod() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	classMethod := ast.NewClassMethodExp(*p.currentToken, nil, nil, nil)
-	classMethod.Name = p.parseIdentifier().(*ast.Identifier)
+	token := *p.currentToken
+	name := p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.LPAREN) {
 		return nil
 	}
 
-	classMethod.Params = p.parseIdentifiers(l.RPAREN)
+	params := p.parseIdentifiers(l.RPAREN)
 	if !p.expepectedToken(l.LBRACE) {
 		return nil
 	}
 
-	classMethod.Body = p.parseBlock()
+	body := p.parseBlock()
 	p.advanceTokens()
-	return classMethod
+	return ast.NewClassMethodExp(token, name, params, body)
 }
 
 // parse a call to instanciate a new class
