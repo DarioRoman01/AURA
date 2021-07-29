@@ -23,13 +23,12 @@ func (p *Parser) parseBoolean() ast.Expression {
 // parse a for expression
 func (p *Parser) parseFor() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	forExpression := ast.NewFor(*p.currentToken, nil, nil)
+	token := *p.currentToken
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error -> por i en rango(10))
 		return nil
 	}
-
-	forExpression.Condition = p.parseRangeExpression()
+	condition := p.parseRangeExpression()
 	if !p.expepectedToken(l.RPAREN) {
 		// syntax error -> por(i en range(10)
 		return nil
@@ -41,48 +40,50 @@ func (p *Parser) parseFor() ast.Expression {
 		return nil
 	}
 
-	forExpression.Body = p.parseBlock()
-	return forExpression
+	body := p.parseBlock()
+	return ast.NewFor(token, condition, body)
 }
 
 // parse a function expression
 func (p *Parser) parseFunction() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	function := ast.NewFunction(*p.currentToken, nil, nil)
+	token := *p.currentToken
+	var name *ast.Identifier = nil
 	if p.peekToken.Token_type == l.IDENT {
 		p.advanceTokens()
-		function.Name = p.parseIdentifier().(*ast.Identifier)
+		name = p.parseIdentifier().(*ast.Identifier)
 	}
 
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error -> funcion {}
 		return nil
 	}
+	parameters := p.parseIdentifiers(l.RPAREN)
 
-	function.Parameters = p.parseIdentifiers(l.RPAREN)
+	var body *ast.Block
 	switch {
 	case p.peekToken.Token_type == l.LBRACE:
 		p.advanceTokens()
-		function.Body = p.parseBlock()
+		body = p.parseBlock()
 
 	case p.peekToken.Token_type == l.ARROW:
 		p.advanceTokens()
 		p.advanceTokens()
 		exp := p.parserExpressionStatement()
-		function.Body = &ast.Block{Staments: []ast.Stmt{exp}}
+		body = &ast.Block{Staments: []ast.Stmt{exp}}
 
 	default:
 		p.expectedTokenError(l.LBRACE)
 		return nil
 	}
 
-	return function
+	return ast.NewFunction(token, name, body, parameters...)
 }
 
 // parse a while expression
 func (p *Parser) parseWhile() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	whileExpression := ast.NewWhile(*p.currentToken, nil, nil)
+	token := *p.currentToken
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error -> mientras <condition>
 		// missing the left paren
@@ -90,7 +91,7 @@ func (p *Parser) parseWhile() ast.Expression {
 	}
 
 	p.advanceTokens()
-	whileExpression.Condition = p.parseExpression(LOWEST)
+	condition := p.parseExpression(LOWEST)
 	if !p.expepectedToken(l.RPAREN) {
 		// syntax error -> mientras <condition>) {}
 		return nil
@@ -100,9 +101,8 @@ func (p *Parser) parseWhile() ast.Expression {
 		// syntax error -> mientras (<condition>) there is no body
 		return nil
 	}
-
-	whileExpression.Body = p.parseBlock()
-	return whileExpression
+	body := p.parseBlock()
+	return ast.NewWhile(token, condition, body)
 }
 
 // parse a identifier expression
@@ -114,14 +114,14 @@ func (p *Parser) parseIdentifier() ast.Expression {
 // parse an if expresion
 func (p *Parser) parseIf() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	ifExpression := ast.NewIf(*p.currentToken, nil, nil, nil)
+	token := *p.currentToken
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error. missing parents
 		return nil
 	}
 
 	p.advanceTokens()
-	ifExpression.Condition = p.parseExpression(LOWEST)
+	condition := p.parseExpression(LOWEST)
 	if !p.expepectedToken(l.RPAREN) {
 		// syntax error. missing parents
 		return nil
@@ -132,8 +132,8 @@ func (p *Parser) parseIf() ast.Expression {
 		return nil
 	}
 
-	ifExpression.Consequence = p.parseBlock()
-
+	consequence := p.parseBlock()
+	var alternative *ast.Block = nil
 	p.checkPeekTokenIsNotNil()
 	// if we have an else token that means there is an else expression
 	if p.peekToken.Token_type == l.ELSE {
@@ -141,17 +141,16 @@ func (p *Parser) parseIf() ast.Expression {
 		if !p.expepectedToken(l.LBRACE) {
 			return nil
 		}
-
-		ifExpression.Alternative = p.parseBlock()
+		alternative = p.parseBlock()
 	}
 
-	return ifExpression
+	return ast.NewIf(token, condition, consequence, alternative)
 }
 
 // parse a integer expressions
 func (p *Parser) parseInteger() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	integer := ast.NewInteger(*p.currentToken, nil)
+	token := *p.currentToken
 
 	val, err := strconv.Atoi(p.currentToken.Literal)
 	if err != nil {
@@ -161,14 +160,13 @@ func (p *Parser) parseInteger() ast.Expression {
 		return nil
 	}
 
-	integer.Value = &val
-	return integer
+	return ast.NewInteger(token, &val)
 }
 
 // parse a float expression
 func (p *Parser) parseFloat() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	float := &ast.FloatExp{BaseNode: ast.BaseNode{Token: *p.currentToken}}
+	token := *p.currentToken
 	val, err := strconv.ParseFloat(p.currentToken.Literal, 64)
 	if err != nil {
 		// the value is not a float. this is very weird to happend
@@ -177,8 +175,7 @@ func (p *Parser) parseFloat() ast.Expression {
 		return nil
 	}
 
-	float.Value = val
-	return float
+	return ast.NewFloatExp(token, val)
 }
 
 // parse a group expression like (5 + 5) / 2
