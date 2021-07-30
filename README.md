@@ -8,7 +8,7 @@ in spanish that is very simple to use. Also is an expressions based lenguage so 
 It is an interpreted language fully built using Go standar libreary.
 
 ## Code Snippet
-```rust
+```go
 // insertion sort implementation in aura
 
 funcion insertion_sort(elements) {
@@ -44,7 +44,7 @@ funcion main() {
 2. <h3>move the binary to a folder of your preference for example:</h3>
 
     ```shell
-    mv aura /home/user/bin/aura
+    mv aura /path/to/your/install/directory
     ```
 
 3. <h3>Then you have to set aura in your path:</h3>
@@ -70,7 +70,7 @@ $ aura
 
 **Is important to have the .aura extension otherwise the lenguage wont read the file**
 ```shell
-$ aura some/file.aura
+$ aura file.aura
 ```
 
 

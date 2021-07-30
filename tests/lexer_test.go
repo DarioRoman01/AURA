@@ -68,6 +68,27 @@ func (l *LexerTests) TestFloat() {
 	l.Assert().Equal(expectedTokens, tokens)
 }
 
+func (l *LexerTests) TestArrowFunc() {
+	source := `sum := |a, b| => a + b;`
+	tokens := l.loadTokens(12, source)
+	expectedTokens := []lexer.Token{
+		{Token_type: lexer.IDENT, Literal: "sum"},
+		{Token_type: lexer.COLONASSING, Literal: ":="},
+		{Token_type: lexer.BAR, Literal: "|"},
+		{Token_type: lexer.IDENT, Literal: "a"},
+		{Token_type: lexer.COMMA, Literal: ","},
+		{Token_type: lexer.IDENT, Literal: "b"},
+		{Token_type: lexer.BAR, Literal: "|"},
+		{Token_type: lexer.ARROW, Literal: "=>"},
+		{Token_type: lexer.IDENT, Literal: "a"},
+		{Token_type: lexer.PLUS, Literal: "+"},
+		{Token_type: lexer.IDENT, Literal: "b"},
+		{Token_type: lexer.SEMICOLON, Literal: ";"},
+	}
+
+	l.Assert().Equal(expectedTokens, tokens)
+}
+
 func (l *LexerTests) TestEOF() {
 	source := "+"
 	tokens := l.loadTokens(utf8.RuneCountInString(source)+1, source)

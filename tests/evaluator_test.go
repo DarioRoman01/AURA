@@ -703,7 +703,7 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 		`, 5,
 		},
 		{`
-			funcion doble(x) {
+			doble := |x| => {
 				regresa 2 * x;
 			};
 

@@ -477,7 +477,7 @@ func NewTry(token l.Token, try *Block, param *Identifier, catch *Block) *TryExp 
 func (t *TryExp) expressNode() {}
 func (t TryExp) Str() string {
 	return fmt.Sprintf(
-		"intenta { %s } excepto(%s) { %s }",
+		"intentar { %s } excepto(%s) { %s }",
 		t.Try.Str(), t.Param.Str(), t.Catch.Str(),
 	)
 }
