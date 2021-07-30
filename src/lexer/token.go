@@ -57,7 +57,6 @@ const (
 	RETURN
 	RPAREN
 	SEMICOLON
-	THIS
 	TIMES // *
 	TIMEASSI
 	TRY
@@ -118,7 +117,6 @@ var Tokens = [...]string{
 	MAP:         "mapa",
 	PLUSASSING:  "+=",
 	MINUSASSING: "-=",
-	THIS:        "this",
 	TRY:         "intenta",
 	TIMEASSI:    "*=",
 	DIVASSING:   "/=",
@@ -158,7 +156,6 @@ func LookUpTokenType(literal string) TokenType {
 		"lista":     DATASTRCUT,
 		"nulo":      NULLT,
 		"mapa":      MAP,
-		"this":      THIS,
 		"clase":     CLASS,
 		"nuevo":     NEW,
 		"importar":  IMPORT,

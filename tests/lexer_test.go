@@ -68,6 +68,26 @@ func (l *LexerTests) TestFloat() {
 	l.Assert().Equal(expectedTokens, tokens)
 }
 
+func (l *LexerTests) TestClassDeclaration() {
+	source := `
+		clase Persona(nombre, edad) {}
+	`
+	tokens := l.loadTokens(9, source)
+	expectedTokens := []lexer.Token{
+		{Token_type: lexer.CLASS, Literal: "clase"},
+		{Token_type: lexer.IDENT, Literal: "Persona"},
+		{Token_type: lexer.LPAREN, Literal: "("},
+		{Token_type: lexer.IDENT, Literal: "nombre"},
+		{Token_type: lexer.COMMA, Literal: ","},
+		{Token_type: lexer.IDENT, Literal: "edad"},
+		{Token_type: lexer.RPAREN, Literal: ")"},
+		{Token_type: lexer.LBRACE, Literal: "{"},
+		{Token_type: lexer.RBRACE, Literal: "}"},
+	}
+
+	l.Assert().Equal(expectedTokens, tokens)
+}
+
 func (l *LexerTests) TestArrowFunc() {
 	source := `sum := |a, b| => a + b;`
 	tokens := l.loadTokens(12, source)
@@ -306,14 +326,14 @@ func (l *LexerTests) TestUnderscoreVar() {
 func (l *LexerTests) TestString() {
 	source := `
 		"foo";
-		"src is a great programing lenguage";
+		"aura is a great programing lenguage";
 	`
 
 	tokens := l.loadTokens(4, source)
 	expectedTokens := []lexer.Token{
 		{Token_type: lexer.STRING, Literal: "foo"},
 		{Token_type: lexer.SEMICOLON, Literal: ";"},
-		{Token_type: lexer.STRING, Literal: "src is a great programing lenguage"},
+		{Token_type: lexer.STRING, Literal: "aura is a great programing lenguage"},
 		{Token_type: lexer.SEMICOLON, Literal: ";"},
 	}
 
