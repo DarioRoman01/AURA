@@ -8,7 +8,7 @@ in spanish that is very simple to use. Also is an expressions based lenguage so 
 It is an interpreted language fully built using Go standar libreary.
 
 ## Code Snippet
-```go
+```dart
 // insertion sort implementation in aura
 
 funcion insertion_sort(elements) {
