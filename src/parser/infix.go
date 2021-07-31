@@ -8,7 +8,7 @@ import (
 // parse a method expression
 func (p *Parser) parseMethod(left ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		// syntax error. we dont allow this -> obj:();
 		return nil
@@ -21,7 +21,7 @@ func (p *Parser) parseMethod(left ast.Expression) ast.Expression {
 // parse an infix expressoin
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	operator := p.currentToken.Literal
 	precedence := p.currentPrecedence()
 
@@ -33,7 +33,7 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 // parse a function call
 func (p *Parser) parseCall(function ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	args := p.parseExpressions(l.RPAREN)
 	return ast.NewCall(token, function, args...)
 }
@@ -41,7 +41,7 @@ func (p *Parser) parseCall(function ast.Expression) ast.Expression {
 // parse a call list expression
 func (p *Parser) parseCallList(valueList ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	p.advanceTokens()
 	index := p.parseExpression(LOWEST)
 	if !p.expepectedToken(l.RBRACKET) {
@@ -55,7 +55,7 @@ func (p *Parser) parseCallList(valueList ast.Expression) ast.Expression {
 // parse a ressigment expression
 func (p *Parser) parseReassigment(ident ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	p.checkPeekTokenIsNotNil()
 	p.advanceTokens()
 	newVal := p.parseExpression(LOWEST)
@@ -65,7 +65,7 @@ func (p *Parser) parseReassigment(ident ast.Expression) ast.Expression {
 // parse a key value expression
 func (p *Parser) parseKeyValues() *ast.KeyValue {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	key := p.parseExpression(LOWEST)
 	if !p.expepectedToken(l.ARROW) {
 		return nil
@@ -78,7 +78,7 @@ func (p *Parser) parseKeyValues() *ast.KeyValue {
 
 // parse a range expression
 func (p *Parser) parseRangeExpression() ast.Expression {
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		// syntax error. we dont allow this -> por(en rango(10))
 		return nil
@@ -97,7 +97,7 @@ func (p *Parser) parseRangeExpression() ast.Expression {
 // parse a class field or method call
 func (p *Parser) parseClassFieldsCall(left ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	p.checkPeekTokenIsNotNil()
 	p.advanceTokens()
 	field := p.parseExpression(LOWEST)
@@ -112,7 +112,7 @@ func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
 		return nil
 	}
 
-	token := *p.currentToken
+	token := p.currentToken
 	p.advanceTokens()
 	val := p.parseExpression(LOWEST)
 	return ast.NewAssigmentExp(token, ident, val)
@@ -120,7 +120,7 @@ func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
 
 func (p *Parser) parseArrowFunc() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	params := p.parseIdentifiers(l.BAR)
 	if !p.expepectedToken(l.ARROW) {
 		return nil
@@ -133,7 +133,7 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 	} else {
 		p.advanceTokens()
 		exp := p.parserExpressionStatement()
-		body = ast.NewBlock(*p.currentToken, exp)
+		body = ast.NewBlock(p.currentToken, exp)
 	}
 
 	return ast.NewArrowFunc(token, params, body)

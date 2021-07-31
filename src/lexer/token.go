@@ -131,8 +131,8 @@ type Token struct {
 }
 
 // Generate a new Token instance
-func NewToken(t TokenType, literal string) Token {
-	return Token{Token_type: t, Literal: literal}
+func NewToken(t TokenType, literal string) *Token {
+	return &Token{Token_type: t, Literal: literal}
 }
 
 // print token info

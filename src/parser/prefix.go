@@ -13,17 +13,17 @@ func (p *Parser) parseBoolean() ast.Expression {
 	var value bool
 	if p.currentToken.Token_type == l.TRUE {
 		value = true
-		return ast.NewBoolean(*p.currentToken, &value)
+		return ast.NewBoolean(p.currentToken, &value)
 	}
 
 	value = false
-	return ast.NewBoolean(*p.currentToken, &value)
+	return ast.NewBoolean(p.currentToken, &value)
 }
 
 // parse a for expression
 func (p *Parser) parseFor() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error -> por i en rango(10))
 		return nil
@@ -47,7 +47,7 @@ func (p *Parser) parseFor() ast.Expression {
 // parse a function expression
 func (p *Parser) parseFunction() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	var name *ast.Identifier = nil
 	if p.peekToken.Token_type == l.IDENT {
 		p.advanceTokens()
@@ -83,7 +83,7 @@ func (p *Parser) parseFunction() ast.Expression {
 // parse a while expression
 func (p *Parser) parseWhile() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error -> mientras <condition>
 		// missing the left paren
@@ -108,13 +108,13 @@ func (p *Parser) parseWhile() ast.Expression {
 // parse a identifier expression
 func (p *Parser) parseIdentifier() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	return ast.NewIdentifier(*p.currentToken, p.currentToken.Literal)
+	return ast.NewIdentifier(p.currentToken, p.currentToken.Literal)
 }
 
 // parse an if expresion
 func (p *Parser) parseIf() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.LPAREN) {
 		// syntax error. missing parents
 		return nil
@@ -150,7 +150,7 @@ func (p *Parser) parseIf() ast.Expression {
 // parse a integer expressions
 func (p *Parser) parseInteger() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 
 	val, err := strconv.Atoi(p.currentToken.Literal)
 	if err != nil {
@@ -166,7 +166,7 @@ func (p *Parser) parseInteger() ast.Expression {
 // parse a float expression
 func (p *Parser) parseFloat() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	val, err := strconv.ParseFloat(p.currentToken.Literal, 64)
 	if err != nil {
 		// the value is not a float. this is very weird to happend
@@ -193,7 +193,7 @@ func (p *Parser) parseGroupExpression() ast.Expression {
 // parse a prefix expression
 func (p *Parser) parsePrefixExpression() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	operator := p.currentToken.Literal
 
 	p.advanceTokens()
@@ -204,13 +204,13 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 // parse a string literal
 func (p *Parser) parseStringLiteral() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	return ast.NewStringLiteral(*p.currentToken, p.currentToken.Literal)
+	return ast.NewStringLiteral(p.currentToken, p.currentToken.Literal)
 }
 
 // parse a array expression
 func (p *Parser) ParseArray() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.LBRACKET) {
 		// syntax error -> lista 2,3,4,5
 		return nil
@@ -222,7 +222,7 @@ func (p *Parser) ParseArray() ast.Expression {
 // parse a map expression
 func (p *Parser) parseMap() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	keyValues := make([]*ast.KeyValue, 0)
 	if !p.expepectedToken(l.LBRACE) {
 		// syntax error: missing left brace
@@ -252,7 +252,7 @@ func (p *Parser) parseMap() ast.Expression {
 // parse a class method
 func (p *Parser) parseClassMethod() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	name := p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.LPAREN) {
 		return nil
@@ -271,7 +271,7 @@ func (p *Parser) parseClassMethod() ast.Expression {
 // parse a call to instanciate a new class
 func (p *Parser) parseClassCall() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	call := ast.NewClassCall(*p.currentToken, nil, nil)
+	call := ast.NewClassCall(p.currentToken, nil, nil)
 	if !p.expepectedToken(l.IDENT) {
 		return nil
 	}
@@ -288,14 +288,14 @@ func (p *Parser) parseClassCall() ast.Expression {
 // parse an imper statement
 func (p *Parser) parseImportStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	importStmt := ast.NewImportStatement(*p.currentToken, nil)
+	importStmt := ast.NewImportStatement(p.currentToken, nil)
 	p.advanceTokens()
 	importStmt.Path = p.parseExpression(LOWEST)
 	return importStmt
 }
 
 func (p *Parser) parseTryExp() ast.Expression {
-	try := ast.NewTry(*p.currentToken, nil, nil, nil)
+	try := ast.NewTry(p.currentToken, nil, nil, nil)
 	if !p.expepectedToken(l.LBRACE) {
 		return nil
 	}

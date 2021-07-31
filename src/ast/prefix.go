@@ -15,7 +15,7 @@ type Prefix struct {
 }
 
 // generates a new prefix instance
-func NewPrefix(token l.Token, operator string, rigth Expression) *Prefix {
+func NewPrefix(token *l.Token, operator string, rigth Expression) *Prefix {
 	return &Prefix{
 		BaseNode: BaseNode{token},
 		Operator: operator,
@@ -35,7 +35,7 @@ type Identifier struct {
 }
 
 // generates a new identifier instance
-func NewIdentifier(token l.Token, value string) *Identifier {
+func NewIdentifier(token *l.Token, value string) *Identifier {
 	return &Identifier{BaseNode: BaseNode{token}, Value: value}
 }
 
@@ -52,7 +52,7 @@ type Integer struct {
 }
 
 // geneerate a new instance of integer
-func NewInteger(token l.Token, value *int) *Integer {
+func NewInteger(token *l.Token, value *int) *Integer {
 	return &Integer{BaseNode: BaseNode{token}, Value: value}
 }
 
@@ -68,7 +68,7 @@ type FloatExp struct {
 	Value    float64 // represents the value of the expression
 }
 
-func NewFloatExp(token l.Token, value float64) *FloatExp {
+func NewFloatExp(token *l.Token, value float64) *FloatExp {
 	return &FloatExp{BaseNode: BaseNode{token}, Value: value}
 }
 
@@ -85,7 +85,7 @@ type Boolean struct {
 }
 
 // return a new boolean instance
-func NewBoolean(token l.Token, value *bool) *Boolean {
+func NewBoolean(token *l.Token, value *bool) *Boolean {
 	return &Boolean{BaseNode: BaseNode{token}, Value: value}
 }
 func (b Boolean) expressNode() {}
@@ -101,7 +101,7 @@ type StringLiteral struct {
 }
 
 // return a new string literal instance
-func NewStringLiteral(token l.Token, value string) *StringLiteral {
+func NewStringLiteral(token *l.Token, value string) *StringLiteral {
 	return &StringLiteral{BaseNode: BaseNode{token}, Value: value}
 }
 
@@ -117,7 +117,7 @@ type NullExpression struct {
 }
 
 // generates a new null instance
-func NewNull(token l.Token) *NullExpression {
+func NewNull(token *l.Token) *NullExpression {
 	return &NullExpression{BaseNode: BaseNode{token}}
 }
 
@@ -135,7 +135,7 @@ type ClassCall struct {
 }
 
 // generates a new class call instance
-func NewClassCall(token l.Token, class *Identifier, arguemnts []Expression) *ClassCall {
+func NewClassCall(token *l.Token, class *Identifier, arguemnts []Expression) *ClassCall {
 	return &ClassCall{
 		BaseNode:  BaseNode{token},
 		Class:     class,
@@ -166,7 +166,7 @@ type ClassFieldCall struct {
 }
 
 // generates an new class field call instance
-func NewClassFieldCall(token l.Token, class Expression, field Expression) *ClassFieldCall {
+func NewClassFieldCall(token *l.Token, class Expression, field Expression) *ClassFieldCall {
 	return &ClassFieldCall{
 		BaseNode: BaseNode{token},
 		Class:    class,
@@ -189,7 +189,7 @@ type ClassMethodExp struct {
 }
 
 // generates new class method expresion
-func NewClassMethodExp(token l.Token, name *Identifier, params []*Identifier, body *Block) *ClassMethodExp {
+func NewClassMethodExp(token *l.Token, name *Identifier, params []*Identifier, body *Block) *ClassMethodExp {
 	return &ClassMethodExp{
 		BaseNode: BaseNode{token},
 		Name:     name,

@@ -12,9 +12,9 @@ type LexerTests struct {
 	suite.Suite
 }
 
-func (l *LexerTests) loadTokens(length int, source string) []lexer.Token {
+func (l *LexerTests) loadTokens(length int, source string) []*lexer.Token {
 	lex := lexer.NewLexer(source)
-	var tokens []lexer.Token
+	var tokens []*lexer.Token
 
 	for i := 0; i < length; i++ {
 		tokens = append(tokens, lex.NextToken())
@@ -27,7 +27,7 @@ func (l *LexerTests) TestIllegalToken() {
 	source := "¡¿@&"
 	tokens := l.loadTokens(utf8.RuneCountInString(source), source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.ILLEGAL, Literal: "¡"},
 		{Token_type: lexer.ILLEGAL, Literal: "¿"},
 		{Token_type: lexer.ILLEGAL, Literal: "@"},
@@ -41,7 +41,7 @@ func (l *LexerTests) TestOneCharacterOperator() {
 	source := "+-/*<>!%="
 	tokens := l.loadTokens(utf8.RuneCountInString(source), source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.PLUS, Literal: "+"},
 		{Token_type: lexer.MINUS, Literal: "-"},
 		{Token_type: lexer.DIVISION, Literal: "/"},
@@ -60,7 +60,7 @@ func (l *LexerTests) TestFloat() {
 	source := "5.5"
 
 	tokens := l.loadTokens(utf8.RuneCountInString(source)-1, source)
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.FLOAT, Literal: "5.5"},
 		{Token_type: lexer.EOF, Literal: ""},
 	}
@@ -73,7 +73,7 @@ func (l *LexerTests) TestClassDeclaration() {
 		clase Persona(nombre, edad) {}
 	`
 	tokens := l.loadTokens(9, source)
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.CLASS, Literal: "clase"},
 		{Token_type: lexer.IDENT, Literal: "Persona"},
 		{Token_type: lexer.LPAREN, Literal: "("},
@@ -91,7 +91,7 @@ func (l *LexerTests) TestClassDeclaration() {
 func (l *LexerTests) TestArrowFunc() {
 	source := `sum := |a, b| => a + b;`
 	tokens := l.loadTokens(12, source)
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.IDENT, Literal: "sum"},
 		{Token_type: lexer.COLONASSING, Literal: ":="},
 		{Token_type: lexer.BAR, Literal: "|"},
@@ -113,7 +113,7 @@ func (l *LexerTests) TestEOF() {
 	source := "+"
 	tokens := l.loadTokens(utf8.RuneCountInString(source)+1, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.PLUS, Literal: "+"},
 		{Token_type: lexer.EOF, Literal: ""},
 	}
@@ -125,7 +125,7 @@ func (l *LexerTests) TestDilimiters() {
 	source := "(){},;"
 	tokens := l.loadTokens(len(source), source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.LPAREN, Literal: "("},
 		{Token_type: lexer.RPAREN, Literal: ")"},
 		{Token_type: lexer.LBRACE, Literal: "{"},
@@ -141,7 +141,7 @@ func (l *LexerTests) TestAssingments() {
 	source := "var cinco =  5;"
 	tokens := l.loadTokens(5, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.LET, Literal: "var"},
 		{Token_type: lexer.IDENT, Literal: "cinco"},
 		{Token_type: lexer.ASSING, Literal: "="},
@@ -161,7 +161,7 @@ func (l *LexerTests) TestFunctionDeclaration() {
 
 	tokens := l.loadTokens(16, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.LET, Literal: "var"},
 		{Token_type: lexer.IDENT, Literal: "suma"},
 		{Token_type: lexer.ASSING, Literal: "="},
@@ -187,7 +187,7 @@ func (l *LexerTests) TestFunctionCall() {
 	source := "var resultado = suma(dos, tres);"
 	tokens := l.loadTokens(10, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.LET, Literal: "var"},
 		{Token_type: lexer.IDENT, Literal: "resultado"},
 		{Token_type: lexer.ASSING, Literal: "="},
@@ -214,7 +214,7 @@ func (l *LexerTests) TestControllStatement() {
 
 	tokens := l.loadTokens(17, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.IF, Literal: "si"},
 		{Token_type: lexer.LPAREN, Literal: "("},
 		{Token_type: lexer.INT, Literal: "5"},
@@ -255,7 +255,7 @@ func (l *LexerTests) TestTwoCharacterOperator() {
 
 	tokens := l.loadTokens(46, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.INT, Literal: "10"},
 		{Token_type: lexer.EQ, Literal: "=="},
 		{Token_type: lexer.INT, Literal: "10"},
@@ -312,7 +312,7 @@ func (l *LexerTests) TestUnderscoreVar() {
 
 	tokens := l.loadTokens(5, source)
 
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.LET, Literal: "var"},
 		{Token_type: lexer.IDENT, Literal: "num_12"},
 		{Token_type: lexer.ASSING, Literal: "="},
@@ -330,7 +330,7 @@ func (l *LexerTests) TestString() {
 	`
 
 	tokens := l.loadTokens(4, source)
-	expectedTokens := []lexer.Token{
+	expectedTokens := []*lexer.Token{
 		{Token_type: lexer.STRING, Literal: "foo"},
 		{Token_type: lexer.SEMICOLON, Literal: ";"},
 		{Token_type: lexer.STRING, Literal: "aura is a great programing lenguage"},

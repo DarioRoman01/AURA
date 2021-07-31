@@ -12,7 +12,7 @@ import (
 func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 	switch node := baseNode.(type) {
 
-	case ast.Program:
+	case *ast.Program:
 		return evaluateProgram(node, env)
 
 	case *ast.ExpressionStament:
@@ -398,7 +398,7 @@ func evaluateIdentifier(node *ast.Identifier, env *obj.Enviroment) obj.Object {
 }
 
 // evaluate program node
-func evaluateProgram(program ast.Program, env *obj.Enviroment) obj.Object {
+func evaluateProgram(program *ast.Program, env *obj.Enviroment) obj.Object {
 	var result obj.Object
 	for _, statement := range program.Staments {
 		result = Evaluate(statement, env)

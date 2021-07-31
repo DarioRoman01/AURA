@@ -34,9 +34,9 @@ func NewLexer(source string) *Lexer {
 }
 
 // read next token and assing a token type to the token
-func (l *Lexer) NextToken() Token {
+func (l *Lexer) NextToken() *Token {
 	l.skipWhiteSpaces()
-	var token Token
+	var token *Token
 
 	if l.isLetter(l.character) {
 		literal := l.readIdentifier()
@@ -160,7 +160,7 @@ func (l *Lexer) NextToken() Token {
 		if l.peekCharacter() == "=" {
 			token = l.makeTwoCharacterToken(NOT_EQ)
 		} else {
-			token = Token{Token_type: NOT, Literal: l.character}
+			token = NewToken(NOT, l.character)
 		}
 
 	case `"`:
@@ -190,7 +190,7 @@ func (l *Lexer) isNumber(char string) bool {
 }
 
 // create a two character token
-func (l *Lexer) makeTwoCharacterToken(tokenType TokenType) Token {
+func (l *Lexer) makeTwoCharacterToken(tokenType TokenType) *Token {
 	prefix := l.character
 	l.readCharacter()
 	suffix := l.character

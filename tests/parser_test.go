@@ -31,7 +31,7 @@ func (p *ParserTests) InitParserTests(source string) (*parser.Parser, *ast.Progr
 	parser := parser.NewParser(lexer)
 	program := parser.ParseProgam()
 
-	return parser, &program
+	return parser, program
 }
 
 func (p *ParserTests) TestParseProgram() {
@@ -40,6 +40,7 @@ func (p *ParserTests) TestParseProgram() {
 	p.Assert().NotNil(program)
 	p.Assert().IsType(&ast.Program{}, program)
 	p.Assert().Implements((*ast.ASTNode)(nil), program)
+	p.Assert().Equal(1, len(program.Staments))
 }
 
 func (p *ParserTests) TestLetStatements() {

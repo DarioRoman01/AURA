@@ -101,8 +101,7 @@ func NewParser(lexer *l.Lexer) *Parser {
 func (p *Parser) advanceTokens() {
 	p.lastToken = p.currentToken
 	p.currentToken = p.peekToken
-	nextToken := p.lexer.NextToken()
-	p.peekToken = &nextToken
+	p.peekToken = p.lexer.NextToken()
 }
 
 // check that the current token is not nil
@@ -136,8 +135,8 @@ func (p *Parser) Errors() []string {
 }
 
 // parse all the program
-func (p *Parser) ParseProgam() ast.Program {
-	program := ast.Program{Staments: []ast.Stmt{}}
+func (p *Parser) ParseProgam() *ast.Program {
+	program := new(ast.Program)
 
 	for p.currentToken.Token_type != l.EOF {
 		if statement := p.parseStament(); statement != nil {
@@ -175,12 +174,12 @@ func (p *Parser) expectedTokenError(tokenType l.TokenType) {
 // parseBlock will parse a block expression
 func (p *Parser) parseBlock() *ast.Block {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	stmts := make([]ast.Stmt, 0)
 	p.advanceTokens()
 
 	// we iterate until we find a } token
-	for !(p.currentToken.Token_type == l.RBRACE) && !(p.currentToken.Token_type == l.EOF) {
+	for p.currentToken.Token_type != l.RBRACE && p.currentToken.Token_type != l.EOF {
 		if stament := p.parseStament(); stament != nil {
 			stmts = append(stmts, stament)
 		}
@@ -266,7 +265,7 @@ func (p *Parser) parseExpression(precedence Precedence) ast.Expression {
 // parse a class statement
 func (p *Parser) parseClassStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		return nil
 	}
@@ -297,7 +296,7 @@ func (p *Parser) parseClassStatement() ast.Stmt {
 // parse a expression statement
 func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	exp := p.parseExpression(LOWEST)
 
 	p.checkPeekTokenIsNotNil()
@@ -310,19 +309,19 @@ func (p *Parser) parserExpressionStatement() *ast.ExpressionStament {
 
 // parse a suffix function
 func (p *Parser) parseSuffixFn(left ast.Expression) ast.Expression {
-	return ast.NewSuffix(*p.currentToken, left, p.currentToken.Literal)
+	return ast.NewSuffix(p.currentToken, left, p.currentToken.Literal)
 }
 
 // parse a null expression
 func (p *Parser) ParseNull() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	return ast.NewNull(*p.currentToken)
+	return ast.NewNull(p.currentToken)
 }
 
 // parse a let statement
 func (p *Parser) parseLetSatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	token := *p.currentToken
+	token := p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		return nil
 	}
@@ -375,7 +374,7 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 // parse a return stament
 func (p *Parser) parseReturnStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	stament := ast.NewReturnStatement(*p.currentToken, nil)
+	stament := ast.NewReturnStatement(p.currentToken, nil)
 	p.advanceTokens()
 
 	stament.ReturnValue = p.parseExpression(LOWEST)

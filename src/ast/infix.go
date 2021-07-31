@@ -14,7 +14,7 @@ type Infix struct {
 }
 
 // generates a new infix instance
-func Newinfix(token l.Token, r Expression, operator string, l Expression) *Infix {
+func Newinfix(token *l.Token, r Expression, operator string, l Expression) *Infix {
 	return &Infix{
 		BaseNode: BaseNode{token},
 		Rigth:    r,
@@ -40,7 +40,7 @@ type RangeExpression struct {
 }
 
 // Generates a new Range instance
-func NewRange(token l.Token, variable Expression, Range Expression) *RangeExpression {
+func NewRange(token *l.Token, variable Expression, Range Expression) *RangeExpression {
 	return &RangeExpression{
 		BaseNode: BaseNode{token},
 		Variable: variable,
@@ -63,7 +63,7 @@ type KeyValue struct {
 }
 
 // generates a new key value instance
-func NewKeyVal(token l.Token, key, value Expression) *KeyValue {
+func NewKeyVal(token *l.Token, key, value Expression) *KeyValue {
 	return &KeyValue{
 		BaseNode: BaseNode{token},
 		Key:      key,
@@ -86,7 +86,7 @@ type MethodExpression struct {
 }
 
 // generates a method expression instance
-func NewMethodExpression(token l.Token, obj Expression, method Expression) *MethodExpression {
+func NewMethodExpression(token *l.Token, obj Expression, method Expression) *MethodExpression {
 	return &MethodExpression{
 		BaseNode: BaseNode{token},
 		Obj:      obj,
@@ -108,7 +108,7 @@ type Reassignment struct {
 }
 
 // generates a new reassigmment instacne
-func NewReassignment(token l.Token, ident Expression, newVal Expression) *Reassignment {
+func NewReassignment(token *l.Token, ident Expression, newVal Expression) *Reassignment {
 	return &Reassignment{
 		BaseNode:   BaseNode{token},
 		Identifier: ident,
@@ -130,7 +130,7 @@ type AssigmentExp struct {
 }
 
 // generates a new assigment instance
-func NewAssigmentExp(token l.Token, name *Identifier, val Expression) *AssigmentExp {
+func NewAssigmentExp(token *l.Token, name *Identifier, val Expression) *AssigmentExp {
 	return &AssigmentExp{
 		BaseNode: BaseNode{token},
 		Name:     name,

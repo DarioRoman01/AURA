@@ -27,7 +27,7 @@ type Expression interface {
 // BaseNode is a struct wich all the expressions and statements
 // whill inherit providing the default TokenLiteral implementation
 type BaseNode struct {
-	Token l.Token // represents the token of the node
+	Token *l.Token // represents the token of the node
 }
 
 // return the token literal of the node
@@ -74,7 +74,7 @@ type LetStatement struct {
 }
 
 // generate a new let stament instance
-func NewLetStatement(token l.Token, name *Identifier, value Expression) *LetStatement {
+func NewLetStatement(token *l.Token, name *Identifier, value Expression) *LetStatement {
 	return &LetStatement{
 		BaseNode: BaseNode{token},
 		Name:     name,
@@ -95,7 +95,7 @@ type ReturnStament struct {
 }
 
 // generates a new return statement instance
-func NewReturnStatement(token l.Token, returnValue Expression) *ReturnStament {
+func NewReturnStatement(token *l.Token, returnValue Expression) *ReturnStament {
 	return &ReturnStament{BaseNode: BaseNode{token}, ReturnValue: returnValue}
 }
 
@@ -112,7 +112,7 @@ type ExpressionStament struct {
 }
 
 // generates a new expression statement instance
-func NewExpressionStament(token l.Token, expression Expression) *ExpressionStament {
+func NewExpressionStament(token *l.Token, expression Expression) *ExpressionStament {
 	return &ExpressionStament{BaseNode: BaseNode{token}, Expression: expression}
 }
 
@@ -129,7 +129,7 @@ type Suffix struct {
 }
 
 // generates a new suffix instance
-func NewSuffix(token l.Token, left Expression, operator string) *Suffix {
+func NewSuffix(token *l.Token, left Expression, operator string) *Suffix {
 	return &Suffix{BaseNode: BaseNode{token}, Left: left, Operator: operator}
 }
 
@@ -146,7 +146,7 @@ type Block struct {
 }
 
 // generates a new block instance
-func NewBlock(token l.Token, staments ...Stmt) *Block {
+func NewBlock(token *l.Token, staments ...Stmt) *Block {
 	return &Block{BaseNode: BaseNode{token}, Staments: staments}
 }
 
@@ -174,7 +174,7 @@ type If struct {
 }
 
 // generates a new if instance
-func NewIf(token l.Token, condition Expression, consequence, alternative *Block) *If {
+func NewIf(token *l.Token, condition Expression, consequence, alternative *Block) *If {
 	return &If{
 		BaseNode:    BaseNode{token},
 		Condition:   condition,
@@ -204,7 +204,7 @@ type Function struct {
 }
 
 // create a new function instance
-func NewFunction(token l.Token, name *Identifier, body *Block, parameters ...*Identifier) *Function {
+func NewFunction(token *l.Token, name *Identifier, body *Block, parameters ...*Identifier) *Function {
 	return &Function{
 		BaseNode:   BaseNode{token},
 		Name:       name,
@@ -236,7 +236,7 @@ type Call struct {
 }
 
 // generates a new Call instance
-func NewCall(token l.Token, function Expression, arguments ...Expression) *Call {
+func NewCall(token *l.Token, function Expression, arguments ...Expression) *Call {
 	return &Call{
 		BaseNode:  BaseNode{token},
 		Function:  function,
@@ -267,7 +267,7 @@ type For struct {
 }
 
 // generates a new For instance
-func NewFor(token l.Token, condition Expression, body *Block) *For {
+func NewFor(token *l.Token, condition Expression, body *Block) *For {
 	return &For{BaseNode: BaseNode{token}, Condition: condition, Body: body}
 }
 
@@ -285,7 +285,7 @@ type While struct {
 }
 
 // generates a new whileloop instance
-func NewWhile(token l.Token, cond Expression, body *Block) *While {
+func NewWhile(token *l.Token, cond Expression, body *Block) *While {
 	return &While{BaseNode: BaseNode{token}, Condition: cond, Body: body}
 }
 
@@ -302,7 +302,7 @@ type Array struct {
 }
 
 // generates a new array instance
-func NewArray(token l.Token, values ...Expression) *Array {
+func NewArray(token *l.Token, values ...Expression) *Array {
 	return &Array{BaseNode: BaseNode{token}, Values: values}
 }
 
@@ -329,7 +329,7 @@ type CallList struct {
 }
 
 // generates a new CallList instance
-func NewCallList(token l.Token, listIdent Expression, index Expression) *CallList {
+func NewCallList(token *l.Token, listIdent Expression, index Expression) *CallList {
 	return &CallList{
 		BaseNode:  BaseNode{token},
 		ListIdent: listIdent,
@@ -349,7 +349,7 @@ type MapExpression struct {
 }
 
 // generates a new MapExpression instance
-func NewMapExpression(token l.Token, body []*KeyValue) *MapExpression {
+func NewMapExpression(token *l.Token, body []*KeyValue) *MapExpression {
 	return &MapExpression{BaseNode{token}, body}
 }
 func (m *MapExpression) expressNode() {}
@@ -376,7 +376,7 @@ type ClassStatement struct {
 }
 
 // generates a new class statement instance
-func NewClassStatement(token l.Token, name *Identifier, params []*Identifier, methods []*ClassMethodExp) *ClassStatement {
+func NewClassStatement(token *l.Token, name *Identifier, params []*Identifier, methods []*ClassMethodExp) *ClassStatement {
 	return &ClassStatement{
 		BaseNode: BaseNode{token},
 		Name:     name,
@@ -420,7 +420,7 @@ type ImportStatement struct {
 }
 
 // generates a new import statement instance
-func NewImportStatement(token l.Token, path Expression) *ImportStatement {
+func NewImportStatement(token *l.Token, path Expression) *ImportStatement {
 	return &ImportStatement{BaseNode: BaseNode{token}, Path: path}
 }
 
@@ -435,7 +435,7 @@ type ArrowFunc struct {
 	Body   *Block
 }
 
-func NewArrowFunc(token l.Token, params []*Identifier, body *Block) *ArrowFunc {
+func NewArrowFunc(token *l.Token, params []*Identifier, body *Block) *ArrowFunc {
 	return &ArrowFunc{
 		BaseNode: BaseNode{token},
 		Params:   params,
@@ -465,7 +465,7 @@ type TryExp struct {
 }
 
 // Genereates a new try catch instance
-func NewTry(token l.Token, try *Block, param *Identifier, catch *Block) *TryExp {
+func NewTry(token *l.Token, try *Block, param *Identifier, catch *Block) *TryExp {
 	return &TryExp{
 		BaseNode: BaseNode{token},
 		Try:      try,
