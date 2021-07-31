@@ -25,7 +25,6 @@ const (
 	DICT
 	FLOATING
 	CLASS
-	THIS
 )
 
 // represents the methods in the standar library
@@ -64,7 +63,6 @@ var Types = [...]string{
 	LIST:       "lista",
 	METHOD:     "metodo",
 	DICT:       "mapa",
-	THIS:       "this",
 	CLASS:      "clase",
 }
 

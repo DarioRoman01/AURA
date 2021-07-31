@@ -1,7 +1,7 @@
 # The Aura programing lenguage
 
 ## What is this?
-This is a very basic programming lenguage inspired in javascript, python and golang, the goal is to create a programming lenguage in spanish
+This is a programming lenguage inspired in javascript, python and golang, the goal is to create a programming lenguage in spanish
 that helps people that are begining in software development or computer science, probiding a high level programming lenguage
 in spanish that is very simple to use. Also is an expressions based lenguage so is more easy to work with it
 
