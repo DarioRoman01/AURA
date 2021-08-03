@@ -110,6 +110,29 @@ func castString(args ...obj.Object) obj.Object {
 	return unsoportedArgumentType("recibir", obj.Types[args[0].Type()])
 }
 
+// convert a string or integer object to a float
+func castFloat(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) == 0 {
+		return wrongNumberofArgs("flotante", len(args), 1)
+	}
+
+	switch node := args[0].(type) {
+	case *obj.Number:
+		return &obj.Float{Value: float64(node.Value)}
+
+	case *obj.String:
+		val, err := strconv.ParseFloat(node.Value, 32)
+		if err != nil {
+			return &obj.Error{Message: fmt.Sprintf("no se pudo parsear como flotante %s", node.Value)}
+		}
+
+		return &obj.Float{Value: val}
+
+	default:
+		return unsoportedArgumentType("flotante", obj.Types[args[0].Type()])
+	}
+}
+
 // input function to recibe int objects from console
 func RecibirEntero(args ...obj.Object) obj.Object {
 	if len(args) > 1 {
@@ -143,12 +166,8 @@ func formatrArgs(args ...obj.Object) obj.Object {
 		}
 	}
 
-	val := str.Value
-	for i := 1; i < len(args); i++ {
-		val = strings.Replace(val, "{}", args[i].Inspect(), 1)
-	}
-
-	return &obj.String{Value: val}
+	formated := formatString(str.Value, args[1:])
+	return &obj.String{Value: formated}
 }
 
 func printF(args ...obj.Object) obj.Object {
@@ -163,13 +182,9 @@ func printF(args ...obj.Object) obj.Object {
 		}
 	}
 
-	val := str.Value
-	for i := 1; i < len(args); i++ {
-		val = strings.Replace(val, "{}", args[i].Inspect(), 1)
-	}
-
+	formated := formatString(str.Value, args[1:])
 	defer writer.Flush()
-	writer.WriteString(val + "\n")
+	writer.WriteString(formated + "\n")
 	return obj.SingletonNUll
 }
 
@@ -280,4 +295,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"contar":         obj.NewBuiltin(count),
 	"separar":        obj.NewBuiltin(split),
 	"abs":            obj.NewBuiltin(abs),
+	"flotante":       obj.NewBuiltin(castFloat),
 }

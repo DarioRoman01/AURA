@@ -3,6 +3,7 @@ package builtins
 import (
 	obj "aura/src/object"
 	"fmt"
+	"strings"
 )
 
 func makeOneArgList(arg obj.Object) obj.Object {
@@ -66,4 +67,12 @@ func makeTreArgList(start, end, pass obj.Object) obj.Object {
 	}
 
 	return list
+}
+
+func formatString(str string, args []obj.Object) string {
+	for i := 0; i < len(args); i++ {
+		str = strings.Replace(str, "{}", args[i].Inspect(), 1)
+	}
+
+	return str
 }

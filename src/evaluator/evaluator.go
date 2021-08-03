@@ -256,7 +256,7 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 		// if the iter is a string we make a iterable with all the string characters
 		list := makeStringList(str.Value)
 		iter := obj.NewIterator(list[0], list, obj.NewEnviroment(env))
-		iter.Env.SetItem(val.Value, iter.List[0])
+		iter.Env.SetItem(val.Value, iter.Current)
 		return iter
 	}
 

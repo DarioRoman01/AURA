@@ -631,6 +631,11 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: "abs(-2.5)", expected: 2.5},
 		{source: "abs(2.5)", expected: 2.5},
 		{source: `abs("h")`, expected: "argumento para abs no valido, se recibio texto"},
+		{source: `flotante(5)`, expected: 5.0},
+		{source: `flotante(10)`, expected: 10.0},
+		{source: `flotante("10.5")`, expected: 10.5},
+		{source: `flotante("5.5")`, expected: 5.5},
+		{source: `flotante("h")`, expected: "no se pudo parsear como flotante h"},
 	}
 
 	for _, test := range tests {
@@ -856,6 +861,12 @@ func (e *EvaluatorTests) TestStringConcatenation() {
 		{source: `"hello," + " " + "world!";`, expected: "hello, world!"},
 		{source: `
 			funcion saludo(nombre) => "Hola " + nombre + "!";
+			saludo("David");
+		`,
+			expected: "Hola David!",
+		},
+		{source: `
+			funcion saludo(nombre) => formatear("Hola {}!", nombre);
 			saludo("David");
 		`,
 			expected: "Hola David!",

@@ -85,7 +85,7 @@ func NewLetStatement(token *l.Token, name *Identifier, value Expression) *LetSta
 func (l LetStatement) stmtNode() {}
 
 func (l LetStatement) Str() string {
-	return fmt.Sprintf("%s %s = %s;", l.TokenLiteral(), l.Name.Str(), l.Value.Str())
+	return fmt.Sprintf("var %s = %s;", l.Name.Str(), l.Value.Str())
 }
 
 // Represents a return statement
@@ -102,7 +102,7 @@ func NewReturnStatement(token *l.Token, returnValue Expression) *ReturnStament {
 func (r ReturnStament) stmtNode() {}
 
 func (r ReturnStament) Str() string {
-	return fmt.Sprintf("%s %s;", r.TokenLiteral(), r.ReturnValue.Str())
+	return fmt.Sprintf("return %s;", r.ReturnValue.Str())
 }
 
 // handle expressions statements
@@ -274,7 +274,7 @@ func NewFor(token *l.Token, condition Expression, body *Block) *For {
 func (f *For) expressNode() {}
 
 func (f *For) Str() string {
-	return fmt.Sprintf("%s %s { %s }", f.TokenLiteral(), f.Condition.Str(), f.Body.Str())
+	return fmt.Sprintf("por (%s) { %s }", f.Condition.Str(), f.Body.Str())
 }
 
 // Represents a WhileLoop expression
@@ -396,12 +396,13 @@ func (c *ClassStatement) Str() string {
 			paramsBuf.WriteString(param.Str() + ", ")
 		}
 	}
+
 	var buf strings.Builder
 	for idx, method := range c.Methods {
 		if idx == len(c.Methods)-1 {
 			buf.WriteString(method.Str())
 		} else {
-			buf.WriteString(method.Str() + " ")
+			buf.WriteString(method.Str() + "\n ")
 		}
 	}
 
