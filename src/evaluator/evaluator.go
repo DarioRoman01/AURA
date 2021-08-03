@@ -4,7 +4,6 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
-	"math"
 	"unicode/utf8"
 )
 
@@ -476,19 +475,12 @@ func evaluateListCall(list *obj.List, call *ast.CallList, env *obj.Enviroment) o
 	}
 
 	length := len(list.Values)
-	if num.Value >= length {
-		return indexOutOfRange(num.Value, length)
+	index, err := checkIndex(length, num.Value)
+	if err != nil {
+		return err
 	}
 
-	if num.Value < 0 {
-		if int(math.Abs(float64(num.Value))) > length {
-			return indexOutOfRange(num.Value, length)
-		}
-
-		return list.Values[length+num.Value]
-	}
-
-	return list.Values[num.Value]
+	return list.Values[index]
 }
 
 func evaluateStringCall(str *obj.String, call *ast.CallList, env *obj.Enviroment) obj.Object {
@@ -499,19 +491,12 @@ func evaluateStringCall(str *obj.String, call *ast.CallList, env *obj.Enviroment
 	}
 
 	strLen := utf8.RuneCountInString(str.Value)
-	if num.Value >= strLen {
-		return indexOutOfRange(num.Value, strLen)
+	index, err := checkIndex(strLen, num.Value)
+	if err != nil {
+		return err
 	}
 
-	if num.Value < 0 {
-		if int(math.Abs(float64(num.Value))) > strLen {
-			return indexOutOfRange(num.Value, strLen)
-		}
-
-		return &obj.String{Value: string(str.Value[strLen+num.Value])}
-	}
-
-	return &obj.String{Value: string(str.Value[num.Value])}
+	return &obj.String{Value: string(str.Value[index])}
 }
 
 // evaluate an if expression
@@ -538,14 +523,16 @@ func evaluateIfExpression(ifExpression *ast.If, env *obj.Enviroment) obj.Object 
 func evaluateTryExcept(try *ast.TryExp, env *obj.Enviroment) obj.Object {
 	eval := Evaluate(try.Try, env)
 	if err, isErr := eval.(*obj.Error); isErr {
-		env.SetItem(try.Param.Value, err)
-		return Evaluate(try.Catch, env)
+		newEnv := obj.NewEnviroment(env)
+		newEnv.SetItem(try.Param.Value, err)
+		return Evaluate(try.Catch, newEnv)
 	}
 
 	if returnVal, isReturn := eval.(*obj.Return); isReturn {
 		if err, isErr := returnVal.Value.(*obj.Error); isErr {
-			env.SetItem(try.Param.Value, err)
-			return Evaluate(try.Catch, env)
+			newEnv := obj.NewEnviroment(env)
+			newEnv.SetItem(try.Param.Value, err)
+			return Evaluate(try.Catch, newEnv)
 		}
 
 		return returnVal

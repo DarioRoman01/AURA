@@ -5,6 +5,7 @@ import (
 	obj "aura/src/object"
 	"aura/src/parser"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"unicode/utf8"
@@ -66,4 +67,21 @@ func importEnv(path string) (*obj.Enviroment, *obj.Error) {
 	}
 
 	return nil, newError("La evaluacion fue nula")
+}
+
+// Check that given index is valid for a list call
+func checkIndex(length int, index int) (int, *obj.Error) {
+	if index >= length {
+		return 0, indexOutOfRange(index, length)
+	}
+
+	if index < 0 {
+		if int(math.Abs(float64(index))) > length {
+			return 0, indexOutOfRange(index, length)
+		}
+
+		return length + index, nil
+	}
+
+	return index, nil
 }

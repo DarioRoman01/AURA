@@ -793,6 +793,20 @@ func (e *EvaluatorTests) TestTryExcept() {
 			`,
 			expected: "no se pudo parsear",
 		},
+		{
+			source: `
+			funcion parse(x) {
+				intentar {
+					x := entero(x);
+					regresa x;
+				} excepto(e) {
+					regresa formatear("Error de parseo: {}", e);
+				}
+			}
+			parse("hello world")
+			`,
+			expected: "Error de parseo: Error: No se puede parsear como entero hello world",
+		},
 	}
 
 	for _, test := range tests {
