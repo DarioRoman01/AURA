@@ -226,37 +226,27 @@ func evaluateStringMethod(str *obj.String, method *obj.Method) obj.Object {
 }
 
 // evaluate a method expression
-func evaluateMethod(method *ast.MethodExpression, env *obj.Enviroment) obj.Object {
-	evaluated := Evaluate(method.Obj, env)
+func evaluateMethod(methodExp *ast.MethodExpression, env *obj.Enviroment) obj.Object {
+	evaluated := Evaluate(methodExp.Obj, env)
+	method, isMethod := Evaluate(methodExp.Method, env).(*obj.Method)
+	if !isMethod {
+		return notAMethod(methodExp.Method.Str())
+	}
+
 	// we check the type of the method object
 	switch data := evaluated.(type) {
 
 	case *obj.List:
-		listMethod, isMethod := Evaluate(method.Method, env).(*obj.Method)
-		if !isMethod {
-			return noSuchMethod(listMethod.Inspect(), "list")
-		}
-
-		return evaluateListMethods(data, listMethod)
+		return evaluateListMethods(data, method)
 
 	case *obj.Map:
-		mapMethod, isMethod := Evaluate(method.Method, env).(*obj.Method)
-		if !isMethod {
-			return noSuchMethod(mapMethod.Inspect(), "mapa")
-		}
-
-		return evaluateMapMethods(data, mapMethod)
+		return evaluateMapMethods(data, method)
 
 	case *obj.String:
-		strMethod, isMethod := Evaluate(method.Method, env).(*obj.Method)
-		if !isMethod {
-			return noSuchMethod(strMethod.Inspect(), "texto")
-		}
-
-		return evaluateStringMethod(data, strMethod)
+		return evaluateStringMethod(data, method)
 
 	default:
 		// the object has no methods
-		return noSuchMethod(method.Method.Str(), method.Obj.Str())
+		return noSuchMethod(methodExp.Method.Str(), methodExp.Obj.Str())
 	}
 }

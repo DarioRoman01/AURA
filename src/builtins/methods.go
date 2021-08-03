@@ -107,7 +107,7 @@ func forEach(args ...obj.Object) obj.Object {
 
 	if fn, isFn := args[0].(*obj.Def); isFn {
 		if len(fn.Parameters) != 1 {
-			return &obj.Error{Message: "La funcion para map solo puede recibir un argumento"}
+			return &obj.Error{Message: "La funcion porCada solo puede recibir un argumento"}
 		}
 
 		return obj.NewMethod(fn, obj.FOREACH)
@@ -123,7 +123,7 @@ func filter(args ...obj.Object) obj.Object {
 
 	if fn, isFn := args[0].(*obj.Def); isFn {
 		if len(fn.Parameters) != 1 {
-			return &obj.Error{Message: "La funcion para map solo puede recibir un argumento"}
+			return &obj.Error{Message: "La funcion filtrar solo puede recibir un argumento"}
 		}
 
 		return obj.NewMethod(fn, obj.FILTER)
@@ -139,7 +139,7 @@ func count(args ...obj.Object) obj.Object {
 
 	if fn, isFn := args[0].(*obj.Def); isFn {
 		if len(fn.Parameters) != 1 {
-			return &obj.Error{Message: "La funcion para contar solo puede recibir un argumento"}
+			return &obj.Error{Message: "La funcion contar solo puede recibir un argumento"}
 		}
 
 		return obj.NewMethod(fn, obj.COUNT)

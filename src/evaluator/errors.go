@@ -82,3 +82,7 @@ func indexOutOfRange(found, actual int) *obj.Error {
 func noSuchField(class string, ident string) *obj.Error {
 	return newError(fmt.Sprintf("la clase %s no tiene la propiedad %s", class, ident))
 }
+
+func notAMethod(ident string) *obj.Error {
+	return &obj.Error{Message: fmt.Sprintf("%s no es un metodo", ident)}
+}
