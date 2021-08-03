@@ -740,10 +740,12 @@ func (e *EvaluatorTests) TestTryExcept() {
 			funcion parse(x) {
 				intentar {
 					x := entero(x);
-					regresa x;
 				} excepto(e) {
 					regresa "no se pudo parsear"
 				}
+
+				regresa x;
+
 			}
 			parse("5");
 			`,
@@ -754,10 +756,11 @@ func (e *EvaluatorTests) TestTryExcept() {
 			funcion parse(x) {
 				intentar {
 					x := entero(x);
-					regresa x;
 				} excepto(e) {
 					regresa "no se pudo parsear"
 				}
+
+				regresa x;
 			}
 			parse("25")
 			`,
@@ -768,11 +771,11 @@ func (e *EvaluatorTests) TestTryExcept() {
 			funcion parse(x) {
 				intentar {
 					x := entero(x);
-					regresa x;
 				} excepto(e) {
-					regresa "no se pudo parsear"
+						regresa "no se pudo parsear"
 				}
-
+					
+				regresa x;
 				
 			}
 			parse("h")
@@ -784,10 +787,10 @@ func (e *EvaluatorTests) TestTryExcept() {
 			funcion parse(x) {
 				intentar {
 					x := entero(x);
-					regresa x;
-				} excepto(e) {
-					regresa "no se pudo parsear"
+					} excepto(e) {
+						regresa "no se pudo parsear"
 				}
+				regresa x;
 			}
 			parse("hello world")
 			`,
@@ -798,10 +801,11 @@ func (e *EvaluatorTests) TestTryExcept() {
 			funcion parse(x) {
 				intentar {
 					x := entero(x);
-					regresa x;
 				} excepto(e) {
 					regresa formatear("Error de parseo: {}", e);
 				}
+
+				regresa x;
 			}
 			parse("hello world")
 			`,
