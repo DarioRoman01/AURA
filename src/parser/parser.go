@@ -371,6 +371,16 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 	return values
 }
 
+func (p *Parser) parseContinueStmt() ast.Stmt {
+	p.checkCurrentTokenIsNotNil()
+	return ast.NewContinueStatement(p.currentToken)
+}
+
+func (p *Parser) parseBreakStmt() ast.Stmt {
+	p.checkCurrentTokenIsNotNil()
+	return ast.NewBreakStatement(p.currentToken)
+}
+
 // parse a return stament
 func (p *Parser) parseReturnStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
@@ -398,6 +408,12 @@ func (p *Parser) parseStament() ast.Stmt {
 
 	case l.CLASS:
 		return p.parseClassStatement()
+
+	case l.BREAK:
+		return p.parseBreakStmt()
+
+	case l.CONTINUE:
+		return p.parseContinueStmt()
 
 	case l.IMPORT:
 		return p.parseImportStatement()

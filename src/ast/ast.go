@@ -482,3 +482,29 @@ func (t TryExp) Str() string {
 		t.Try.Str(), t.Param.Str(), t.Catch.Str(),
 	)
 }
+
+type BreakStatement struct {
+	BaseNode
+}
+
+func NewBreakStatement(token *l.Token) *BreakStatement {
+	return &BreakStatement{BaseNode{token}}
+}
+
+func (b *BreakStatement) stmtNode() {}
+func (b *BreakStatement) Str() string {
+	return "romper"
+}
+
+type ContinueStatement struct {
+	BaseNode
+}
+
+func NewContinueStatement(token *l.Token) *ContinueStatement {
+	return &ContinueStatement{BaseNode{token}}
+}
+
+func (c *ContinueStatement) stmtNode() {}
+func (c *ContinueStatement) Str() string {
+	return "continuar"
+}

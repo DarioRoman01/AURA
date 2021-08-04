@@ -67,6 +67,8 @@ const (
 	NULLT
 	MAP
 	IMPORT
+	CONTINUE
+	BREAK
 )
 
 // String representation of all tokens
@@ -124,6 +126,8 @@ var Tokens = [...]string{
 	DIVASSING:   "/=",
 	EXPONENT:    "**",
 	IMPORT:      "importar",
+	CONTINUE:    "continuear",
+	BREAK:       "romper",
 }
 
 // Represents a Token in the programmig lenguage
@@ -164,6 +168,8 @@ func LookUpTokenType(literal string) TokenType {
 		"intentar":  TRY,
 		"excepto":   EXCEPT,
 		"lanzar":    THROW,
+		"continuar": CONTINUE,
+		"romper":    BREAK,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {
