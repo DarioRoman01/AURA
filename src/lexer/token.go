@@ -59,6 +59,7 @@ const (
 	SEMICOLON
 	TIMES // *
 	TIMEASSI
+	THROW
 	TRY
 	STRING
 	TRUE
@@ -111,6 +112,7 @@ var Tokens = [...]string{
 	SEMICOLON:   ";",
 	TIMES:       "*",
 	STRING:      `"`,
+	THROW:       "lanzar",
 	TRUE:        "verdaro",
 	WHILE:       "mientras",
 	NULLT:       "nulo",
@@ -161,6 +163,7 @@ func LookUpTokenType(literal string) TokenType {
 		"importar":  IMPORT,
 		"intentar":  TRY,
 		"excepto":   EXCEPT,
+		"lanzar":    THROW,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {
