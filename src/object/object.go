@@ -25,6 +25,8 @@ const (
 	DICT
 	FLOATING
 	CLASS
+	BREAK
+	CONTINUE
 )
 
 // represents the methods in the standar library
@@ -318,6 +320,16 @@ func (c *ClassInstance) Type() ObjectType { return CLASS }
 func (c *ClassInstance) Inspect() string {
 	return fmt.Sprintf("clase %s", c.Name)
 }
+
+type BreakObj struct{}
+
+func (b *BreakObj) Type() ObjectType { return BREAK }
+func (b *BreakObj) Inspect() string  { return "romper" }
+
+type ContinueObj struct{}
+
+func (c *ContinueObj) Type() ObjectType { return CONTINUE }
+func (c *ContinueObj) Inspect() string  { return "continuar" }
 
 // use singleton patern with true false and null
 var (

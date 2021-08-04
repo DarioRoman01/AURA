@@ -139,6 +139,12 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 	case *ast.Identifier:
 		return evaluateIdentifier(node, env)
 
+	case *ast.BreakStatement:
+		return new(obj.BreakObj)
+
+	case *ast.ContinueStatement:
+		return new(obj.ContinueObj)
+
 	case *ast.ThorwExpression:
 		CheckIsNotNil(node.Message)
 		return evaluateTrhowExp(node, env)
@@ -226,6 +232,15 @@ func evaluateFor(forLoop *ast.For, env *obj.Enviroment) obj.Object {
 			if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
 				// we break the loop because we have a return statement
 				return returnVal
+			}
+
+			if _, isBreak := evaluated.(*obj.BreakObj); isBreak {
+				return obj.SingletonNUll
+			}
+
+			if _, isContinue := evaluated.(*obj.ContinueObj); isContinue {
+				iter.Env.SetItem(val, iter.Current)
+				continue
 			}
 
 			// we update the variable in the expression
@@ -374,6 +389,10 @@ func evaluateBLockStaments(block *ast.Block, env *obj.Enviroment) obj.Object {
 		if result != nil && result.Type() == obj.RETURNTYPE || result.Type() == obj.ERROR {
 			return result
 		}
+
+		if result != nil && result.Type() == obj.BREAK || result.Type() == obj.CONTINUE {
+			return result
+		}
 	}
 
 	return result
@@ -451,6 +470,14 @@ func evaluateWhileExpression(whileExpression *ast.While, env *obj.Enviroment) ob
 		evaluated := Evaluate(whileExpression.Body, env)
 		if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
 			return returnVal
+		}
+
+		if _, isBreak := evaluated.(*obj.BreakObj); isBreak {
+			return obj.SingletonNUll
+		}
+
+		if _, isContinue := evaluated.(*obj.ContinueObj); isContinue {
+			continue
 		}
 
 		condition = Evaluate(whileExpression.Condition, env)

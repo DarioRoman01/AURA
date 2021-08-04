@@ -373,11 +373,17 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 
 func (p *Parser) parseContinueStmt() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
+	if p.peekToken.Token_type == l.SEMICOLON {
+		p.advanceTokens()
+	}
 	return ast.NewContinueStatement(p.currentToken)
 }
 
 func (p *Parser) parseBreakStmt() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
+	if p.peekToken.Token_type == l.SEMICOLON {
+		p.advanceTokens()
+	}
 	return ast.NewBreakStatement(p.currentToken)
 }
 
