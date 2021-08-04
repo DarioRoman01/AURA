@@ -332,3 +332,28 @@ func (p *Parser) parseTryExp() ast.Expression {
 	try.Catch = p.parseBlock()
 	return try
 }
+
+func (p *Parser) ParseTrhowExp() ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	token := p.currentToken
+	if !p.expepectedToken(l.IDENT) {
+		return nil
+	}
+
+	ident := p.parseIdentifier().(*ast.Identifier)
+	if ident.Value != "Error" {
+		p.errors = append(p.errors, "solo se permite el keyword Error para lanzar una excepcion")
+		return nil
+	}
+
+	if !p.expepectedToken(l.LPAREN) {
+		return nil
+	}
+	message := p.parseExpressions(l.RPAREN)
+	if len(message) != 1 {
+		p.errors = append(p.errors, "las excepciones solo pueden recibir un argumento")
+		return nil
+	}
+
+	return ast.NewThrowExpression(token, message[0])
+}

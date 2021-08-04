@@ -468,6 +468,7 @@ func (p *Parser) registerPrefixFns() {
 	p.prefixParsFns[l.NEW] = p.parseClassCall
 	p.prefixParsFns[l.BAR] = p.parseArrowFunc
 	p.prefixParsFns[l.TRY] = p.parseTryExp
+	p.prefixParsFns[l.THROW] = p.ParseTrhowExp
 }
 
 // register all the functions to parse suffix expressions
