@@ -689,6 +689,43 @@ func (e *EvaluatorTests) TestTrhowExpression() {
 	}
 }
 
+func (e *EvaluatorTests) TestBreakAndContinue() {
+	tests := []struct {
+		source   string
+		expected []int
+	}{
+		{source: `
+			x := lista[]; 
+			por(i en rango(5)) { 
+				x:agregar(i);
+				si(i == 3) {
+					romper;
+				}
+			}
+			x; 
+			`,
+			expected: []int{0, 1, 2, 3},
+		},
+		{source: `
+			x := lista[]; 
+			por(i en rango(5)) { 
+				si(i == 3) {
+					continuar;
+				}
+				x:agregar(i);
+			}
+			x; 
+			`,
+			expected: []int{0, 1, 2, 4},
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntArrayObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestImportStatement() {
 	source := `
 		importar "../examples/func.aura"

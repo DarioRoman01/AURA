@@ -333,8 +333,10 @@ func (c *ContinueObj) Inspect() string  { return "continuar" }
 
 // use singleton patern with true false and null
 var (
-	SingletonTRUE  = &Bool{Value: true}
-	SingletonFALSE = &Bool{Value: false}
-	SingletonNUll  = &Null{nil} //  this null is for functions that dont return anything
-	NullVAlue      = &Null{1}   // this null is the null value
+	SingletonTRUE     = &Bool{Value: true}
+	SingletonFALSE    = &Bool{Value: false}
+	SingletonNUll     = &Null{nil} //  this null is for functions that dont return anything
+	NullVAlue         = &Null{1}   // this null is the null value
+	SingleTonBreak    = &BreakObj{}
+	SingletonContinue = &ContinueObj{}
 )

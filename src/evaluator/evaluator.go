@@ -140,10 +140,10 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return evaluateIdentifier(node, env)
 
 	case *ast.BreakStatement:
-		return new(obj.BreakObj)
+		return obj.SingleTonBreak
 
 	case *ast.ContinueStatement:
-		return new(obj.ContinueObj)
+		return obj.SingletonContinue
 
 	case *ast.ThorwExpression:
 		CheckIsNotNil(node.Message)
@@ -229,23 +229,22 @@ func evaluateFor(forLoop *ast.For, env *obj.Enviroment) obj.Object {
 		val := forLoop.Condition.(*ast.RangeExpression).Variable.(*ast.Identifier).Value
 		for iter.Next() != nil {
 			evaluated = Evaluate(forLoop.Body, iter.Env)
-			if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
-				// we break the loop because we have a return statement
-				return returnVal
-			}
+			switch node := evaluated.(type) {
+			case *obj.Return:
+				return node
 
-			if _, isBreak := evaluated.(*obj.BreakObj); isBreak {
+			case *obj.BreakObj:
 				return obj.SingletonNUll
-			}
 
-			if _, isContinue := evaluated.(*obj.ContinueObj); isContinue {
+			case *obj.ContinueObj:
 				iter.Env.SetItem(val, iter.Current)
 				continue
-			}
 
-			// we update the variable in the expression
-			iter.Env.SetItem(val, iter.Current)
+			default:
+				iter.Env.SetItem(val, iter.Current)
+			}
 		}
+
 		return obj.SingletonNUll
 	}
 
@@ -468,19 +467,19 @@ func evaluateWhileExpression(whileExpression *ast.While, env *obj.Enviroment) ob
 	// we loop an update the condition until the condition is not trythy
 	for isTruthy(condition) {
 		evaluated := Evaluate(whileExpression.Body, env)
-		if returnVal, isReturn := evaluated.(*obj.Return); isReturn {
-			return returnVal
-		}
+		switch node := evaluated.(type) {
+		case *obj.Return:
+			return node
 
-		if _, isBreak := evaluated.(*obj.BreakObj); isBreak {
+		case *obj.BreakObj:
 			return obj.SingletonNUll
-		}
 
-		if _, isContinue := evaluated.(*obj.ContinueObj); isContinue {
+		case *obj.ContinueObj:
 			continue
-		}
 
-		condition = Evaluate(whileExpression.Condition, env)
+		default:
+			condition = Evaluate(whileExpression.Condition, env)
+		}
 	}
 
 	return obj.SingletonNUll
