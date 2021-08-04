@@ -259,11 +259,20 @@ func (p *Parser) parseClassMethod() ast.Expression {
 	}
 
 	params := p.parseIdentifiers(l.RPAREN)
-	if !p.expepectedToken(l.LBRACE) {
-		return nil
+	var body *ast.Block
+
+	if p.peekToken.Token_type == l.ARROW {
+		p.advanceTokens()
+		p.advanceTokens()
+		exp := p.parseStament()
+		body = ast.NewBlock(nil, exp)
+	} else {
+		if !p.expepectedToken(l.LBRACE) {
+			return nil
+		}
+		body = p.parseBlock()
 	}
 
-	body := p.parseBlock()
 	p.advanceTokens()
 	return ast.NewClassMethodExp(token, name, params, body)
 }

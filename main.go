@@ -20,7 +20,7 @@ func validatePath(path string) error {
 	}
 
 	if fileInfo.IsDir() {
-		return fmt.Errorf("la ruta indicada es una carpeta: %s", path)
+		return fmt.Errorf("la ruta indicada no contiene un archivo: %s", path)
 	}
 
 	extension := filepath.Ext(path)

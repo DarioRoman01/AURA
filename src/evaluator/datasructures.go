@@ -40,18 +40,19 @@ func evaluateArray(arr *ast.Array, env *obj.Enviroment) obj.Object {
 // evaluate a list reassigment by index like:
 //		arr[0] = 2;
 func evaluateListReassigment(call *ast.CallList, list *obj.List, newVal ast.Expression, env *obj.Enviroment) obj.Object {
-	index := Evaluate(call.Index, env)
-	num, isNum := index.(*obj.Number)
+	evaluated := Evaluate(call.Index, env)
+	num, isNum := evaluated.(*obj.Number)
 	if !isNum {
 		// the index is not a number
 		return newError("El indice debe ser un numero")
 	}
-	if num.Value >= len(list.Values) {
-		// the index is grater than the length of the list
-		return indexOutOfRange(num.Value, len(list.Values))
+
+	index, err := checkIndex(len(list.Values), num.Value)
+	if err != nil {
+		return err
 	}
 
-	list.Values[num.Value] = Evaluate(newVal, env)
+	list.Values[index] = Evaluate(newVal, env)
 	return obj.SingletonNUll
 }
 
@@ -59,7 +60,7 @@ func evaluateListReassigment(call *ast.CallList, list *obj.List, newVal ast.Expr
 func evaluateMapReassigment(hashMap *obj.Map, key obj.Object, value obj.Object) obj.Object {
 	// we dont care if the key doesnt exist
 	// we just add the key value pair to the map
-	hashMap.Store[key.Inspect()] = value
+	hashMap.UpdateKey(key, value)
 	return obj.SingletonNUll
 }
 

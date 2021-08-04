@@ -374,16 +374,16 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 // parse a return stament
 func (p *Parser) parseReturnStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	stament := ast.NewReturnStatement(p.currentToken, nil)
+	token := p.currentToken
 	p.advanceTokens()
+	returnVal := p.parseExpression(LOWEST)
 
-	stament.ReturnValue = p.parseExpression(LOWEST)
 	p.checkPeekTokenIsNotNil()
 	if p.peekToken.Token_type == l.SEMICOLON {
 		p.advanceTokens()
 	}
 
-	return stament
+	return ast.NewReturnStatement(token, returnVal)
 }
 
 // check current token and parse the token as a expression, let stament or return stament

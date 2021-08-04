@@ -7,9 +7,7 @@ clase Stack(data) {
         regresa data[-1];
     }
 
-    push(val) {
-        data:agregar(val);
-    }
+    push(val) => data:agregar(val);
 
     vacio() {
         si(largo(data)==0) {
@@ -27,9 +25,7 @@ clase Stack(data) {
         regresa data:pop();
     }
 
-    size() {
-        regresa largo(data);
-    }
+    size() => largo(data);
 
     vaciar() {
         mientras(largo(data) > 0) {
@@ -39,9 +35,9 @@ clase Stack(data) {
 }
 
 s := nuevo Stack(lista[2,34,65,23,39])
-escribir(s.data);
 s.push(45)
-escribir(s.data);
+escribirF("data: {}", s.data);
+escribirF("the size is: {}", s.size())
 s.vaciar();
 escribir(s.data);
 escribir(s.peek());

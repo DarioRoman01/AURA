@@ -36,8 +36,6 @@ func NewLexer(source string) *Lexer {
 // read next token and assing a token type to the token
 func (l *Lexer) NextToken() *Token {
 	l.skipWhiteSpaces()
-	var token *Token
-
 	if l.isLetter(l.character) {
 		literal := l.readIdentifier()
 		token_type := LookUpTokenType(literal)
@@ -54,6 +52,7 @@ func (l *Lexer) NextToken() *Token {
 		return NewToken(INT, literal)
 	}
 
+	var token *Token
 	switch l.character {
 	case "":
 		token = NewToken(EOF, l.character)
