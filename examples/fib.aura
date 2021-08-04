@@ -6,6 +6,16 @@ fib := |n| => {
     regresa fib(n - 1) + fib(n - 2);
 }
 
-numero := recibir_entero("Ingrese un numero para calcular su fibonacci: ")
-resultado := fib(numero);
-escribir(resultado);
+funcion main() {
+    intentar {
+        numero := entero(recibir("Ingrese un numero para calcular su fibonacci: "))
+    } excepto(error) {
+        escribir("Debe ingresar un numero!")
+        main()
+    }
+
+    resultado := fib(numero);
+    escribir(resultado);
+}
+
+main();

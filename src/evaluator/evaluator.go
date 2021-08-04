@@ -139,6 +139,10 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 	case *ast.Identifier:
 		return evaluateIdentifier(node, env)
 
+	case *ast.ThorwExpression:
+		CheckIsNotNil(node.Message)
+		return evaluateTrhowExp(node, env)
+
 	case *ast.Function:
 		CheckIsNotNil(node.Body)
 		return evaluateFunction(node, env)
@@ -335,6 +339,15 @@ func CheckIsNotNil(val interface{}) {
 	if val == nil {
 		panic("Error de evaluacion! Se esperaba una expression pero se obtuvo nulo!")
 	}
+}
+
+func evaluateTrhowExp(throwExp *ast.ThorwExpression, env *obj.Enviroment) obj.Object {
+	str, isStr := Evaluate(throwExp.Message, env).(*obj.String)
+	if !isStr {
+		return newError("las excepciones solo pueden recibir texto como parametro")
+	}
+
+	return newError(str.Value)
 }
 
 // evaluate an import statement

@@ -13,8 +13,10 @@ import (
 )
 
 // use singleton pattern for the scanner
-var scanner = bufio.NewScanner(os.Stdin)
-var writer = bufio.NewWriter(os.Stdout)
+var (
+	scanner = bufio.NewScanner(os.Stdin)
+	writer  = bufio.NewWriter(os.Stdout)
+)
 
 // return an error indicating the the builtin has wrong number of args
 func wrongNumberofArgs(funcName string, found, actual int) *obj.Error {

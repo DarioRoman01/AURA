@@ -212,3 +212,19 @@ func (cm *ClassMethodExp) Str() string {
 
 	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
 }
+
+// lanzar Error("no se puede hacer eso");
+type ThorwExpression struct {
+	BaseNode // extends base node struct
+	Message  Expression
+}
+
+func NewThrowExpression(token *l.Token, message Expression) *ThorwExpression {
+	return &ThorwExpression{BaseNode{token}, message}
+}
+
+func (t *ThorwExpression) expressNode() {}
+
+func (t *ThorwExpression) Str() string {
+	return fmt.Sprintf("lanzar Error(%s)", t.Message.Str())
+}
