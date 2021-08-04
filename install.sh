@@ -1,7 +1,6 @@
 #!/bin/bash
 echo "Cheking requirements..."
-go version
-if [ $? -eq 0 ]
+if [ "go version" ]
 then
     echo "Go is installed"
 else
