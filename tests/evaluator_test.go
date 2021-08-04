@@ -663,6 +663,32 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 	}
 }
 
+func (e *EvaluatorTests) TestTrhowExpression() {
+	tests := []struct {
+		source   string
+		expected interface{}
+	}{
+		{source: `lanzar Error("this is an error")`, expected: "this is an error"},
+		{
+			source:   `si(5 < 10) { 5 } si_no { lanzar Error("that is imposible!")}`,
+			expected: 5,
+		},
+		{
+			source:   `si(5 > 10) { 5 } si_no { lanzar Error("that is imposible!")}`,
+			expected: "that is imposible!",
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if str, isStr := test.expected.(string); isStr {
+			e.testErrorObject(evaluated, str)
+		} else {
+			e.testIntegerObject(evaluated, test.expected.(int))
+		}
+	}
+}
+
 func (e *EvaluatorTests) TestImportStatement() {
 	source := `
 		importar "../examples/func.aura"
