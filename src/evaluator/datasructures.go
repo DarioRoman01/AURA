@@ -181,7 +181,7 @@ func evaluateMapMethods(hashMap *obj.Map, method *obj.Method) obj.Object {
 		return obj.SingletonFALSE
 
 	case obj.VALUES:
-		list := &obj.List{Values: []obj.Object{}}
+		list := new(obj.List)
 		for _, val := range hashMap.Store {
 			list.Values = append(list.Values, val)
 		}

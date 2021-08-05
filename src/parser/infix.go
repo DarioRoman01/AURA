@@ -118,6 +118,7 @@ func (p *Parser) parseAssigmentExp(left ast.Expression) ast.Expression {
 	return ast.NewAssigmentExp(token, ident, val)
 }
 
+// parse an arrow function expression
 func (p *Parser) parseArrowFunc() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	token := p.currentToken

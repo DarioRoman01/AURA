@@ -266,7 +266,7 @@ func evaluateRange(rangeExpress *ast.RangeExpression, env *obj.Enviroment) obj.O
 	if list, isList := Evaluate(rangeExpress.Range, env).(*obj.List); isList {
 		// if the iter is a list we make a iterable with the list
 		iter := obj.NewIterator(list.Values[0], list.Values, obj.NewEnviroment(env))
-		iter.Env.SetItem(val.Value, iter.List[0])
+		iter.Env.SetItem(val.Value, iter.Current)
 		return iter
 	}
 
@@ -320,12 +320,7 @@ func evaluateClassFieldCall(call *ast.ClassFieldCall, env *obj.Enviroment) obj.O
 	}
 
 	if class, isClass := evaluated.(*obj.ClassInstance); isClass {
-		evaluated := Evaluate(call.Field, class.Env)
-		if _, isErr := evaluated.(*obj.Error); isErr {
-			return evaluated
-		}
-
-		return evaluated
+		return Evaluate(call.Field, class.Env)
 	}
 
 	return notAClass(evaluated.Inspect())
@@ -475,6 +470,7 @@ func evaluateWhileExpression(whileExpression *ast.While, env *obj.Enviroment) ob
 			return obj.SingletonNUll
 
 		case *obj.ContinueObj:
+			condition = Evaluate(whileExpression.Condition, env)
 			continue
 
 		default:

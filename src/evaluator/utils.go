@@ -76,7 +76,7 @@ func checkIndex(length int, index int) (int, *obj.Error) {
 	}
 
 	if index < 0 {
-		if int(math.Abs(float64(index))) > length {
+		if math.Abs(float64(index)) > float64(length) {
 			return 0, indexOutOfRange(index, length)
 		}
 
