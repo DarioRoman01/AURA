@@ -280,27 +280,27 @@ func (p *Parser) parseClassMethod() ast.Expression {
 // parse a call to instanciate a new class
 func (p *Parser) parseClassCall() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	call := ast.NewClassCall(p.currentToken, nil, nil)
+	token := p.currentToken
 	if !p.expepectedToken(l.IDENT) {
 		return nil
 	}
 
-	call.Class = p.parseIdentifier().(*ast.Identifier)
+	class := p.parseIdentifier().(*ast.Identifier)
 	if !p.expepectedToken(l.LPAREN) {
 		return nil
 	}
 
-	call.Arguments = p.parseExpressions(l.RPAREN)
-	return call
+	args := p.parseExpressions(l.RPAREN)
+	return ast.NewClassCall(token, class, args)
 }
 
 // parse an imper statement
 func (p *Parser) parseImportStatement() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
-	importStmt := ast.NewImportStatement(p.currentToken, nil)
+	token := p.currentToken
 	p.advanceTokens()
-	importStmt.Path = p.parseExpression(LOWEST)
-	return importStmt
+	path := p.parseExpression(LOWEST)
+	return ast.NewImportStatement(token, path)
 }
 
 func (p *Parser) parseTryExp() ast.Expression {

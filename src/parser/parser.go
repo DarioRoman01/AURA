@@ -373,18 +373,20 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 
 func (p *Parser) parseContinueStmt() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
+	stmt := ast.NewContinueStatement(p.currentToken)
 	if p.peekToken.Token_type == l.SEMICOLON {
 		p.advanceTokens()
 	}
-	return ast.NewContinueStatement(p.currentToken)
+	return stmt
 }
 
 func (p *Parser) parseBreakStmt() ast.Stmt {
 	p.checkCurrentTokenIsNotNil()
+	stmt := ast.NewBreakStatement(p.currentToken)
 	if p.peekToken.Token_type == l.SEMICOLON {
 		p.advanceTokens()
 	}
-	return ast.NewBreakStatement(p.currentToken)
+	return stmt
 }
 
 // parse a return stament
@@ -467,6 +469,7 @@ func (p *Parser) registerInfixFns() {
 	p.infixParseFns[l.OR] = p.parseInfixExpression
 	p.infixParseFns[l.DOT] = p.parseClassFieldsCall
 	p.infixParseFns[l.COLONASSING] = p.parseAssigmentExp
+	p.infixParseFns[l.QUESTION] = p.parseTernaryIf
 }
 
 // register all the functions to parse prefix expressions

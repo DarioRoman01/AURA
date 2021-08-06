@@ -139,3 +139,18 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 
 	return ast.NewArrowFunc(token, params, body)
 }
+
+// list.len() > 1 ? value : not value;
+func (p *Parser) parseTernaryIf(condition ast.Expression) ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	token := p.currentToken
+	p.advanceTokens()
+	consequence := p.parseExpression(LOWEST)
+	if !p.expepectedToken(l.COLON) {
+		return nil
+	}
+
+	p.advanceTokens()
+	alternative := p.parseExpression(LOWEST)
+	return ast.NewTernaryIf(token, condition, consequence, alternative)
+}
