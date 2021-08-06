@@ -76,6 +76,8 @@ func (l *Lexer) NextToken() *Token {
 		token = NewToken(SEMICOLON, l.character)
 	case ".":
 		token = NewToken(DOT, l.character)
+	case "?":
+		token = NewToken(QUESTION, l.character)
 
 	case ":":
 		if l.peekCharacter() == "=" {

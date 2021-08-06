@@ -69,6 +69,7 @@ const (
 	IMPORT
 	CONTINUE
 	BREAK
+	QUESTION
 )
 
 // String representation of all tokens
@@ -128,6 +129,7 @@ var Tokens = [...]string{
 	IMPORT:      "importar",
 	CONTINUE:    "continuear",
 	BREAK:       "romper",
+	QUESTION:    "?",
 }
 
 // Represents a Token in the programmig lenguage

@@ -124,9 +124,9 @@ func (r *Reassignment) Str() string {
 
 // represents an assigment with the := operator
 type AssigmentExp struct {
-	BaseNode
-	Name *Identifier
-	Val  Expression
+	BaseNode             // extends base nde struct
+	Name     *Identifier // represents the variable name
+	Val      Expression  // represents the value of the variable
 }
 
 // generates a new assigment instance
@@ -141,4 +141,25 @@ func NewAssigmentExp(token *l.Token, name *Identifier, val Expression) *Assigmen
 func (a *AssigmentExp) expressNode() {}
 func (a *AssigmentExp) Str() string {
 	return fmt.Sprintf("%s := %s", a.Name.Value, a.Val.Str())
+}
+
+type TernaryIf struct {
+	BaseNode               // extends base node struct
+	Condition   Expression // represents the condition of the if
+	Consequence Expression // represents the consequence if the condition is true
+	Alternative Expression // represents the alternative if the condition is false
+}
+
+func NewTernaryIf(token *l.Token, condition, consequence, alternative Expression) *TernaryIf {
+	return &TernaryIf{
+		BaseNode:    BaseNode{token},
+		Condition:   condition,
+		Consequence: consequence,
+		Alternative: alternative,
+	}
+}
+
+func (t *TernaryIf) expressNode() {}
+func (t *TernaryIf) Str() string {
+	return fmt.Sprintf("%s ? %s : %s", t.Condition.Str(), t.Condition.Str(), t.Alternative.Str())
 }
