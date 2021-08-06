@@ -915,6 +915,24 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 	}
 }
 
+func (e *EvaluatorTests) TestTernaryIf() {
+	tests := []tuple{
+		{`(10 > 5) ? 5 : 4;`, 5},
+		{`(10 < 5) ? 5 : 4;`, 4},
+		{`(10 > 5 && 5 < 4) ? 5 : 4;`, 4},
+		{`(10 > 5 || 5 < 4) ? 5 : 4;`, 5},
+		{`x := 5; (x > 5 || x < 4) ? 5 : 4;`, 4},
+		{`x := 5; (x == 5 && x > 4) ? 5 : 4;`, 5},
+		{`x := 5; (x == 10) ? 5 : 4;`, 4},
+		{`x := 5; (x % 2 == 0) ? 5 : 4;`, 4},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func (e *EvaluatorTests) TestStringConcatenation() {
 	tests := []struct {
 		source   string
