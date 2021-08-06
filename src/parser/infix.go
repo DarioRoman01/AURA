@@ -145,12 +145,12 @@ func (p *Parser) parseTernaryIf(condition ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	token := p.currentToken
 	p.advanceTokens()
-	consequence := p.parseExpression(LOWEST)
+	consequence := p.parseExpression(PREFIX)
 	if !p.expepectedToken(l.COLON) {
 		return nil
 	}
 
 	p.advanceTokens()
-	alternative := p.parseExpression(LOWEST)
+	alternative := p.parseExpression(PREFIX)
 	return ast.NewTernaryIf(token, condition, consequence, alternative)
 }

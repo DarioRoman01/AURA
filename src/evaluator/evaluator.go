@@ -149,6 +149,12 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		CheckIsNotNil(node.Message)
 		return newError(node.Message.Str())
 
+	case *ast.TernaryIf:
+		CheckIsNotNil(node.Condition)
+		CheckIsNotNil(node.Consequence)
+		CheckIsNotNil(node.Alternative)
+		return evaluateTernaryIf(node, env)
+
 	case *ast.Function:
 		CheckIsNotNil(node.Body)
 		return evaluateFunction(node, env)
@@ -347,6 +353,15 @@ func evaluateFieldReassigment(call *ast.ClassFieldCall, class *obj.ClassInstance
 func CheckIsNotNil(val interface{}) {
 	if val == nil {
 		panic("Error de evaluacion! Se esperaba una expression pero se obtuvo nulo!")
+	}
+}
+
+func evaluateTernaryIf(ternary *ast.TernaryIf, env *obj.Enviroment) obj.Object {
+	condition := Evaluate(ternary.Condition, env)
+	if isTruthy(condition) {
+		return Evaluate(ternary.Consequence, env)
+	} else {
+		return Evaluate(ternary.Alternative, env)
 	}
 }
 

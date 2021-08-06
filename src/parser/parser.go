@@ -51,7 +51,7 @@ var precedences = map[l.TokenType]Precedence{
 	l.LBRACKET:    CALL,
 	l.OR:          ANDOR,
 	l.ASSING:      ANDOR,
-	l.COLON:       PREFIX,
+	l.COLON:       PRODUCT,
 	l.PLUSASSING:  PRODUCT,
 	l.MINUSASSING: PRODUCT,
 	l.DIVASSING:   PRODUCT,
@@ -61,6 +61,7 @@ var precedences = map[l.TokenType]Precedence{
 	l.MINUS2:      PRODUCT,
 	l.DOT:         PREFIX,
 	l.COLONASSING: PREFIX,
+	l.QUESTION:    PREFIX,
 }
 
 // Represents the Parser of the programming lenguage
