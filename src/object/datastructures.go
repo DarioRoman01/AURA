@@ -3,6 +3,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 )
 
@@ -50,6 +51,25 @@ func (l *List) RemoveAt(index int) Object {
 	val := l.Values[index]
 	l.Values = append(l.Values[:index], l.Values[index+1:]...)
 	return val
+}
+
+func (l *List) Contains(obj Object) Object {
+	for _, val := range l.Values {
+		if reflect.DeepEqual(val, obj) {
+			return SingletonTRUE
+		}
+	}
+
+	return SingletonFALSE
+}
+
+func (l *List) Map(fn *Def, applyFunction func(Object, ...Object) Object) *List {
+	newList := new(List)
+	for _, val := range l.Values {
+		newList.Values = append(newList.Values, applyFunction(fn, val))
+	}
+
+	return newList
 }
 
 // represents a HashMap

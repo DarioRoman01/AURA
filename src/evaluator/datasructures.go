@@ -3,7 +3,6 @@ package evaluator
 import (
 	"aura/src/ast"
 	obj "aura/src/object"
-	"reflect"
 	"strings"
 )
 
@@ -28,13 +27,13 @@ func evaluateMap(mapa *ast.MapExpression, env *obj.Enviroment) obj.Object {
 
 // evaluate an array expression
 func evaluateArray(arr *ast.Array, env *obj.Enviroment) obj.Object {
-	var list obj.List
+	list := new(obj.List)
 	// we loop and evaluated all the values in the array expression to add them to the list
 	for _, val := range arr.Values {
 		list.Values = append(list.Values, Evaluate(val, env))
 	}
 
-	return &list
+	return list
 }
 
 // evaluate a list reassigment by index like:
@@ -72,10 +71,6 @@ func evaluateReassigment(reassigment *ast.Reassignment, env *obj.Enviroment) obj
 
 	case *ast.ClassFieldCall:
 		evaluated := Evaluate(exp.Class, env)
-		if _, isErr := evaluated.(*obj.Error); isErr {
-			return evaluated
-		}
-
 		if class, isClass := evaluated.(*obj.ClassInstance); isClass {
 			return evaluateFieldReassigment(exp, class, reassigment.NewVal)
 		}
@@ -117,22 +112,11 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 		return list.RemoveAt(index.Value)
 
 	case obj.CONTAIS:
-		for _, val := range list.Values {
-			if reflect.DeepEqual(val, method.Value) {
-				return obj.SingletonTRUE
-			}
-		}
-
-		return obj.SingletonFALSE
+		return list.Contains(method.Value)
 
 	case obj.MAP:
-		var newList obj.List
 		fn := method.Value.(*obj.Def)
-		for _, val := range list.Values {
-			newList.Values = append(newList.Values, applyFunction(fn, val))
-		}
-
-		return &newList
+		return list.Map(fn, applyFunction)
 
 	case obj.FOREACH:
 		fn := method.Value.(*obj.Def)

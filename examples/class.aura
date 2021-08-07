@@ -1,29 +1,11 @@
 clase Stack(data) {
-    peek() {
-        si (largo(data) == 0) {
-            regresa nulo;
-        }
-
-        regresa data[-1];
-    }
+    peek() => (largo(data) == 0) ? nulo : data[-1];
 
     push(val) => data:agregar(val);
 
-    vacio() {
-        si(largo(data)==0) {
-            regresa verdadero;
-        } 
+    vacio() => largo(data) == 0;
 
-        regresa falso;
-    }
-
-    popuwu() {
-        si( largo(data) == 0 ) {
-            regresa nulo;
-        }
-
-        regresa data:pop();
-    }
+    popuwu() => (largo(data) == 0) ? nulo : data:pop();
 
     size() => largo(data);
 
@@ -40,4 +22,4 @@ escribirF("data: {}", s.data);
 escribirF("the size is: {}", s.size())
 s.vaciar();
 escribir(s.data);
-escribir(s.peek());
+escribir(s.vacio());
