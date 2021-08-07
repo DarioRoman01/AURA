@@ -120,34 +120,15 @@ func evaluateListMethods(list *obj.List, method *obj.Method) obj.Object {
 
 	case obj.FOREACH:
 		fn := method.Value.(*obj.Def)
-		for _, val := range list.Values {
-			applyFunction(fn, val)
-		}
-		return obj.SingletonNUll
+		return list.ForEach(fn, applyFunction)
 
 	case obj.FILTER:
-		var newList obj.List
 		fn := method.Value.(*obj.Def)
-		for _, val := range list.Values {
-			eval := applyFunction(fn, val)
-			if isTruthy(eval) {
-				newList.Values = append(newList.Values, val)
-			}
-		}
-
-		return &newList
+		return list.Filter(fn, applyFunction, isTruthy)
 
 	case obj.COUNT:
-		var count obj.Number
 		fn := method.Value.(*obj.Def)
-		for _, val := range list.Values {
-			eval := applyFunction(fn, val)
-			if isTruthy(eval) {
-				count.Value++
-			}
-		}
-
-		return &count
+		return list.Count(fn, applyFunction, isTruthy)
 
 	default:
 		return noSuchMethod(method.Inspect(), "list")

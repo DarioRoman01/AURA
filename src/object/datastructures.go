@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+type applyFunc func(Object, ...Object) Object
+type isTruthyFunc func(Object) bool
+
 // Represents an Array
 type List struct {
 	Values []Object // represents all the values in the array
@@ -63,13 +66,45 @@ func (l *List) Contains(obj Object) Object {
 	return SingletonFALSE
 }
 
-func (l *List) Map(fn *Def, applyFunction func(Object, ...Object) Object) *List {
+func (l *List) Map(fn *Def, applyFunction applyFunc) *List {
 	newList := new(List)
 	for _, val := range l.Values {
 		newList.Values = append(newList.Values, applyFunction(fn, val))
 	}
 
 	return newList
+}
+
+func (l *List) ForEach(fn *Def, applyFunction applyFunc) Object {
+	for _, val := range l.Values {
+		applyFunction(fn, val)
+	}
+
+	return SingletonNUll
+}
+
+func (l *List) Filter(fn *Def, applyFunction applyFunc, isTruthy isTruthyFunc) *List {
+	newList := new(List)
+	for _, val := range l.Values {
+		eval := applyFunction(fn, val)
+		if isTruthy(eval) {
+			newList.Values = append(newList.Values, val)
+		}
+	}
+
+	return newList
+}
+
+func (l *List) Count(fn *Def, applyFunction applyFunc, isTruthy isTruthyFunc) *Number {
+	count := new(Number)
+	for _, val := range l.Values {
+		eval := applyFunction(fn, val)
+		if isTruthy(eval) {
+			count.Value++
+		}
+	}
+
+	return count
 }
 
 // represents a HashMap
