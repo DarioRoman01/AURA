@@ -185,9 +185,9 @@ func (s *String) Contains(val string) Object {
 
 func (s *String) Split(sep string) *List {
 	list := strings.Split(s.Value, sep)
-	var splited List
+	splited := new(List)
 	for _, val := range list {
 		splited.Values = append(splited.Values, &String{val})
 	}
-	return &splited
+	return splited
 }

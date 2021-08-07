@@ -82,13 +82,13 @@ func evaluateLeftFloatInfixExp(operator string, left obj.Object, rigth obj.Objec
 
 	switch operator {
 	case "+":
-		return &obj.Float{Value: leftVal + float64(rigthVal)}
+		return obj.NewFloat(leftVal + float64(rigthVal))
 	case "-":
-		return &obj.Float{Value: leftVal - float64(rigthVal)}
+		return obj.NewFloat(leftVal - float64(rigthVal))
 	case "*":
-		return &obj.Float{Value: leftVal * float64(rigthVal)}
+		return obj.NewFloat(leftVal * float64(rigthVal))
 	case "/":
-		return &obj.Float{Value: leftVal / float64(rigthVal)}
+		return obj.NewFloat(leftVal / float64(rigthVal))
 	case "+=":
 		left.(*obj.Float).Value += float64(rigthVal)
 		return left
@@ -133,13 +133,13 @@ func evaluateRigthFloatInfixExp(operator string, left obj.Object, rigth obj.Obje
 
 	switch operator {
 	case "+":
-		return &obj.Float{Value: float64(leftVal) + rigthVal}
+		return obj.NewFloat(float64(leftVal) + rigthVal)
 	case "-":
-		return &obj.Float{Value: float64(leftVal) - rigthVal}
+		return obj.NewFloat(float64(leftVal) - rigthVal)
 	case "*":
-		return &obj.Float{Value: float64(leftVal) * rigthVal}
+		return obj.NewFloat(float64(leftVal) * rigthVal)
 	case "/":
-		return &obj.Float{Value: float64(leftVal) / rigthVal}
+		return obj.NewFloat(float64(leftVal) / rigthVal)
 	case ">":
 		return toBooleanObject(float64(leftVal) > rigthVal)
 	case "<":
@@ -218,13 +218,13 @@ func evaluateFloatInfixExpression(operator string, left, rigth obj.Object) obj.O
 	rigthVal := rigth.(*obj.Float).Value
 	switch operator {
 	case "+":
-		return &obj.Float{Value: leftVal + rigthVal}
+		return obj.NewFloat(leftVal + rigthVal)
 	case "-":
-		return &obj.Float{Value: leftVal - rigthVal}
+		return obj.NewFloat(leftVal - rigthVal)
 	case "*":
-		return &obj.Float{Value: leftVal * rigthVal}
+		return obj.NewFloat(leftVal * rigthVal)
 	case "/":
-		return &obj.Float{Value: leftVal / rigthVal}
+		return obj.NewFloat(leftVal / rigthVal)
 	case "+=":
 		left.(*obj.Float).Value += rigthVal
 		return left

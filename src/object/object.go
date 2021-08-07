@@ -83,13 +83,16 @@ func (i *Number) Inspect() string  { return fmt.Sprint(i.Value) }
 // represents the float object type
 type Float struct{ Value float64 }
 
+func NewFloat(val float64) *Float {
+	return &Float{val}
+}
+
 func (f *Float) Type() ObjectType { return FLOATING }
 func (f *Float) Inspect() string  { return fmt.Sprint(f.Value) }
 
 // represent the bool object
 type Bool struct{ Value bool }
 
-func NewBool(value bool) *Bool   { return &Bool{Value: value} }
 func (b *Bool) Type() ObjectType { return BOOLEAN }
 func (b *Bool) Inspect() string {
 	if b.Value {
