@@ -13,13 +13,13 @@ import (
 	"strings"
 )
 
-var EOF_TOKEN = l.Token{Token_type: l.EOF, Literal: ""}
-
 // iterate trough parser errors and print them
-func printParseErros(errors []string) {
+func printParseErros(errors []string, writer *bufio.Writer) {
 	for _, err := range errors {
-		fmt.Println(err)
+		writer.WriteString(fmt.Sprintf("%s\n", err))
 	}
+
+	writer.Flush()
 }
 
 // clear the console
@@ -76,7 +76,7 @@ func StartRpl() {
 		program := parser.ParseProgam()
 
 		if len(parser.Errors()) > 0 {
-			printParseErros(parser.Errors())
+			printParseErros(parser.Errors(), writer)
 			scanned = scanned[:len(scanned)-1]
 			continue
 		}
