@@ -143,6 +143,7 @@ func (a *AssigmentExp) Str() string {
 	return fmt.Sprintf("%s := %s", a.Name.Value, a.Val.Str())
 }
 
+// represents a ternary if expression
 type TernaryIf struct {
 	BaseNode               // extends base node struct
 	Condition   Expression // represents the condition of the if

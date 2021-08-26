@@ -135,27 +135,6 @@ func castFloat(args ...obj.Object) obj.Object {
 	}
 }
 
-// input function to recibe int objects from console
-func RecibirEntero(args ...obj.Object) obj.Object {
-	if len(args) > 1 {
-		return wrongNumberofArgs("recibir_entero", len(args), 1)
-	}
-
-	if len(args) == 0 {
-		strInt := input(scanner)
-		return toInt(strInt)
-	}
-
-	if arg, isString := args[0].(*obj.String); isString {
-		fmt.Print(arg.Inspect())
-		strInt := input(scanner)
-		return toInt(strInt)
-	}
-
-	return unsoportedArgumentType("recbir_entero", obj.Types[args[0].Type()])
-
-}
-
 func formatrArgs(args ...obj.Object) obj.Object {
 	if len(args) <= 1 {
 		return wrongNumberofArgs("format", 0, 100)
@@ -271,31 +250,30 @@ func toInt(str string) obj.Object {
 }
 
 var BUILTINS = map[string]*obj.Builtin{
-	"largo":          obj.NewBuiltin(Longitud),
-	"escribir":       obj.NewBuiltin(Escribir),
-	"recibir":        obj.NewBuiltin(Recibir),
-	"recibir_entero": obj.NewBuiltin(RecibirEntero),
-	"tipo":           obj.NewBuiltin(Tipo),
-	"entero":         obj.NewBuiltin(castInt),
-	"texto":          obj.NewBuiltin(castString),
-	"rango":          obj.NewBuiltin(rango),
-	"agregar":        obj.NewBuiltin(add),
-	"pop":            obj.NewBuiltin(pop),
-	"popIndice":      obj.NewBuiltin(remove),
-	"contiene":       obj.NewBuiltin(contains),
-	"valores":        obj.NewBuiltin(values),
-	"mayusculas":     obj.NewBuiltin(toUppper),
-	"minusculas":     obj.NewBuiltin(toLower),
-	"dormir":         obj.NewBuiltin(slep),
-	"es_mayuscula":   obj.NewBuiltin(isUpper),
-	"es_minuscula":   obj.NewBuiltin(isLower),
-	"formatear":      obj.NewBuiltin(formatrArgs),
-	"escribirF":      obj.NewBuiltin(printF),
-	"map":            obj.NewBuiltin(mapList),
-	"porCada":        obj.NewBuiltin(forEach),
-	"filtrar":        obj.NewBuiltin(filter),
-	"contar":         obj.NewBuiltin(count),
-	"separar":        obj.NewBuiltin(split),
-	"abs":            obj.NewBuiltin(abs),
-	"flotante":       obj.NewBuiltin(castFloat),
+	"largo":        obj.NewBuiltin(Longitud),
+	"escribir":     obj.NewBuiltin(Escribir),
+	"recibir":      obj.NewBuiltin(Recibir),
+	"tipo":         obj.NewBuiltin(Tipo),
+	"entero":       obj.NewBuiltin(castInt),
+	"texto":        obj.NewBuiltin(castString),
+	"rango":        obj.NewBuiltin(rango),
+	"agregar":      obj.NewBuiltin(add),
+	"pop":          obj.NewBuiltin(pop),
+	"popIndice":    obj.NewBuiltin(remove),
+	"contiene":     obj.NewBuiltin(contains),
+	"valores":      obj.NewBuiltin(values),
+	"mayusculas":   obj.NewBuiltin(toUppper),
+	"minusculas":   obj.NewBuiltin(toLower),
+	"dormir":       obj.NewBuiltin(slep),
+	"es_mayuscula": obj.NewBuiltin(isUpper),
+	"es_minuscula": obj.NewBuiltin(isLower),
+	"formatear":    obj.NewBuiltin(formatrArgs),
+	"escribirF":    obj.NewBuiltin(printF),
+	"map":          obj.NewBuiltin(mapList),
+	"porCada":      obj.NewBuiltin(forEach),
+	"filtrar":      obj.NewBuiltin(filter),
+	"contar":       obj.NewBuiltin(count),
+	"separar":      obj.NewBuiltin(split),
+	"abs":          obj.NewBuiltin(abs),
+	"flotante":     obj.NewBuiltin(castFloat),
 }

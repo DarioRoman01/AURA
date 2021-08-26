@@ -23,8 +23,7 @@ func validatePath(path string) error {
 		return fmt.Errorf("la ruta indicada no contiene un archivo: %s", path)
 	}
 
-	extension := filepath.Ext(path)
-	if extension != ".aura" {
+	if filepath.Ext(path) != ".aura" {
 		return fmt.Errorf(
 			"el archivo %s no es una archivo aura valido",
 			filepath.Base(path),
