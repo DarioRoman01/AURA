@@ -108,14 +108,14 @@ func (p *Parser) advanceTokens() {
 // check that the current token is not nil
 func (p *Parser) checkCurrentTokenIsNotNil() {
 	if p.currentToken == nil {
-		panic("Error de parseo se esperaba una expression despues de: " + p.lastToken.Literal)
+		panic("Error de parseo se esperaba un token despues de: " + p.lastToken.Literal)
 	}
 }
 
 // check that the peek token is not nil
 func (p *Parser) checkPeekTokenIsNotNil() {
 	if p.peekToken == nil {
-		panic("Error de parseo se esperaba una expression despues de: " + p.currentToken.Literal)
+		panic("Error de parseo se esperaba un token despues de: " + p.currentToken.Literal)
 	}
 }
 

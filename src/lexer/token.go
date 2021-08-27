@@ -143,7 +143,7 @@ func NewToken(t TokenType, literal string) *Token {
 	return &Token{Token_type: t, Literal: literal}
 }
 
-// print token info
+// print token info for debugging
 func (t *Token) PrintToken() string {
 	return fmt.Sprintf("Token Type: %s, Literal: %s", Tokens[t.Token_type], t.Literal)
 }

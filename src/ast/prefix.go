@@ -213,12 +213,13 @@ func (cm *ClassMethodExp) Str() string {
 	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
 }
 
-// lanzar Error("no se puede hacer eso");
+// represents an throw exception expression
 type ThorwExpression struct {
-	BaseNode // extends base node struct
-	Message  Expression
+	BaseNode            // extends base node struct
+	Message  Expression // represents the error message
 }
 
+// generates a new throw expression instace
 func NewThrowExpression(token *l.Token, message Expression) *ThorwExpression {
 	return &ThorwExpression{BaseNode{token}, message}
 }

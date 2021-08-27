@@ -385,7 +385,7 @@ func NewClassStatement(token *l.Token, name *Identifier, params []*Identifier, m
 	}
 }
 
-func (c *ClassStatement) stmtNode() {}
+func (*ClassStatement) stmtNode() {}
 
 func (c *ClassStatement) Str() string {
 	var paramsBuf strings.Builder
@@ -416,8 +416,8 @@ func (c *ClassStatement) Str() string {
 
 // represents an import statement
 type ImportStatement struct {
-	BaseNode
-	Path Expression
+	BaseNode            // extends base node struct
+	Path     Expression // represents the import path
 }
 
 // generates a new import statement instance
@@ -430,12 +430,14 @@ func (i *ImportStatement) Str() string {
 	return fmt.Sprintf("importar %s", i.Path.Str())
 }
 
+// represents an arrow function expression
 type ArrowFunc struct {
-	BaseNode
-	Params []*Identifier
-	Body   *Block
+	BaseNode               // extends base node struct
+	Params   []*Identifier // represents the parameters of the function
+	Body     *Block        // represents the body of the function
 }
 
+// generates a new arrow function instance
 func NewArrowFunc(token *l.Token, params []*Identifier, body *Block) *ArrowFunc {
 	return &ArrowFunc{
 		BaseNode: BaseNode{token},
@@ -483,10 +485,12 @@ func (t TryExp) Str() string {
 	)
 }
 
+// represents a break statement
 type BreakStatement struct {
 	BaseNode
 }
 
+// generates new break statement instance
 func NewBreakStatement(token *l.Token) *BreakStatement {
 	return &BreakStatement{BaseNode{token}}
 }
@@ -496,10 +500,12 @@ func (b *BreakStatement) Str() string {
 	return "romper"
 }
 
+// represents a continue statement
 type ContinueStatement struct {
 	BaseNode
 }
 
+// generates new continue statement instance
 func NewContinueStatement(token *l.Token) *ContinueStatement {
 	return &ContinueStatement{BaseNode{token}}
 }

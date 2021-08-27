@@ -239,7 +239,7 @@ func input(scan *bufio.Scanner) string {
 	return str
 }
 
-// perform the string to int conversion and handle the error
+// perform the string to int conversion and handle the posibe errror
 func toInt(str string) obj.Object {
 	number, err := strconv.Atoi(str)
 	if err != nil {

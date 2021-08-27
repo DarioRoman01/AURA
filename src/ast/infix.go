@@ -146,7 +146,7 @@ func (a *AssigmentExp) Str() string {
 // represents a ternary if expression
 type TernaryIf struct {
 	BaseNode               // extends base node struct
-	Condition   Expression // represents the condition of the if
+	Condition   Expression // represents the condition
 	Consequence Expression // represents the consequence if the condition is true
 	Alternative Expression // represents the alternative if the condition is false
 }

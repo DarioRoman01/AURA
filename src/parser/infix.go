@@ -21,8 +21,7 @@ func (p *Parser) parseMethod(left ast.Expression) ast.Expression {
 // parse an infix expressoin
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
-	token := p.currentToken
-	operator := p.currentToken.Literal
+	token, operator := p.currentToken, p.currentToken.Literal
 	precedence := p.currentPrecedence()
 
 	p.advanceTokens()
@@ -140,7 +139,7 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 	return ast.NewArrowFunc(token, params, body)
 }
 
-// list.len() > 1 ? value : not value;
+// parse a ternary if expression
 func (p *Parser) parseTernaryIf(condition ast.Expression) ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	token := p.currentToken
