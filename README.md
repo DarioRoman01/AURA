@@ -43,8 +43,14 @@ funcion main() {
 
 2. <h3>move the binary to a folder of your preference for example:</h3>
 
+    * on linux
     ```shell
     mv aura /path/to/your/install/directory
+    ```
+    
+    * on windows
+    ```cmd
+    move \path\to\your\install\directory
     ```
 
 3. <h3>Then you have to set aura in your path:</h3>
