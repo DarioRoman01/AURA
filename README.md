@@ -50,7 +50,7 @@ funcion main() {
     
     * on windows
     ```cmd
-    move \path\to\your\install\directory
+    move C:\path\to\your\install\directory
     ```
 
 3. <h3>Then you have to set aura in your path:</h3>

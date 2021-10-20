@@ -1,0 +1,5 @@
+funcion test(num) {
+    num == 2 ? escribir("uwu") : escribir("owo");
+}
+
+test(2);
