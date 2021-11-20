@@ -9,3 +9,4 @@ mi_lista:pop();
 mi_lista:agregar(10);
 escribir(mi_lista);
 mi_lista:porCada(|x| => escribir(x));
+escribir(suma(mi_lista));

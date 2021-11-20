@@ -214,6 +214,32 @@ func Tipo(args ...obj.Object) obj.Object {
 	return &obj.String{Value: obj.Types[args[0].Type()]}
 }
 
+func sum(args ...obj.Object) obj.Object {
+	if len(args) > 1 || len(args) < 1 {
+		return wrongNumberofArgs("sum", len(args), 1)
+	}
+
+	if list, isList := args[0].(*obj.List); isList {
+		var res obj.Number
+		for _, value := range list.Values {
+			switch item := value.(type) {
+			case *obj.Number:
+				res.Value += item.Value
+
+			case *obj.Float:
+				res.Value += int(item.Value)
+
+			default:
+				return unsoportedArgumentType("suma", obj.Types[value.Type()])
+			}
+		}
+
+		return &res
+	}
+
+	return unsoportedArgumentType("suma", obj.Types[args[0].Type()])
+}
+
 // return the absolute value of the given number
 func abs(args ...obj.Object) obj.Object {
 	if len(args) > 1 || len(args) == 0 {
@@ -276,4 +302,5 @@ var BUILTINS = map[string]*obj.Builtin{
 	"separar":      obj.NewBuiltin(split),
 	"abs":          obj.NewBuiltin(abs),
 	"flotante":     obj.NewBuiltin(castFloat),
+	"suma":         obj.NewBuiltin(sum),
 }
