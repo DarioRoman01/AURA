@@ -56,7 +56,7 @@ func (e *EvaluatorTests) TestFloatEvaluation() {
 		{"5.5 * 5.5", 30.25},
 		{"5.5 *= 5.5", 30.25},
 		{"5.5 / 2", 2.75},
-		{"5.5 /= 2", 2.75},
+		{"x := 10; x /= 3.2", 3.125},
 	}
 
 	for _, test := range tests {
