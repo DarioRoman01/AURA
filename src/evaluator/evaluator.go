@@ -40,13 +40,13 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 		return evaluatePrefixExpression(node.Operator, rigth)
 
 	case *ast.Infix:
-		go CheckIsNotNil(node.Left)
+		CheckIsNotNil(node.Left)
 		CheckIsNotNil(node.Rigth)
 		left := Evaluate(node.Left, env)
 		rigth := Evaluate(node.Rigth, env)
-		go CheckIsNotNil(left)
+		CheckIsNotNil(left)
 		CheckIsNotNil(rigth)
-		return evaluateInfixExpression(node.Operator, left, rigth)
+		return evaluateInfixExpression(node.Operator, left, rigth, env, node.Left)
 
 	case *ast.Block:
 		return evaluateBLockStaments(node, env)

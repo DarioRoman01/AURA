@@ -1,13 +1,14 @@
 package evaluator
 
 import (
+	"aura/src/ast"
 	obj "aura/src/object"
 	"fmt"
 	"reflect"
 )
 
 // evluate infix expressions between objects
-func evaluateInfixExpression(operator string, left obj.Object, right obj.Object) obj.Object {
+func evaluateInfixExpression(operator string, left obj.Object, right obj.Object, env *obj.Enviroment, leftNode ast.Expression) obj.Object {
 	switch {
 
 	case left.Type() == obj.INTEGERS && right.Type() == obj.INTEGERS:
@@ -20,7 +21,7 @@ func evaluateInfixExpression(operator string, left obj.Object, right obj.Object)
 		return evaluateLeftFloatInfixExp(operator, left, right)
 
 	case left.Type() == obj.INTEGERS && right.Type() == obj.FLOATING:
-		return evaluateRigthFloatInfixExp(operator, left, right)
+		return evaluateRigthFloatInfixExp(operator, left, right, env, leftNode)
 
 	case left.Type() == obj.STRINGTYPE && right.Type() == obj.STRINGTYPE:
 		return evaluateStringInfixExpression(operator, left, right)
@@ -88,7 +89,11 @@ func evaluateLeftFloatInfixExp(operator string, left obj.Object, rigth obj.Objec
 	case "*":
 		return obj.NewFloat(leftVal * float64(rigthVal))
 	case "/":
+		if leftVal == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
 		return obj.NewFloat(leftVal / float64(rigthVal))
+
 	case "+=":
 		left.(*obj.Float).Value += float64(rigthVal)
 		return left
@@ -98,6 +103,9 @@ func evaluateLeftFloatInfixExp(operator string, left obj.Object, rigth obj.Objec
 		return left
 
 	case "/=":
+		if left.(*obj.Float).Value == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
 		left.(*obj.Float).Value /= float64(rigthVal)
 		return left
 
@@ -127,9 +135,27 @@ func evaluateLeftFloatInfixExp(operator string, left obj.Object, rigth obj.Objec
 	}
 }
 
-func evaluateRigthFloatInfixExp(operator string, left obj.Object, rigth obj.Object) obj.Object {
+func isIdentifier(exp ast.Expression) (*ast.Identifier, *obj.Error) {
+	ident, isIdentifier := exp.(*ast.Identifier)
+	if !isIdentifier {
+		return nil, newError("no se puede user el /= sin una variable a la derecha si se usa un flotante a la izquierda")
+	}
+	return ident, nil
+}
+
+func evaluateRigthFloatInfixExp(operator string, left obj.Object, rigth obj.Object, env *obj.Enviroment, leftNode ast.Expression) obj.Object {
 	leftVal := left.(*obj.Number).Value
 	rigthVal := rigth.(*obj.Float).Value
+	var variable string
+
+	if operator == "+=" || operator == "-=" || operator == "/=" || operator == "*=" {
+		ident, err := isIdentifier(leftNode)
+		if err != nil {
+			return err
+		}
+
+		variable = ident.Value
+	}
 
 	switch operator {
 	case "+":
@@ -139,7 +165,34 @@ func evaluateRigthFloatInfixExp(operator string, left obj.Object, rigth obj.Obje
 	case "*":
 		return obj.NewFloat(float64(leftVal) * rigthVal)
 	case "/":
+		if leftVal == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
 		return obj.NewFloat(float64(leftVal) / rigthVal)
+
+	case "+=":
+		env.SetItem(variable, obj.NewFloat(float64(leftVal)+rigthVal))
+		obj, _ := env.GetItem(variable)
+		return obj
+
+	case "-=":
+		env.SetItem(variable, obj.NewFloat(float64(leftVal)-rigthVal))
+		obj, _ := env.GetItem(variable)
+		return obj
+
+	case "/=":
+		if leftVal == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
+		env.SetItem(variable, obj.NewFloat(float64(leftVal)/rigthVal))
+		obj, _ := env.GetItem(variable)
+		return obj
+
+	case "*=":
+		env.SetItem(variable, obj.NewFloat(float64(leftVal)*rigthVal))
+		obj, _ := env.GetItem(variable)
+		return obj
+
 	case ">":
 		return toBooleanObject(float64(leftVal) > rigthVal)
 	case "<":
@@ -224,6 +277,9 @@ func evaluateFloatInfixExpression(operator string, left, rigth obj.Object) obj.O
 	case "*":
 		return obj.NewFloat(leftVal * rigthVal)
 	case "/":
+		if leftVal == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
 		return obj.NewFloat(leftVal / rigthVal)
 	case "+=":
 		left.(*obj.Float).Value += rigthVal
@@ -234,6 +290,10 @@ func evaluateFloatInfixExpression(operator string, left, rigth obj.Object) obj.O
 		return left
 
 	case "/=":
+		if left.(*obj.Float).Value == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
+
 		left.(*obj.Float).Value /= rigthVal
 		return left
 
@@ -276,6 +336,9 @@ func evaluateIntegerInfixExpression(operator string, left, rigth obj.Object) obj
 	case "*":
 		return &obj.Number{Value: leftVal * rigthVal}
 	case "/":
+		if leftVal == 0 && rigthVal == 0 {
+			return newError("division entre 0 ")
+		}
 		return &obj.Number{Value: leftVal / rigthVal}
 	case "%":
 		return &obj.Number{Value: leftVal % rigthVal}
@@ -288,6 +351,9 @@ func evaluateIntegerInfixExpression(operator string, left, rigth obj.Object) obj
 		return left
 
 	case "/=":
+		if left.(*obj.Number).Value == 0 && rigthVal == 0 {
+			return divisionByZeroError()
+		}
 		left.(*obj.Number).Value /= rigthVal
 		return left
 

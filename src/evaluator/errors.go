@@ -18,6 +18,10 @@ func typeMismatchError(left, operator, rigth string) *obj.Error {
 	}
 }
 
+func divisionByZeroError() *obj.Error {
+	return &obj.Error{Message: "Division entre 0"}
+}
+
 func unknownPrefixOperator(operator, rigth string) *obj.Error {
 	return &obj.Error{
 		Message: fmt.Sprintf("Operador desconocido: %s%s", operator, rigth),
