@@ -636,6 +636,7 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 		{source: `flotante("10.5")`, expected: 10.5},
 		{source: `flotante("5.5")`, expected: 5.5},
 		{source: `flotante("h")`, expected: "no se pudo parsear como flotante h"},
+		{source: "suma(lista[2,3,4])", expected: 9},
 	}
 
 	for _, test := range tests {
