@@ -23,7 +23,7 @@ func printParseErros(errors []string, writer *bufio.Writer) {
 }
 
 // clear the console
-func clearConsole() {
+func clearConsole(writter *bufio.Writer) {
 	var cmd *exec.Cmd
 
 	if runtime.GOOS == "linux" {
@@ -34,7 +34,7 @@ func clearConsole() {
 
 	cmd.Stdout = os.Stdout
 	if err := cmd.Run(); err != nil {
-		fmt.Println("No se pudo limpiar la consola :(")
+		writter.WriteString("No se pudo limpiar la consola\n")
 	}
 }
 
@@ -64,7 +64,7 @@ func StartRpl() {
 		if source == "salir()" || source == "salir" {
 			break
 		} else if source == "limpiar()" || source == "limpiar" {
-			clearConsole()
+			clearConsole(writer)
 			continue
 		}
 

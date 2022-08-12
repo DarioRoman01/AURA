@@ -91,11 +91,19 @@ func castInt(args ...obj.Object) obj.Object {
 		return wrongNumberofArgs("entero", len(args), 1)
 	}
 
-	if arg, isString := args[0].(*obj.String); isString {
-		return toInt(arg.Value)
-	}
+	switch node := args[0].(type) {
+	case *obj.Number:
+		return node
 
-	return unsoportedArgumentType("entero", obj.Types[args[0].Type()])
+	case *obj.String:
+		return toInt(node.Value)
+
+	case *obj.Float:
+		return &obj.Number{Value: int(node.Value)}
+
+	default:
+		return unsoportedArgumentType("entero", obj.Types[args[0].Type()])
+	}
 }
 
 // convert a string object to int object
@@ -104,12 +112,7 @@ func castString(args ...obj.Object) obj.Object {
 		return wrongNumberofArgs("texto", len(args), 1)
 	}
 
-	if arg, isNumber := args[0].(*obj.Number); isNumber {
-		strInt := strconv.Itoa(arg.Value)
-		return &obj.String{Value: strInt}
-	}
-
-	return unsoportedArgumentType("recibir", obj.Types[args[0].Type()])
+	return &obj.String{Value: args[0].Inspect()}
 }
 
 // convert a string or integer object to a float
