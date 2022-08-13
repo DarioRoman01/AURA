@@ -7,9 +7,10 @@ import (
 )
 
 var (
-	charRegex   = regexp.MustCompile(`^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$`)
-	numRegex    = regexp.MustCompile(`^\d$`)
-	wSpaceRegex = regexp.MustCompile(`^\s$`)
+	charRegex    = regexp.MustCompile(`^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$`)
+	numRegex     = regexp.MustCompile(`^\d$`)
+	wSpaceRegex  = regexp.MustCompile(`^\s$`)
+	newLineRegex = regexp.MustCompile(`^\n$`)
 )
 
 // Represents the lexer of the programming lenguage
@@ -50,6 +51,12 @@ func (l *Lexer) NextToken() *Token {
 			return NewToken(FLOAT, literal)
 		}
 		return NewToken(INT, literal)
+	} else if l.character == "/" {
+		if l.peekCharacter() == "/" {
+			l.skipComment()
+			l.readCharacter()
+			return l.NextToken()
+		}
 	}
 
 	var token *Token
@@ -208,6 +215,13 @@ func (l *Lexer) readCharacter() {
 
 	l.position = l.read_position
 	l.read_position++
+}
+
+// reads the next character until it reaches a newline
+func (l *Lexer) skipComment() {
+	for !newLineRegex.MatchString(l.peekCharacter()) {
+		l.readCharacter()
+	}
 }
 
 // read character sequence
