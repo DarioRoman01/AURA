@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type tuple struct {
+type tuple[T any] struct {
 	source   string
-	expected int
+	expected T
 }
 
 type EvaluatorTests struct {
@@ -20,7 +20,7 @@ type EvaluatorTests struct {
 }
 
 func (e *EvaluatorTests) TestIntegerEvaluation() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{"5", 5},
 		{"10", 10},
 		{"-5", -5},
@@ -43,10 +43,7 @@ func (e *EvaluatorTests) TestIntegerEvaluation() {
 }
 
 func (e *EvaluatorTests) TestFloatEvaluation() {
-	tests := []struct {
-		souce    string
-		expected float64
-	}{
+	tests := []tuple[float64]{
 		{`5.5`, 5.5},
 		{`-5.5`, -5.5},
 		{`2.2 + 2.7`, 4.9},
@@ -60,16 +57,13 @@ func (e *EvaluatorTests) TestFloatEvaluation() {
 	}
 
 	for _, test := range tests {
-		evaluated := e.evaluateTests(test.souce)
+		evaluated := e.evaluateTests(test.source)
 		e.testFloatObject(evaluated, test.expected)
 	}
 }
 
 func (e *EvaluatorTests) TestArrayEvaluation() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{
 			source:   "lista[2,4,5];",
 			expected: []int{2, 4, 5},
@@ -161,10 +155,7 @@ func (e *EvaluatorTests) TestArrayEvaluation() {
 }
 
 func (e *EvaluatorTests) TestBangOperator() {
-	tests := []struct {
-		source   string
-		expected bool
-	}{
+	tests := []tuple[bool]{
 		{"!verdadero", false},
 		{"!falso", true},
 		{"!!verdadero", true},
@@ -185,10 +176,7 @@ func (e *EvaluatorTests) TestBangOperator() {
 }
 
 func (e *EvaluatorTests) TestBooleanEvaluation() {
-	tests := []struct {
-		source   string
-		expected bool
-	}{
+	tests := []tuple[bool]{
 		{"verdadero", true},
 		{"falso", false},
 		{"1 < 2", true},
@@ -243,10 +231,7 @@ func (e *EvaluatorTests) TestBooleanEvaluation() {
 }
 
 func (e *EvaluatorTests) TestIfElseEvaluation() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{"si (verdadero) { 10 }", 10},
 		{"si (falso) { 10 }", nil},
 		{"si (1) { 10 }", 10},
@@ -272,7 +257,7 @@ func (e *EvaluatorTests) TestIfElseEvaluation() {
 }
 
 func (e *EvaluatorTests) TestReturnEvaluation() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{"regresa 10;", 10},
 		{"regresa 10; 9;", 10},
 		{"regresa 2 * 5; 9;", 10},
@@ -297,10 +282,7 @@ func (e *EvaluatorTests) TestReturnEvaluation() {
 }
 
 func (e *EvaluatorTests) TestErrorhandling() {
-	tests := []struct {
-		source   string
-		expected string
-	}{
+	tests := []tuple[string]{
 		{source: "5 + verdadero;", expected: "Discrepancia de tipos: entero + booleano"},
 		{source: "5 + verdadero; 9;", expected: "Discrepancia de tipos: entero + booleano"},
 		{source: "-verdadero", expected: "Operador desconocido: -booleano"},
@@ -335,7 +317,7 @@ func (e *EvaluatorTests) TestErrorhandling() {
 }
 
 func (e *EvaluatorTests) TestAssingmentEvaluation() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{"var a = 5; a;", 5},
 		{"var a = 5 * 5; a", 25},
 		{"var a = 5; var b = a; b;", 5},
@@ -350,7 +332,7 @@ func (e *EvaluatorTests) TestAssingmentEvaluation() {
 }
 
 func (e *EvaluatorTests) TestWhileLoop() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{`i := 0; mientras(i <= 10) { i++; }; i;`, 11},
 		{`i := 0; mientras(i <= 3) { i++; }; i;`, 4},
 		{`i := 0; mientras(i <= 5) { i++; }; i;`, 6},
@@ -365,10 +347,7 @@ func (e *EvaluatorTests) TestWhileLoop() {
 }
 
 func (e *EvaluatorTests) TestMaps() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{`m := mapa{"a" => 1, "b" => 2}; m["a"]`, 1},
 		{`m := mapa{"a" => 1, "b" => 2}; m["b"]`, 2},
 		{`m := mapa{1 => "hola", 2 => "mundo"}; m[1]`, "hola"},
@@ -386,10 +365,7 @@ func (e *EvaluatorTests) TestMaps() {
 }
 
 func (e *EvaluatorTests) TestMapMethods() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{`m := mapa{"a" => 1, "b" => 2}; m:contiene("a");`, true},
 		{`m := mapa{"a" => 1, "b" => 2}; m:contiene("b");`, true},
 		{`m := mapa{"a" => 1, "b" => 2}; m:contiene("d");`, false},
@@ -407,10 +383,7 @@ func (e *EvaluatorTests) TestMapMethods() {
 }
 
 func (e *EvaluatorTests) TestStringMethods() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{source: `s := "hola"; s:mayusculas();`, expected: "HOLA"},
 		{source: `s := "HOLA"; s:minusculas();`, expected: "hola"},
 		{source: `s := "hola"; s:contiene("g");`, expected: false},
@@ -432,10 +405,7 @@ func (e *EvaluatorTests) TestStringMethods() {
 }
 
 func (e *EvaluatorTests) TestListMethods() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{"a := lista[2,3]; a:agregar(4); a:pop();", 4},
 		{"a := lista[2,3,4,2,12]; a:agregar(17); a:pop();", 17},
 		{"a := lista[2,3,4,2,12]; a:agregar(4); a:popIndice(1);", 3},
@@ -460,7 +430,7 @@ func (e *EvaluatorTests) TestListMethods() {
 }
 
 func (e *EvaluatorTests) TestForLoop() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{`i := 0; por(n en rango(10)) { i++; }; i;`, 10},
 		{`i := 0; por(n en rango(3)) { i++; }; i;`, 3},
 		{`i := 0; por(n en rango(5)) { i++; }; i;`, 5},
@@ -476,7 +446,7 @@ func (e *EvaluatorTests) TestForLoop() {
 }
 
 func (e *EvaluatorTests) TestReassigment() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{"a := 5; a = 2; a;", 2},
 		{`a := 20; a = 10; a;`, 10},
 		{"a := 12; a = 23; a = 25; a;", 25},
@@ -496,10 +466,7 @@ func (e *EvaluatorTests) TestReassigment() {
 }
 
 func (e *EvaluatorTests) TestCallList() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{"mi_lista := lista[1,23,4,5]; mi_lista[1];", 23},
 		{"mi_lista := lista[1,23,4,5]; mi_lista[0];", 1},
 		{"mi_lista := lista[1,23,4,5]; mi_lista[2];", 4},
@@ -524,7 +491,7 @@ func (e *EvaluatorTests) TestCallList() {
 }
 
 func (e *EvaluatorTests) TestOperators() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{"a := 10; a++; a;", 11},
 		{"a := 10; a+=1; a;", 11},
 		{"a := 10; a--; a;", 9},
@@ -541,10 +508,7 @@ func (e *EvaluatorTests) TestOperators() {
 }
 
 func (e *EvaluatorTests) TestClassEvaluation() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{source: `
 			clase Persona(name, age) {
 				saludar() {
@@ -594,10 +558,7 @@ func (e *EvaluatorTests) TestClassEvaluation() {
 }
 
 func (e *EvaluatorTests) TestBuiltinFunctions() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{source: `largo("");`, expected: 0},
 		{source: `largo("cuatro");`, expected: 6},
 		{source: `largo("hola mundo");`, expected: 10},
@@ -665,10 +626,7 @@ func (e *EvaluatorTests) TestBuiltinFunctions() {
 }
 
 func (e *EvaluatorTests) TestTrhowExpression() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{source: `lanzar Error("this is an error")`, expected: "this is an error"},
 		{
 			source:   `si(5 < 10) { 5 } si_no { lanzar Error("that is imposible!")}`,
@@ -691,10 +649,7 @@ func (e *EvaluatorTests) TestTrhowExpression() {
 }
 
 func (e *EvaluatorTests) TestBreakAndContinue() {
-	tests := []struct {
-		source   string
-		expected []int
-	}{
+	tests := []tuple[[]int]{
 		{source: `
 			x := lista[]; 
 			por(i en rango(5)) { 
@@ -761,7 +716,7 @@ func (e *EvaluatorTests) TestFunctionEvaluation() {
 }
 
 func (e *EvaluatorTests) TestFunctionCalls() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{"funcion identidad(x) { x }; identidad(5);", 5},
 		{`
 			funcion identidad(x) {
@@ -800,10 +755,7 @@ func (e *EvaluatorTests) TestFunctionCalls() {
 }
 
 func (e *EvaluatorTests) TestTryExcept() {
-	tests := []struct {
-		source   string
-		expected interface{}
-	}{
+	tests := []tuple[interface{}]{
 		{
 			source: `
 			funcion parse(x) {
@@ -893,10 +845,7 @@ func (e *EvaluatorTests) TestTryExcept() {
 }
 
 func (e *EvaluatorTests) TestStringEvaluation() {
-	tests := []struct {
-		source   string
-		expected string
-	}{
+	tests := []tuple[string]{
 		{source: `"hello world!"`, expected: "hello world!"},
 		{
 			source:   `funcion() { regresa "aura is awesome"; }()`,
@@ -917,7 +866,7 @@ func (e *EvaluatorTests) TestStringEvaluation() {
 }
 
 func (e *EvaluatorTests) TestTernaryIf() {
-	tests := []tuple{
+	tests := []tuple[int]{
 		{`(10 > 5) ? 5 : 4;`, 5},
 		{`(10 < 5) ? 5 : 4;`, 4},
 		{`(10 > 5 && 5 < 4) ? 5 : 4;`, 4},
@@ -935,10 +884,7 @@ func (e *EvaluatorTests) TestTernaryIf() {
 }
 
 func (e *EvaluatorTests) TestStringConcatenation() {
-	tests := []struct {
-		source   string
-		expected string
-	}{
+	tests := []tuple[string]{
 		{source: `"foo" + "bar";`, expected: "foobar"},
 		{source: `"hello," + " " + "world!";`, expected: "hello, world!"},
 		{source: `
@@ -971,10 +917,7 @@ func (e *EvaluatorTests) testStringObject(evaluated obj.Object, expected string)
 }
 
 func (e *EvaluatorTests) TestStringComparison() {
-	tests := []struct {
-		source   string
-		expected bool
-	}{
+	tests := []tuple[bool]{
 		{`"a" == "a"`, true},
 		{`"a" != "a"`, false},
 		{`"a" == "b"`, false},

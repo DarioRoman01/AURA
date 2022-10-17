@@ -543,7 +543,7 @@ func (p *ParserTests) testLiteralExpression(expression ast.Expression, expectedV
 	case bool:
 		p.testBoolean(expression, expectedValue)
 	default:
-		p.T().Log(fmt.Sprintf("unhandled type of expression, Got=%s", reflect.TypeOf(expectedValue).String()))
+		p.T().Logf("unhandled type of expression, Got=%s", reflect.TypeOf(expectedValue).String())
 		p.T().Fail()
 	}
 }
