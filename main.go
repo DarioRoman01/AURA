@@ -63,7 +63,7 @@ func ReadFile(path string) {
 		for _, err := range parser.Errors() {
 			fmt.Println(err)
 		}
-		// we dont evaluate the program if has syntax errors
+		// we dont evaluate the program if it has syntax errors
 		return
 	}
 

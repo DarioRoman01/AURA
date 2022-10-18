@@ -33,13 +33,15 @@ func makeTwoArgList(start, end obj.Object) obj.Object {
 		return &obj.Error{Message: fmt.Sprintf("El valor de inicio debe ser un entero %s", end.Inspect())}
 	}
 
-	if startVal.Value > endVal.Value {
-		return &obj.Error{Message: "El valor de inicio no puede ser mayor al de el final"}
-	}
-
 	list := &obj.List{Values: []obj.Object{}}
-	for i := startVal.Value; i < endVal.Value; i++ {
-		list.Values = append(list.Values, &obj.Number{Value: i})
+	if startVal.Value > endVal.Value {
+		for i := startVal.Value; i > endVal.Value; i-- {
+			list.Values = append(list.Values, &obj.Number{Value: i})
+		}
+	} else {
+		for i := startVal.Value; i < endVal.Value; i++ {
+			list.Values = append(list.Values, &obj.Number{Value: i})
+		}
 	}
 
 	return list
@@ -53,17 +55,27 @@ func makeTreArgList(start, end, pass obj.Object) obj.Object {
 
 	endVal, isNum := end.(*obj.Number)
 	if !isNum {
-		return &obj.Error{Message: fmt.Sprintf("El valor de inicio debe ser un entero %s", end.Inspect())}
+		return &obj.Error{Message: fmt.Sprintf("El valor final debe ser un entero %s", end.Inspect())}
 	}
 
 	passVal, isNum := pass.(*obj.Number)
 	if !isNum {
-		return &obj.Error{Message: fmt.Sprintf("El valor de inicio debe ser un entero %s", end.Inspect())}
+		return &obj.Error{Message: fmt.Sprintf("Los pasos deben debe ser un entero %s", pass.Inspect())}
+	}
+
+	if passVal.Value < 1 {
+		return &obj.Error{Message: fmt.Sprintf("Los pasos deben debe ser mayor a 0 %s", pass.Inspect())}
 	}
 
 	list := &obj.List{Values: []obj.Object{}}
-	for i := startVal.Value; i < endVal.Value; i += passVal.Value {
-		list.Values = append(list.Values, &obj.Number{Value: i})
+	if startVal.Value > endVal.Value {
+		for i := startVal.Value; i > endVal.Value; i -= passVal.Value {
+			list.Values = append(list.Values, &obj.Number{Value: i})
+		}
+	} else {
+		for i := startVal.Value; i < endVal.Value; i += passVal.Value {
+			list.Values = append(list.Values, &obj.Number{Value: i})
+		}
 	}
 
 	return list

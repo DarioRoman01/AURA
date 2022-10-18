@@ -169,8 +169,8 @@ func (b Block) Str() string {
 type If struct {
 	BaseNode               // Extends base node struct
 	Condition   Expression // represents the condition of the expression
-	Consequence *Block     // represents the consequence if the condition is trythy
-	Alternative *Block     // represents the alternative if the condition is not trythy
+	Consequence *Block     // represents the consequence if the condition is truthy
+	Alternative *Block     // represents the alternative if the condition is not truthy
 }
 
 // generates a new if instance
