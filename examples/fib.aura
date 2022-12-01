@@ -10,7 +10,7 @@ funcion main() {
     intentar {
         numero := entero(recibir("Ingrese un numero para calcular su fibonacci: "))
     } excepto(error) {
-        escribir("Debe ingresar un numero!")
+        escribir(error)
         main()
     }
 
