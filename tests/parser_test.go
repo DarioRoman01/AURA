@@ -563,6 +563,91 @@ func (p *ParserTests) testInteger(expression ast.Expression, expectedValue int) 
 	p.Assert().Equal(fmt.Sprint(expectedValue), integer.Token.Literal)
 }
 
+func (p *ParserTests) TestTypedFunctionParameters() {
+	input := `funcion suma(a: Entero, b: Entero) { regresa a + b; }`
+	lexer := l.NewLexer(input)
+	parser := parser.NewParser(lexer)
+	program := parser.ParseProgam()
+	
+	p.Assert().Equal(0, len(parser.Errors()))
+	p.Assert().Equal(1, len(program.Staments))
+	
+	stmt := program.Staments[0].(*ast.ExpressionStament)
+	function := stmt.Expression.(*ast.Function)
+	
+	p.Assert().NotNil(function.Name)
+	p.Assert().Equal("suma", function.Name.Value)
+	p.Assert().Equal(2, len(function.Parameters))
+	
+	// Check first parameter
+	p.Assert().Equal("a", function.Parameters[0].Value)
+	p.Assert().NotNil(function.Parameters[0].TypeAnnotation)
+	p.Assert().Equal("Entero", function.Parameters[0].TypeAnnotation.TypeName)
+	
+	// Check second parameter
+	p.Assert().Equal("b", function.Parameters[1].Value)
+	p.Assert().NotNil(function.Parameters[1].TypeAnnotation)
+	p.Assert().Equal("Entero", function.Parameters[1].TypeAnnotation.TypeName)
+}
+
+func (p *ParserTests) TestTypedFunctionReturnType() {
+	input := `funcion obtener() -> Texto { regresa "hola"; }`
+	lexer := l.NewLexer(input)
+	parser := parser.NewParser(lexer)
+	program := parser.ParseProgam()
+	
+	p.Assert().Equal(0, len(parser.Errors()))
+	p.Assert().Equal(1, len(program.Staments))
+	
+	stmt := program.Staments[0].(*ast.ExpressionStament)
+	function := stmt.Expression.(*ast.Function)
+	
+	p.Assert().NotNil(function.Name)
+	p.Assert().Equal("obtener", function.Name.Value)
+	p.Assert().NotNil(function.ReturnType)
+	p.Assert().Equal("Texto", function.ReturnType.TypeName)
+}
+
+func (p *ParserTests) TestTypedArrowFunction() {
+	input := `suma := |a: Entero, b: Entero| -> Entero => a + b;`
+	lexer := l.NewLexer(input)
+	parser := parser.NewParser(lexer)
+	program := parser.ParseProgam()
+	
+	p.Assert().Equal(0, len(parser.Errors()))
+	p.Assert().Equal(1, len(program.Staments))
+	
+	stmt := program.Staments[0]
+	
+	// The statement could be either LetStatement or ExpressionStatement depending on parsing
+	var arrowFunc *ast.ArrowFunc
+	
+	switch s := stmt.(type) {
+	case *ast.LetStatement:
+		arrowFunc = s.Value.(*ast.ArrowFunc)
+	case *ast.ExpressionStament:
+		// In case it's parsed as assignment expression
+		assigment := s.Expression.(*ast.AssigmentExp)
+		arrowFunc = assigment.Val.(*ast.ArrowFunc)
+	}
+	
+	p.Assert().NotNil(arrowFunc)
+	p.Assert().Equal(2, len(arrowFunc.Params))
+	
+	// Check parameters
+	p.Assert().Equal("a", arrowFunc.Params[0].Value)
+	p.Assert().NotNil(arrowFunc.Params[0].TypeAnnotation)
+	p.Assert().Equal("Entero", arrowFunc.Params[0].TypeAnnotation.TypeName)
+	
+	p.Assert().Equal("b", arrowFunc.Params[1].Value)
+	p.Assert().NotNil(arrowFunc.Params[1].TypeAnnotation)
+	p.Assert().Equal("Entero", arrowFunc.Params[1].TypeAnnotation.TypeName)
+	
+	// Check return type
+	p.Assert().NotNil(arrowFunc.ReturnType)
+	p.Assert().Equal("Entero", arrowFunc.ReturnType.TypeName)
+}
+
 func TestParserSuite(t *testing.T) {
 	suite.Run(t, new(ParserTests))
 }

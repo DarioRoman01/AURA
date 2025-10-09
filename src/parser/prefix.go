@@ -60,6 +60,14 @@ func (p *Parser) parseFunction() ast.Expression {
 	}
 	parameters := p.parseIdentifiers(l.RPAREN)
 
+	// Check for return type annotation
+	var returnType *ast.TypeAnnotation = nil
+	if p.peekToken.Token_type == l.RARROW {
+		p.advanceTokens() // consume the ->
+		p.advanceTokens() // move to the type token
+		returnType = p.parseTypeAnnotation()
+	}
+
 	var body *ast.Block
 	switch {
 	case p.peekToken.Token_type == l.LBRACE:
@@ -77,6 +85,9 @@ func (p *Parser) parseFunction() ast.Expression {
 		return nil
 	}
 
+	if returnType != nil {
+		return ast.NewTypedFunction(token, name, body, returnType, parameters...)
+	}
 	return ast.NewFunction(token, name, body, parameters...)
 }
 
@@ -259,6 +270,15 @@ func (p *Parser) parseClassMethod() ast.Expression {
 	}
 
 	params := p.parseIdentifiers(l.RPAREN)
+	
+	// Check for return type annotation
+	var returnType *ast.TypeAnnotation = nil
+	if p.peekToken.Token_type == l.RARROW {
+		p.advanceTokens() // consume the ->
+		p.advanceTokens() // move to the type token
+		returnType = p.parseTypeAnnotation()
+	}
+	
 	var body *ast.Block
 
 	if p.peekToken.Token_type == l.ARROW {
@@ -274,6 +294,9 @@ func (p *Parser) parseClassMethod() ast.Expression {
 	}
 
 	p.advanceTokens()
+	if returnType != nil {
+		return ast.NewTypedClassMethodExp(token, name, params, body, returnType)
+	}
 	return ast.NewClassMethodExp(token, name, params, body)
 }
 

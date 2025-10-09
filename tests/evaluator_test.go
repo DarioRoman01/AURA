@@ -1006,6 +1006,129 @@ func (e *EvaluatorTests) testFloatObject(evaluated obj.Object, expected float64)
 	e.Assert().Equal(expected, val.Value)
 }
 
+func (e *EvaluatorTests) TestTypedFunctions() {
+	tests := []tuple[interface{}]{
+		// Test function with typed parameters
+		{source: `
+			funcion suma(a: Entero, b: Entero) {
+				regresa a + b;
+			}
+			suma(5, 3);
+		`,
+			expected: 8,
+		},
+		// Test function with typed parameters and return type
+		{source: `
+			funcion suma(a: Entero, b: Entero) -> Entero {
+				regresa a + b;
+			}
+			suma(10, 20);
+		`,
+			expected: 30,
+		},
+		// Test function with string parameter type
+		{source: `
+			funcion saludo(nombre: Texto) -> Texto {
+				regresa "Hola " + nombre;
+			}
+			saludo("Maria");
+		`,
+			expected: "Hola Maria",
+		},
+		// Test function with boolean parameter type
+		{source: `
+			funcion negar(val: Booleano) -> Booleano {
+				regresa !val;
+			}
+			negar(verdadero);
+		`,
+			expected: false,
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		switch exp := test.expected.(type) {
+		case int:
+			e.testIntegerObject(evaluated, exp)
+		case string:
+			if !e.Assert().IsType(&obj.String{}, evaluated) {
+				e.T().FailNow()
+			}
+			e.Assert().Equal(exp, evaluated.(*obj.String).Value)
+		case bool:
+			if !e.Assert().IsType(&obj.Bool{}, evaluated) {
+				e.T().FailNow()
+			}
+			e.Assert().Equal(exp, evaluated.(*obj.Bool).Value)
+		}
+	}
+}
+
+func (e *EvaluatorTests) TestTypedFunctionErrors() {
+	tests := []tuple[string]{
+		// Test type mismatch in parameter
+		{source: `
+			funcion suma(a: Entero, b: Entero) {
+				regresa a + b;
+			}
+			suma(5, "hola");
+		`,
+			expected: "Error de tipo: el parametro 'b' espera tipo Entero pero recibio texto",
+		},
+		// Test type mismatch in return value
+		{source: `
+			funcion obtenerNumero() -> Entero {
+				regresa "no es un numero";
+			}
+			obtenerNumero();
+		`,
+			expected: "Error de tipo: la funcion debe regresar tipo Entero pero regreso texto",
+		},
+		// Test multiple parameter type checking
+		{source: `
+			funcion procesar(x: Entero, y: Texto, z: Booleano) {
+				regresa x;
+			}
+			procesar(5, 10, verdadero);
+		`,
+			expected: "Error de tipo: el parametro 'y' espera tipo Texto pero recibio entero",
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		if !e.Assert().IsType(&obj.Error{}, evaluated) {
+			e.T().FailNow()
+		}
+		e.Assert().Equal(test.expected, evaluated.(*obj.Error).Message)
+	}
+}
+
+func (e *EvaluatorTests) TestTypedArrowFunctions() {
+	tests := []tuple[int]{
+		// Test arrow function with typed parameters
+		{source: `
+			sumar := |a: Entero, b: Entero| => a + b;
+			sumar(3, 7);
+		`,
+			expected: 10,
+		},
+		// Test arrow function with return type
+		{source: `
+			multiplicar := |x: Entero, y: Entero| -> Entero => x * y;
+			multiplicar(4, 5);
+		`,
+			expected: 20,
+		},
+	}
+
+	for _, test := range tests {
+		evaluated := e.evaluateTests(test.source)
+		e.testIntegerObject(evaluated, test.expected)
+	}
+}
+
 func TestEvalutorSuite(t *testing.T) {
 	suite.Run(t, new(EvaluatorTests))
 }

@@ -4,6 +4,7 @@ import (
 	"aura/src/ast"
 	b "aura/src/builtins"
 	obj "aura/src/object"
+	"fmt"
 	"unicode/utf8"
 )
 
@@ -111,6 +112,9 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 
 	case *ast.ArrowFunc:
 		CheckIsNotNil(node.Body)
+		if node.ReturnType != nil {
+			return obj.NewTypedDef(node.Body, env, node.ReturnType, node.Params...)
+		}
 		return obj.NewDef(node.Body, env, node.Params...)
 
 	case *ast.ClassCall:
@@ -182,10 +186,37 @@ func Evaluate(baseNode ast.ASTNode, env *obj.Enviroment) obj.Object {
 func applyFunction(fn obj.Object, args ...obj.Object) obj.Object {
 	switch function := fn.(type) {
 	case *obj.Def:
+		// Check parameter types if annotated
+		for idx, param := range function.Parameters {
+			if param.TypeAnnotation != nil && idx < len(args) {
+				if !checkTypeMatch(args[idx], param.TypeAnnotation.TypeName) {
+					return newError(fmt.Sprintf(
+						"Error de tipo: el parametro '%s' espera tipo %s pero recibio %s",
+						param.Value,
+						param.TypeAnnotation.TypeName,
+						obj.Types[args[idx].Type()],
+					))
+				}
+			}
+		}
+		
 		extendedEnviron := extendFunctionEnviroment(function, args)
 		evaluated := Evaluate(function.Body, extendedEnviron)
 		CheckIsNotNil(evaluated)
-		return unwrapReturnValue(evaluated)
+		result := unwrapReturnValue(evaluated)
+		
+		// Check return type if annotated
+		if function.ReturnType != nil {
+			if !checkTypeMatch(result, function.ReturnType.TypeName) {
+				return newError(fmt.Sprintf(
+					"Error de tipo: la funcion debe regresar tipo %s pero regreso %s",
+					function.ReturnType.TypeName,
+					obj.Types[result.Type()],
+				))
+			}
+		}
+		
+		return result
 
 	case *obj.Builtin:
 		return function.Fn(args...)
@@ -450,12 +481,20 @@ func evaluateProgram(program *ast.Program, env *obj.Enviroment) obj.Object {
 func evaluateFunction(function *ast.Function, env *obj.Enviroment) obj.Object {
 	if function.Name != nil {
 		// if the name is not nil we have a named function like func main() {}
-		def := obj.NewDef(function.Body, env, function.Parameters...)
+		var def *obj.Def
+		if function.ReturnType != nil {
+			def = obj.NewTypedDef(function.Body, env, function.ReturnType, function.Parameters...)
+		} else {
+			def = obj.NewDef(function.Body, env, function.Parameters...)
+		}
 		env.SetItem(function.Name.Value, def)
 		return obj.SingletonNUll
 	}
 
 	// we have an anonimous function like x := func(a, b) {}
+	if function.ReturnType != nil {
+		return obj.NewTypedDef(function.Body, env, function.ReturnType, function.Parameters...)
+	}
 	return obj.NewDef(function.Body, env, function.Parameters...)
 }
 

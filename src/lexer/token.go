@@ -10,6 +10,7 @@ const (
 	AND
 	ASSING
 	ARROW
+	RARROW // return type arrow ->
 	BAR
 	CLASS
 	COLON
@@ -70,6 +71,14 @@ const (
 	CONTINUE
 	BREAK
 	QUESTION
+	// Type tokens
+	TYPE_ENTERO
+	TYPE_TEXTO
+	TYPE_BOOLEANO
+	TYPE_FLOTANTE
+	TYPE_LISTA
+	TYPE_MAPA
+	TYPE_NULO
 )
 
 // String representation of all tokens
@@ -77,6 +86,7 @@ var Tokens = [...]string{
 	AND:         "&&",
 	ASSING:      "=",
 	ARROW:       "=>",
+	RARROW:      "->",
 	BAR:         "|",
 	CLASS:       "clase",
 	COLON:       ":",
@@ -127,9 +137,16 @@ var Tokens = [...]string{
 	DIVASSING:   "/=",
 	EXPONENT:    "**",
 	IMPORT:      "importar",
-	CONTINUE:    "continuear",
-	BREAK:       "romper",
-	QUESTION:    "?",
+	CONTINUE:       "continuear",
+	BREAK:          "romper",
+	QUESTION:       "?",
+	TYPE_ENTERO:    "Entero",
+	TYPE_TEXTO:     "Texto",
+	TYPE_BOOLEANO:  "Booleano",
+	TYPE_FLOTANTE:  "Flotante",
+	TYPE_LISTA:     "Lista",
+	TYPE_MAPA:      "Mapa",
+	TYPE_NULO:      "Nulo",
 }
 
 // Represents a Token in the programmig lenguage
@@ -172,6 +189,14 @@ func LookUpTokenType(literal string) TokenType {
 		"lanzar":    THROW,
 		"continuar": CONTINUE,
 		"romper":    BREAK,
+		// Type keywords
+		"Entero":    TYPE_ENTERO,
+		"Texto":     TYPE_TEXTO,
+		"Booleano":  TYPE_BOOLEANO,
+		"Flotante":  TYPE_FLOTANTE,
+		"Lista":     TYPE_LISTA,
+		"Mapa":      TYPE_MAPA,
+		"Nulo":      TYPE_NULO,
 	}
 
 	if TokenType, exists := keywords[literal]; exists {

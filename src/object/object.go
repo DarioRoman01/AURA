@@ -133,11 +133,17 @@ type Def struct {
 	Parameters []*ast.Identifier // represents the parameters of the function
 	Body       *ast.Block        // represents the body of the function
 	Env        *Enviroment       // represents the scope of the function
+	ReturnType *ast.TypeAnnotation // optional return type annotation
 }
 
 // return a new function object instance
 func NewDef(body *ast.Block, env *Enviroment, parameters ...*ast.Identifier) *Def {
-	return &Def{Parameters: parameters, Body: body, Env: env}
+	return &Def{Parameters: parameters, Body: body, Env: env, ReturnType: nil}
+}
+
+// return a new typed function object instance
+func NewTypedDef(body *ast.Block, env *Enviroment, returnType *ast.TypeAnnotation, parameters ...*ast.Identifier) *Def {
+	return &Def{Parameters: parameters, Body: body, Env: env, ReturnType: returnType}
 }
 
 func (d *Def) Type() ObjectType {

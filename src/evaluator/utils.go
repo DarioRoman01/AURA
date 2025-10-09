@@ -85,3 +85,32 @@ func checkIndex(length int, index int) (int, *obj.Error) {
 
 	return index, nil
 }
+
+// Check if an object matches a given type annotation
+func checkTypeMatch(value obj.Object, typeAnnotation string) bool {
+	switch typeAnnotation {
+	case "Entero":
+		_, ok := value.(*obj.Number)
+		return ok
+	case "Texto":
+		_, ok := value.(*obj.String)
+		return ok
+	case "Booleano":
+		_, ok := value.(*obj.Bool)
+		return ok
+	case "Flotante":
+		_, ok := value.(*obj.Float)
+		return ok
+	case "Lista":
+		_, ok := value.(*obj.List)
+		return ok
+	case "Mapa":
+		_, ok := value.(*obj.Map)
+		return ok
+	case "Nulo":
+		_, ok := value.(*obj.Null)
+		return ok
+	default:
+		return true // Unknown type, don't check
+	}
+}
