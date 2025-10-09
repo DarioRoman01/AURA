@@ -30,19 +30,45 @@ func (p Prefix) Str() string {
 
 // represents a variable or function name
 type Identifier struct {
-	BaseNode        // Extends base node struct
-	Value    string // represents the name of the identifier
+	BaseNode            // Extends base node struct
+	Value        string // represents the name of the identifier
+	TypeAnnotation *TypeAnnotation // optional type annotation
 }
 
 // generates a new identifier instance
 func NewIdentifier(token *l.Token, value string) *Identifier {
-	return &Identifier{BaseNode: BaseNode{token}, Value: value}
+	return &Identifier{BaseNode: BaseNode{token}, Value: value, TypeAnnotation: nil}
+}
+
+// generates a new identifier instance with type annotation
+func NewTypedIdentifier(token *l.Token, value string, typeAnnotation *TypeAnnotation) *Identifier {
+	return &Identifier{BaseNode: BaseNode{token}, Value: value, TypeAnnotation: typeAnnotation}
 }
 
 func (i Identifier) expressNode() {}
 
 func (i Identifier) Str() string {
+	if i.TypeAnnotation != nil {
+		return fmt.Sprintf("%s: %s", i.Value, i.TypeAnnotation.Str())
+	}
 	return i.Value
+}
+
+// Represents a type annotation
+type TypeAnnotation struct {
+	BaseNode        // Extends base node struct
+	TypeName string // represents the name of the type (entero, texto, booleano, etc.)
+}
+
+// generates a new type annotation instance
+func NewTypeAnnotation(token *l.Token, typeName string) *TypeAnnotation {
+	return &TypeAnnotation{BaseNode: BaseNode{token}, TypeName: typeName}
+}
+
+func (t TypeAnnotation) expressNode() {}
+
+func (t TypeAnnotation) Str() string {
+	return t.TypeName
 }
 
 // Represents a Integer expression
@@ -186,6 +212,7 @@ type ClassMethodExp struct {
 	Name     *Identifier   // represents the method identifier
 	Params   []*Identifier // represents the method params
 	Body     *Block        // represents the method body
+	ReturnType *TypeAnnotation // optional return type annotation
 }
 
 // generates new class method expresion
@@ -195,6 +222,18 @@ func NewClassMethodExp(token *l.Token, name *Identifier, params []*Identifier, b
 		Name:     name,
 		Params:   params,
 		Body:     body,
+		ReturnType: nil,
+	}
+}
+
+// generates new class method expresion with return type
+func NewTypedClassMethodExp(token *l.Token, name *Identifier, params []*Identifier, body *Block, returnType *TypeAnnotation) *ClassMethodExp {
+	return &ClassMethodExp{
+		BaseNode: BaseNode{token},
+		Name:     name,
+		Params:   params,
+		Body:     body,
+		ReturnType: returnType,
 	}
 }
 
@@ -210,6 +249,9 @@ func (cm *ClassMethodExp) Str() string {
 		}
 	}
 
+	if cm.ReturnType != nil {
+		return fmt.Sprintf("%s(%s) -> %s {%s}", cm.Name.Str(), buf.String(), cm.ReturnType.Str(), cm.Body.Str())
+	}
 	return fmt.Sprintf("%s(%s){%s}", cm.Name.Str(), buf.String(), cm.Body.Str())
 }
 

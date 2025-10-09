@@ -353,14 +353,14 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 	}
 
 	p.advanceTokens()
-	if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
+	if ident := p.parseIdentifierWithType().(*ast.Identifier); ident != nil {
 		values = append(values, ident)
 	}
 
 	for p.peekToken.Token_type == l.COMMA {
 		p.advanceTokens()
 		p.advanceTokens()
-		if ident := p.parseIdentifier().(*ast.Identifier); ident != nil {
+		if ident := p.parseIdentifierWithType().(*ast.Identifier); ident != nil {
 			values = append(values, ident)
 		}
 	}
@@ -370,6 +370,53 @@ func (p *Parser) parseIdentifiers(delimiter l.TokenType) []*ast.Identifier {
 	}
 
 	return values
+}
+
+// parse an identifier with optional type annotation
+func (p *Parser) parseIdentifierWithType() ast.Expression {
+	p.checkCurrentTokenIsNotNil()
+	ident := ast.NewIdentifier(p.currentToken, p.currentToken.Literal)
+	
+	// Check if there's a colon for type annotation
+	if p.peekToken.Token_type == l.COLON {
+		p.advanceTokens() // consume the colon
+		p.advanceTokens() // move to the type token
+		
+		// Parse the type annotation
+		if typeAnnotation := p.parseTypeAnnotation(); typeAnnotation != nil {
+			ident.TypeAnnotation = typeAnnotation
+		}
+	}
+	
+	return ident
+}
+
+// parse a type annotation
+func (p *Parser) parseTypeAnnotation() *ast.TypeAnnotation {
+	p.checkCurrentTokenIsNotNil()
+	var typeName string
+	
+	switch p.currentToken.Token_type {
+	case l.TYPE_ENTERO:
+		typeName = "Entero"
+	case l.TYPE_TEXTO:
+		typeName = "Texto"
+	case l.TYPE_BOOLEANO:
+		typeName = "Booleano"
+	case l.TYPE_FLOTANTE:
+		typeName = "Flotante"
+	case l.TYPE_LISTA:
+		typeName = "Lista"
+	case l.TYPE_MAPA:
+		typeName = "Mapa"
+	case l.TYPE_NULO:
+		typeName = "Nulo"
+	default:
+		p.errors = append(p.errors, fmt.Sprintf("tipo desconocido: %s", p.currentToken.Literal))
+		return nil
+	}
+	
+	return ast.NewTypeAnnotation(p.currentToken, typeName)
 }
 
 func (p *Parser) parseContinueStmt() ast.Stmt {

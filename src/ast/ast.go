@@ -201,6 +201,7 @@ type Function struct {
 	Name       *Identifier   // represents the function name
 	Parameters []*Identifier // represents the parameters of the function
 	Body       *Block        // represents the function body
+	ReturnType *TypeAnnotation // optional return type annotation
 }
 
 // create a new function instance
@@ -210,6 +211,18 @@ func NewFunction(token *l.Token, name *Identifier, body *Block, parameters ...*I
 		Name:       name,
 		Parameters: parameters,
 		Body:       body,
+		ReturnType: nil,
+	}
+}
+
+// create a new function instance with return type
+func NewTypedFunction(token *l.Token, name *Identifier, body *Block, returnType *TypeAnnotation, parameters ...*Identifier) *Function {
+	return &Function{
+		BaseNode:   BaseNode{token},
+		Name:       name,
+		Parameters: parameters,
+		Body:       body,
+		ReturnType: returnType,
 	}
 }
 
@@ -225,6 +238,9 @@ func (f Function) Str() string {
 		}
 	}
 
+	if f.ReturnType != nil {
+		return fmt.Sprintf("funcion %s(%s) -> %s %s", f.Name.Value, buf.String(), f.ReturnType.Str(), f.Body.Str())
+	}
 	return fmt.Sprintf("funcion %s(%s) %s", f.Name.Value, buf.String(), f.Body.Str())
 }
 
@@ -435,6 +451,7 @@ type ArrowFunc struct {
 	BaseNode               // extends base node struct
 	Params   []*Identifier // represents the parameters of the function
 	Body     *Block        // represents the body of the function
+	ReturnType *TypeAnnotation // optional return type annotation
 }
 
 // generates a new arrow function instance
@@ -443,6 +460,17 @@ func NewArrowFunc(token *l.Token, params []*Identifier, body *Block) *ArrowFunc 
 		BaseNode: BaseNode{token},
 		Params:   params,
 		Body:     body,
+		ReturnType: nil,
+	}
+}
+
+// generates a new arrow function instance with return type
+func NewTypedArrowFunc(token *l.Token, params []*Identifier, body *Block, returnType *TypeAnnotation) *ArrowFunc {
+	return &ArrowFunc{
+		BaseNode: BaseNode{token},
+		Params:   params,
+		Body:     body,
+		ReturnType: returnType,
 	}
 }
 
@@ -455,6 +483,9 @@ func (a *ArrowFunc) Str() string {
 		} else {
 			buf.WriteString(param.Str() + ", ")
 		}
+	}
+	if a.ReturnType != nil {
+		return fmt.Sprintf("|%s| -> %s => {\n%s\n}", buf.String(), a.ReturnType.Str(), a.Body.Str())
 	}
 	return fmt.Sprintf("|%s| => {\n%s\n}", buf.String(), a.Body.Str())
 }

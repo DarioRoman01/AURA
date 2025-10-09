@@ -122,6 +122,15 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 	p.checkCurrentTokenIsNotNil()
 	token := p.currentToken
 	params := p.parseIdentifiers(l.BAR)
+	
+	// Check for return type annotation
+	var returnType *ast.TypeAnnotation = nil
+	if p.peekToken.Token_type == l.RARROW {
+		p.advanceTokens() // consume the ->
+		p.advanceTokens() // move to the type token
+		returnType = p.parseTypeAnnotation()
+	}
+	
 	if !p.expepectedToken(l.ARROW) {
 		return nil
 	}
@@ -136,6 +145,9 @@ func (p *Parser) parseArrowFunc() ast.Expression {
 		body = ast.NewBlock(p.currentToken, exp)
 	}
 
+	if returnType != nil {
+		return ast.NewTypedArrowFunc(token, params, body, returnType)
+	}
 	return ast.NewArrowFunc(token, params, body)
 }
 

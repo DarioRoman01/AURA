@@ -144,6 +144,8 @@ func (l *Lexer) NextToken() *Token {
 			token = l.makeTwoCharacterToken(MINUSASSING)
 		} else if l.peekCharacter() == "-" {
 			token = l.makeTwoCharacterToken(MINUS2)
+		} else if l.peekCharacter() == ">" {
+			token = l.makeTwoCharacterToken(RARROW)
 		} else {
 			token = NewToken(MINUS, l.character)
 		}
