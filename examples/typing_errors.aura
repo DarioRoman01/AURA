@@ -1,0 +1,12 @@
+// Ejemplos de Errores de Tipo en Aura
+// Examples of Type Errors in Aura
+
+escribir("=== AURA - Deteccion de Errores de Tipo ===");
+escribir("");
+
+// 1. Error en parametros - se espera Entero pero se pasa Texto
+escribir("1. Intentando pasar texto donde se espera entero:");
+funcion suma(a: Entero, b: Entero) {
+    regresa a + b;
+}
+suma(5, "texto");  // Esto deberia dar error

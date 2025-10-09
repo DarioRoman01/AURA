@@ -1,0 +1,54 @@
+// Ejemplos de Tipado en Aura
+// Examples of Typing in Aura
+
+escribir("=== AURA - Sistema de Tipado ===");
+escribir("");
+
+// 1. Funciones con parametros tipados
+escribir("1. Funcion con parametros tipados:");
+funcion suma(a: Entero, b: Entero) {
+    regresa a + b;
+}
+escribir("suma(10, 20) = " + texto(suma(10, 20)));
+escribir("");
+
+// 2. Funciones con tipo de retorno
+escribir("2. Funcion con tipo de retorno:");
+funcion obtenerSaludo(nombre: Texto) -> Texto {
+    regresa "Hola, " + nombre + "!";
+}
+escribir(obtenerSaludo("Mundo"));
+escribir("");
+
+// 3. Funciones con parametros y retorno tipados
+escribir("3. Funcion con parametros y retorno tipados:");
+funcion multiplicar(x: Entero, y: Entero) -> Entero {
+    regresa x * y;
+}
+escribir("multiplicar(7, 8) = " + texto(multiplicar(7, 8)));
+escribir("");
+
+// 4. Funciones flecha con tipos
+escribir("4. Funcion flecha con tipos:");
+restar := |a: Entero, b: Entero| -> Entero => a - b;
+escribir("restar(15, 5) = " + texto(restar(15, 5)));
+escribir("");
+
+// 5. Funcion con tipo booleano
+escribir("5. Funcion con tipo booleano:");
+funcion esPositivo(num: Entero) -> Booleano {
+    regresa num > 0;
+}
+escribir("esPositivo(10) = " + texto(esPositivo(10)));
+escribir("esPositivo(-5) = " + texto(esPositivo(-5)));
+escribir("");
+
+// 6. Funcion con tipo flotante
+escribir("6. Funcion con tipo flotante:");
+funcion promediar(a: Flotante, b: Flotante) -> Flotante {
+    regresa (a + b) / 2.0;
+}
+escribir("promediar(10.5, 20.5) = " + texto(promediar(10.5, 20.5)));
+escribir("");
+
+escribir("=== Todos los ejemplos de tipado funcionaron correctamente! ===");
